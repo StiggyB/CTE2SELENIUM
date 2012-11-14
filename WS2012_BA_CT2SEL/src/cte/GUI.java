@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -15,9 +17,13 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import test.CTETest;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class GUI {
 
@@ -48,8 +54,11 @@ public class GUI {
 
 	StringBuffer sb_cte = new StringBuffer();
 	DefaultListModel<String> cte_listModel = new DefaultListModel<String>();
+	DefaultListModel<String> to_listModel = new DefaultListModel<String>();
 	JList<String> cte_list = new JList<String>(cte_listModel);
+	JList<String> to_list = new JList<String>(to_listModel);
 	private JTextField txtWebsite;
+	JTextArea txtrJunitoutput = new JTextArea();
 
 	/**
 	 * Initialize the contents of the frame.
@@ -63,6 +72,7 @@ public class GUI {
 		frmAutomaticTestCase.getContentPane().setLayout(null);
 
 		JButton btnOpenCtFile = new JButton("Open CT File");
+		btnOpenCtFile.setToolTipText("Select a CTE .txt File");
 		btnOpenCtFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -95,6 +105,14 @@ public class GUI {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 45, 414, 204);
 		frmAutomaticTestCase.getContentPane().add(scrollPane);
+		cte_list.setToolTipText("");
+		cte_list.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if ( arg0.getButton() == MouseEvent.BUTTON1)
+					to_listModel.addElement(cte_list.getSelectedValue());
+			}
+		});
 
 		scrollPane.setViewportView(cte_list);
 
@@ -113,8 +131,14 @@ public class GUI {
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(10, 319, 201, 129);
 		frmAutomaticTestCase.getContentPane().add(scrollPane_1);
+		to_list.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if ( e.getButton() == MouseEvent.BUTTON1)
+					to_listModel.removeElement(to_list.getSelectedValue());
+			}
+		});
 
-		JList to_list = new JList();
 		scrollPane_1.setViewportView(to_list);
 
 		txtWebsite = new JTextField();
@@ -131,13 +155,6 @@ public class GUI {
 		lblCtFile.setBounds(192, 20, 46, 14);
 		frmAutomaticTestCase.getContentPane().add(lblCtFile);
 
-		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(221, 320, 203, 128);
-		frmAutomaticTestCase.getContentPane().add(scrollPane_2);
-
-		JList list = new JList();
-		scrollPane_2.setViewportView(list);
-
 		JButton btnGenerateJUnitTest = new JButton("Generate JUnit Test");
 		btnGenerateJUnitTest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -147,7 +164,10 @@ public class GUI {
 					jfg.setFileName("test");
 					jfg.setPackageName("test");
 					jfg.generateFile();
+					
 					ct.setUp();
+					ct.testAdvancedSearch();
+					ct.tearDown();
 				} catch (AssertionError | Exception e) {
 					System.err.println( ": ");
 					System.err.println(e);
@@ -156,11 +176,51 @@ public class GUI {
 		});
 		btnGenerateJUnitTest.setBounds(124, 459, 195, 23);
 		frmAutomaticTestCase.getContentPane().add(btnGenerateJUnitTest);
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(221, 316, 203, 132);
+		frmAutomaticTestCase.getContentPane().add(scrollPane_2);
+		txtrJunitoutput.setEditable(false);
+		
+
+		scrollPane_2.setViewportView(txtrJunitoutput);
+		txtrJunitoutput.setText("JUnitOutput");
+		redirectSystemStreams();
 
 		JMenuBar menuBar = new JMenuBar();
 		frmAutomaticTestCase.setJMenuBar(menuBar);
 
 		JMenu mnMenu = new JMenu("Menu");
 		menuBar.add(mnMenu);
+	}
+	
+	private void updateTextArea(final String text) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				txtrJunitoutput.append(text);
+			}
+		});
+	}
+
+	private void redirectSystemStreams() {
+		OutputStream out = new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				updateTextArea(String.valueOf((char) b));
+			}
+
+			@Override
+			public void write(byte[] b, int off, int len) throws IOException {
+				updateTextArea(new String(b, off, len));
+			}
+
+			@Override
+			public void write(byte[] b) throws IOException {
+				write(b, 0, b.length);
+			}
+		};
+
+		System.setOut(new PrintStream(out, true));
+		System.setErr(new PrintStream(out, true));
 	}
 }
