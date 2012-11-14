@@ -25,8 +25,10 @@ public class CTETest {
 
 	@Test
 	public void testAdvancedSearch() throws Exception {
-		driver.findElement(By.name("q")).sendKeys("Selenium 2.0 WebDriver");
+		driver.findElement(By.name("q")).sendKeys("HAW Hamburg");
 		driver.findElement(By.name("q")).submit();
+//		WebElement firstLink = driver.findElement(By.id("1"));
+//		firstLink.click();
 		System.out.println("Page title is: " + driver.getTitle());
 	}
 	
