@@ -4,48 +4,41 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
-import javax.swing.JFileChooser;
 
 public class CTE {
-
 	
-	public static StringBuffer readCTEfile() {
-		StringBuffer cte_sb = new StringBuffer();
-		try {
-			// Open the file that is the first
-			// command line parameter
-			JFileChooser chooser= new JFileChooser();
+	DataInputStream in;
+	BufferedReader br;
+	int row = 0;
+	
+	public void setUpFile(File chosenFile) throws FileNotFoundException {
+		FileInputStream fstream = new FileInputStream(chosenFile.getName());
+		in = new DataInputStream(fstream);
+		br = new BufferedReader(new InputStreamReader(in));
+	}
+	
+	public String readCTEfileByLine() throws IOException {
+		String strLine = "";
 
-
-			chooser.setCurrentDirectory(new File("."));
-			int choice = chooser.showOpenDialog(chooser);
-
-			if (choice != JFileChooser.APPROVE_OPTION) return null;
-			File chosenFile = chooser.getSelectedFile();
-
-			FileInputStream fstream = new FileInputStream(chosenFile.getName());
-			// Get the object of DataInputStream
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			String strLine;
-			int i = 0;
-			// Read File Line By Line
-			while ((strLine = br.readLine()) != null) {
-				// Print the content on the console
-				if (strLine.matches(".*[^a-z^A-Z^0-9].*")) {
-					cte_sb.append(i + " " + strLine + "\n");
-					System.out.print(i + " " + strLine + "\n");
-					i++;
-				}
-			}
-			// Close the input stream
-			in.close();
-		} catch (Exception e) {// Catch exception if any
-			System.err.println("Error: " + e.getMessage());
+		// Read File Line By Line
+		strLine = br.readLine();
+		
+		if (strLine != null && strLine.matches(".*[^a-z^A-Z^0-9].*")) {
+			strLine = strLine + "\n";
+			System.out.print(strLine);
+//			row++;
 		}
-		return cte_sb;
+
+		return strLine;
+	}
+	
+	public void tearDownStream() throws IOException {
+		// Close the input stream
+		in.close();
 	}
 	/**
 	 * @param args
