@@ -19,6 +19,7 @@ public class CTETest {
 		driver.get("http://www.google.com");
 	}
 	
+//	Get Method Name in assert message
 //	public void testSetUpFile() throws AssertionError, NoSuchMethodException, SecurityException {
 //			assertTrue(new Object(){}.getClass().getEnclosingMethod().getName(), true);
 //	}

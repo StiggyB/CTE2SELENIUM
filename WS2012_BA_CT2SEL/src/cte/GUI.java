@@ -21,6 +21,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import codeGen.JFileGenerator;
+
 import test.CTETest;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -67,7 +69,7 @@ public class GUI {
 		frmAutomaticTestCase = new JFrame();
 		frmAutomaticTestCase
 				.setTitle("Automatic Test Case Generation for Selenium using CTE");
-		frmAutomaticTestCase.setBounds(100, 100, 450, 551);
+		frmAutomaticTestCase.setBounds(100, 100, 450, 573);
 		frmAutomaticTestCase.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmAutomaticTestCase.getContentPane().setLayout(null);
 
@@ -99,11 +101,11 @@ public class GUI {
 
 			}
 		});
-		btnOpenCtFile.setBounds(10, 11, 113, 23);
+		btnOpenCtFile.setBounds(10, 23, 113, 23);
 		frmAutomaticTestCase.getContentPane().add(btnOpenCtFile);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 45, 414, 204);
+		scrollPane.setBounds(10, 57, 203, 204);
 		frmAutomaticTestCase.getContentPane().add(scrollPane);
 		cte_list.setToolTipText("");
 		cte_list.addMouseListener(new MouseAdapter() {
@@ -121,15 +123,15 @@ public class GUI {
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
-		btnSearchTestCases.setBounds(10, 260, 203, 23);
+		btnSearchTestCases.setBounds(10, 272, 203, 23);
 		frmAutomaticTestCase.getContentPane().add(btnSearchTestCases);
 
 		JLabel lblPossibleTestCase = new JLabel("Possible Test Case Objects:");
-		lblPossibleTestCase.setBounds(10, 294, 201, 14);
+		lblPossibleTestCase.setBounds(225, 32, 201, 14);
 		frmAutomaticTestCase.getContentPane().add(lblPossibleTestCase);
 
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(10, 319, 201, 129);
+		scrollPane_1.setBounds(221, 57, 201, 204);
 		frmAutomaticTestCase.getContentPane().add(scrollPane_1);
 		to_list.addMouseListener(new MouseAdapter() {
 			@Override
@@ -143,17 +145,13 @@ public class GUI {
 
 		txtWebsite = new JTextField();
 		txtWebsite.setText("www.google.com");
-		txtWebsite.setBounds(221, 291, 203, 20);
+		txtWebsite.setBounds(10, 301, 412, 20);
 		frmAutomaticTestCase.getContentPane().add(txtWebsite);
 		txtWebsite.setColumns(10);
 
 		JButton btnParse = new JButton("Parse Website for Matches");
-		btnParse.setBounds(221, 260, 203, 23);
+		btnParse.setBounds(223, 272, 203, 23);
 		frmAutomaticTestCase.getContentPane().add(btnParse);
-
-		JLabel lblCtFile = new JLabel("CT File");
-		lblCtFile.setBounds(192, 20, 46, 14);
-		frmAutomaticTestCase.getContentPane().add(lblCtFile);
 
 		JButton btnGenerateJUnitTest = new JButton("Generate JUnit Test");
 		btnGenerateJUnitTest.addActionListener(new ActionListener() {
@@ -174,11 +172,11 @@ public class GUI {
 				}
 			}
 		});
-		btnGenerateJUnitTest.setBounds(124, 459, 195, 23);
+		btnGenerateJUnitTest.setBounds(114, 332, 195, 23);
 		frmAutomaticTestCase.getContentPane().add(btnGenerateJUnitTest);
 		
 		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(221, 316, 203, 132);
+		scrollPane_2.setBounds(10, 362, 412, 141);
 		frmAutomaticTestCase.getContentPane().add(scrollPane_2);
 		txtrJunitoutput.setEditable(false);
 		

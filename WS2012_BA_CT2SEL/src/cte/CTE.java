@@ -11,9 +11,8 @@ import java.io.InputStreamReader;
 
 public class CTE {
 	
-	DataInputStream in;
-	BufferedReader br;
-	int row = 0;
+	private DataInputStream in;
+	private BufferedReader br;
 	
 	public void setUpFile(File chosenFile) throws FileNotFoundException {
 		FileInputStream fstream = new FileInputStream(chosenFile.getName());
@@ -29,8 +28,6 @@ public class CTE {
 		
 		if (strLine != null && strLine.matches(".*[^a-z^A-Z^0-9].*")) {
 			strLine = strLine + "\n";
-			System.out.print(strLine);
-//			row++;
 		}
 
 		return strLine;
@@ -40,12 +37,5 @@ public class CTE {
 		// Close the input stream
 		in.close();
 	}
-	/**
-	 * @param args
-	 */
-//	public static void main(String[] args) {
-//		readCTEfile();
-//
-//	}
 
 }
