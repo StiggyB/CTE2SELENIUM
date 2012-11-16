@@ -7,12 +7,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class CTE {
 	
 	private DataInputStream in;
 	private BufferedReader br;
+	private ArrayList<String> cteElements;
 	
 	public void setUpFile(File chosenFile) throws FileNotFoundException {
 		FileInputStream fstream = new FileInputStream(chosenFile.getName());
@@ -26,9 +31,10 @@ public class CTE {
 		// Read File Line By Line
 		strLine = br.readLine();
 		
-		if (strLine != null && strLine.matches(".*[^a-z^A-Z^0-9].*")) {
-			strLine = strLine + "\n";
-		}
+//		// Delete empty Lines... Ne das ist schrott ^^
+//		if (strLine != null && strLine.matches(".*[^a-z^A-Z^0-9].*")) {
+//			return strLine;
+//		}
 
 		return strLine;
 	}
@@ -36,6 +42,22 @@ public class CTE {
 	public void tearDownStream() throws IOException {
 		// Close the input stream
 		in.close();
+	}
+
+	/*
+	 * DOES NOT WORK....
+	 */
+	public void parseForTC(ArrayList<String> cteElements) {
+//		this.cteElements = cteElements;
+		Pattern pattern = Pattern.compile("(Test)");
+		Matcher matcher = pattern.matcher(cteElements.get(0));
+
+		for(String item : cteElements)  {
+			matcher = pattern.matcher(item);
+			System.out.println( item + ": ");
+			System.out.println(matcher.group());
+			System.out.println(matcher.find());
+		}
 	}
 
 }

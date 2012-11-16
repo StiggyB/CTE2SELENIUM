@@ -3,10 +3,13 @@ package cte;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -21,11 +24,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import codeGen.JFileGenerator;
-
 import test.CTETest;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import codeGen.JFileGenerator;
 
 public class GUI {
 
@@ -54,14 +54,16 @@ public class GUI {
 		initialize();
 	}
 
-	StringBuffer sb_cte = new StringBuffer();
-	DefaultListModel<String> cte_listModel = new DefaultListModel<String>();
-	DefaultListModel<String> to_listModel = new DefaultListModel<String>();
-	JList<String> cte_list = new JList<String>(cte_listModel);
-	JList<String> to_list = new JList<String>(to_listModel);
+	private DefaultListModel<String> cte_listModel = new DefaultListModel<String>();
+	private DefaultListModel<String> to_listModel = new DefaultListModel<String>();
+	private JList<String> cte_list = new JList<String>(cte_listModel);
+	private JList<String> to_list = new JList<String>(to_listModel);
 	private JTextField txtWebsite;
-	JTextArea txtrJunitoutput = new JTextArea();
+	private JTextArea txtrJunitoutput = new JTextArea();
 
+	private CTE cte = new CTE();
+	private ArrayList<String> cteElements = new ArrayList<>();
+	private String strLine = "";
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -87,13 +89,13 @@ public class GUI {
 					return;
 				File chosenFile = chooser.getSelectedFile();
 
-				CTE cte = new CTE();
-				String strLine = "";
 				try {
 					cte.setUpFile(chosenFile);
 					while ((strLine = cte.readCTEfileByLine()) != null) {
-						if (strLine != "")
+						if (!strLine.isEmpty()) {
 							cte_listModel.addElement(strLine);
+							cteElements.add(strLine);
+						}
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -121,6 +123,7 @@ public class GUI {
 		JButton btnSearchTestCases = new JButton("Search for Test\r\n Cases");
 		btnSearchTestCases.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				cte.parseForTC(cteElements);
 			}
 		});
 		btnSearchTestCases.setBounds(10, 272, 203, 23);
