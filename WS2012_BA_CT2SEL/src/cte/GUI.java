@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -23,6 +24,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
+import junit.framework.JUnit4TestAdapter;
+import junit.framework.TestResult;
+
+import org.junit.runners.JUnit4;
 
 import test.CTETest;
 import codeGen.JFileGenerator;
@@ -159,16 +165,20 @@ public class GUI {
 		JButton btnGenerateJUnitTest = new JButton("Generate JUnit Test");
 		btnGenerateJUnitTest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				CTETest ct = new CTETest();
+//				CTETest ct = new CTETest();
 				try {
-					JFileGenerator jfg = new JFileGenerator();
-					jfg.setFileName("test");
-					jfg.setPackageName("test");
-					jfg.generateFile();
+//					JFileGenerator jfg = new JFileGenerator();
+//					jfg.setFileName("test");
+//					jfg.setPackageName("test");
+//					jfg.generateFile();
 					
-					ct.setUp();
-					ct.testAdvancedSearch();
-					ct.tearDown();
+//					ct.setUp();
+					JUnit4TestAdapter juta = new JUnit4TestAdapter(CTETest.class);
+					TestResult result = new TestResult();
+					juta.run(result);
+					System.out.println("JUnit tests Successful: " + result.wasSuccessful());
+//					ct.testLogin();
+//					ct.tearDown();
 				} catch (AssertionError | Exception e) {
 					System.err.println( ": ");
 					System.err.println(e);
