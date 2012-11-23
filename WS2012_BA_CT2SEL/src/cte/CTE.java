@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +16,6 @@ public class CTE {
 	
 	private DataInputStream in;
 	private BufferedReader br;
-	private ArrayList<String> cteElements;
 	
 	public void setUpFile(File chosenFile) throws FileNotFoundException {
 		FileInputStream fstream = new FileInputStream(chosenFile.getName());
@@ -48,7 +46,6 @@ public class CTE {
 	 * DOES NOT WORK....
 	 */
 	public void parseForTC(ArrayList<String> cteElements) {
-//		this.cteElements = cteElements;
 		Pattern pattern = Pattern.compile("(Test)");
 		Matcher matcher = pattern.matcher(cteElements.get(0));
 
