@@ -25,7 +25,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-import test.WEBTest;
+import test.web.WEBTest;
 
 public class GUI {
 

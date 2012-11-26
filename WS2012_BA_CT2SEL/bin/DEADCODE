@@ -1,0 +1,27 @@
+private Pattern idPattern = Pattern.compile("[+-]?[c][0-9]+");
+	private Pattern namePattern = Pattern.compile("name=\"(.*)\" style");
+	//"<row><column>(.*)</column></row>",
+
+	public Composition getCTEComposition() {
+		Composition composition = new Composition();
+		// Set Composition ID
+		for (String s : strList) {
+			if (s.contains("<Composition")) {
+				Matcher idMatcher = idPattern.matcher(s);
+				while (idMatcher.find()) {
+					System.out.println(idMatcher.group(0));
+					composition.setId(idMatcher.group(0));
+				}
+				if (s.contains("name")) {
+					
+					Matcher nameMatcher = namePattern.matcher(s);
+					while (nameMatcher.find()) {
+						System.out.println(nameMatcher.group(1));
+						composition.setName(nameMatcher.group(1));
+					}
+				}
+			}
+			
+		}
+		return composition;
+	}
