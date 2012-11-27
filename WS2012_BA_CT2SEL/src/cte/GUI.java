@@ -1,6 +1,7 @@
 package cte;
 
 import java.awt.EventQueue;
+import java.util.Map.Entry;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -9,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -61,8 +61,6 @@ public class GUI {
 	private JTextArea txtrJunitoutput = new JTextArea();
 
 	private CTE cte = new CTE();
-	private ArrayList<String> cteElements = new ArrayList<>();
-	private String strLine = "";
 
 	/**
 	 * Initialize the contents of the frame.
@@ -120,8 +118,16 @@ public class GUI {
 		cte_list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if (arg0.getButton() == MouseEvent.BUTTON1)
+				if (arg0.getButton() == MouseEvent.BUTTON1) {
 					to_listModel.addElement(cte_list.getSelectedValue());
+					cte_listModel.removeElement(cte_list.getSelectedValue());
+					cte.getNodes();
+					for (Entry<Integer, CteObject> entry : cte.getCteObjects().entrySet())
+					{
+					    System.out.println(entry.getKey() + "/" + entry.getValue());
+					    to_listModel.addElement(entry.toString());
+					}
+				}
 			}
 		});
 
@@ -166,11 +172,12 @@ public class GUI {
 				try {
 					cte.setUpFile(chosenFile);
 					cte_listModel.addElement(chosenFile.getName());
-					while ((strLine = cte.readCTEfileByLine()) != null) {
-						if (!strLine.isEmpty()) {
-							cteElements.add(strLine);
-						}
-					}
+//					while ((strLine = cte.readCTEfileByLine()) != null) {
+//						if (!strLine.isEmpty()) {
+//							cteElements.add(strLine);
+//						}
+//					}
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
