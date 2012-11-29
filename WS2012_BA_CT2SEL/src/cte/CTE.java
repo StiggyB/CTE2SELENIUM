@@ -7,8 +7,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -20,20 +21,36 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import c2s.TC;
+
 public class CTE {
 
 	private DataInputStream in;
 	private BufferedReader br;
+	private File chosenFile;
 	private ArrayList<String> strList = new ArrayList<String>();
 	private final static String composition = "Composition";
 	private final static String classification = "Classification";
 	private final static String testcase = "TestCase";
-	private List<CteObject> cteObjects = new ArrayList<CteObject>();
 	private TreeMap<Integer, CteObject> cteObjectTree = new TreeMap<Integer, CteObject>();
 	private Document dom;
+	private ArrayList<TC> tcList = new ArrayList<TC>();
+	/**
+	 * Number of Testcases
+	 */
+	private int notc = 0;
+	/**
+	 * Number of Classifications
+	 */
+	private int nocl = 0;
+	/**
+	 * Number of Compositions
+	 */
+	private int noco = 0;
 
 	public boolean setUpFile(File chosenFile) throws IOException {
 		boolean res;
+		this.chosenFile = chosenFile;
 		FileInputStream fstream = new FileInputStream(chosenFile.getName());
 		in = new DataInputStream(fstream);
 		res = ((br = new BufferedReader(new InputStreamReader(in))).ready());
@@ -65,7 +82,7 @@ public class CTE {
 			return res;
 		}
 		//Iterate through the list and print the data
-		printData();
+//		printData();
 
 		return res;
 	}
@@ -80,7 +97,7 @@ public class CTE {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 
 			// parse using builder to get DOM representation of the XML file
-			dom = db.parse("password.cte");
+			dom = db.parse(chosenFile);
 
 		} catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
@@ -117,7 +134,7 @@ public class CTE {
 				CteObject c = getCteObject(el);
 
 				// add it to list
-				cteObjects.add(c);
+				cteObjectTree.put(c.getId(), c);
 			}
 		}
 	}
@@ -133,71 +150,119 @@ public class CTE {
 		if (compEl.getNodeName().equals(testcase)) {
 			String marks = getValue(compEl, "Marks")[0];
 			cteObj = new CteTestCase(name, id, marks);
+			tcList.add(new TC(name));
+			notc++;
 		} else if (compEl.getNodeName().equals(classification)) {
-			String[] cteClass = getValue(compEl, "Class");
+			String[][] cteClass = getClassValue(compEl, "Class");
 			cteObj = new Classification(name, id, cteClass);
+			nocl++;
 		} else {
-			cteObj = new Composition(name, id, null);
+			cteObj = new Composition(name, id);
+			noco++;
 		}
-
 		return cteObj;
 	}
-
+	
 	private String[] getValue(Element ele, String tagName) {
-		String[] textVal = { "", "" };
 		NodeList nl = ele.getElementsByTagName(tagName);
+		String[] textVal = new String[nl.getLength()];
 		if (nl != null && nl.getLength() > 0) {
 			for (int i = 0; i < nl.getLength(); i++) {
 				Element el = (Element) nl.item(i);
-				textVal[i] = el.getAttributes().item(i).getNodeValue();
+				textVal[i] = el.getAttributes().item(i).getNodeValue();	//das gibt kacke, 0 vom ersten und 1 vom zweiten classobj
 			}
 		}
 
 		return textVal;
 	}
 
-	private void printData() {
-
-		System.out.println("No of CteObjects '" + cteObjects.size() + "'.");
-		Iterator<CteObject> it = cteObjects.iterator();
-//		while (it.hasNext()) {
-//			System.out.println(it.next().toString());
-//		}
-
-		// arraylist to treemap
-		System.out.println("Tree:");
-		Iterator<CteObject> it2 = cteObjects.iterator();
-		CteObject ceto = null;
-		while (it2.hasNext()) {
-			ceto = it2.next();
-			cteObjectTree.put(ceto.getId(), ceto);
-			System.out.println("Object: " + ceto + " ID: " + ceto.getId()
-					+ "map: " + cteObjectTree.containsKey(ceto.getId()));
+	private String[][] getClassValue(Element ele, String tagName) {
+		NodeList nl = ele.getElementsByTagName(tagName);
+		String[][] textVal = new String[nl.getLength()][nl.getLength()];
+		if (nl != null && nl.getLength() > 0) {
+			for (int i = 0; i < nl.getLength(); i++) {
+				Element el = (Element) nl.item(i);
+				// Magic Number 2, to eliminate unused xml data
+				for (int j = 0; j < el.getAttributes().getLength()-2; j++) {
+					textVal[i][j] = el.getAttributes().item(j).getNodeValue();
+				}
+			}
 		}
+
+		return textVal;
+	}
+	
+	@SuppressWarnings("unused")
+	private void printData() {
 
 		for (Integer elem : cteObjectTree.keySet())
 			System.out.println(elem + " - " + cteObjectTree.get(elem));
 
 	}
 
-	
-	public void getTestData() {
-		for (CteObject tcele : cteObjectTree.values()) {
-			if (tcele.getClass().equals(CteTestCase.class)) {
-				System.out.println("TC FOUND: " + tcele.getName());
-				Integer[] marks = ((CteTestCase) tcele).getMarks();
-				for (int i = 0; i < marks.length; i++) {
-					for (CteObject cfcele : cteObjectTree.values()) {
-						if (cfcele.getClass().equals(Classification.class)) {
-							if (marks[i].equals(((Classification)cfcele).getTestDataId())) {
-								System.out.println(marks[i] + " equals " + ((Classification)cfcele).getTestDataId());
+	/**
+	 * Soll TestCase Marks mit Classification(Class)-Marks Verknüpfen so dass
+	 * am ende etwas entsteht wie:
+	 * 
+	 * Testcase 1 -> numeric: true; uppercase: true; length: P4ssword
+	 */
+	public ArrayList<TC> getTestData() {
+		
+		/**
+		 * <testcaseName, marks>
+		 */
+		Map<String, Integer[]> testcaseMap = new HashMap<String, Integer[]>();
+		
+		/**
+		 * <classificationName, ids>
+		 */
+		Map<Integer, Integer[]> classificationMap = new HashMap<Integer, Integer[]>();
+
+		for (CteObject element : cteObjectTree.values()) {
+			if (element.getClass().equals(CteTestCase.class)) {
+				testcaseMap.put(element.getName(), ((CteTestCase) element).getMarks());
+			} else if (element.getClass().equals(Classification.class)) {
+				classificationMap.put(element.getId(), ((Classification)element).getTestDataIds());
+			}
+		}
+		
+		for (Map.Entry<Integer, Integer[]> entrycl : classificationMap.entrySet()) {
+			for (int i = 0; i < entrycl.getValue().length; i++) {
+				for (Map.Entry<String, Integer[]> entrytc : testcaseMap.entrySet()) {
+					for (int j = 0; j < entrytc.getValue().length; j++) {
+						if (entrycl.getValue()[i].equals(entrytc.getValue()[j])) {
+							for (Iterator<TC> iterator = tcList.iterator(); iterator.hasNext();) {
+								TC type = iterator.next();
+								if (type.getName().equals(entrytc.getKey())) {
+									String val = ((Classification)cteObjectTree.get(entrycl.getKey())).getTestData()[i];
+									if ( val.equals("true")) {
+										if (cteObjectTree.get(entrycl.getKey()).getName().equalsIgnoreCase("upper case")) {
+											type.setUppercase(true);
+										} else {
+											type.setNumeric(true);
+										}
+										}
+									else if ( val.equals("false") ) {
+										if (cteObjectTree.get(entrycl.getKey()).getName().equalsIgnoreCase("upper case")) {
+											type.setUppercase(false);
+										} else {
+											type.setNumeric(false);
+										}
+									} else if ( val.equals("p4ss") ) {
+										type.setLength(val);
+									} else if ( val.equals("P4ssw0rd") ) {
+										type.setLength(val);
+									} else {
+										System.out.println("SHOULD NOT HAPPEN");
+									}
+								}
 							}
 						}
 					}
-					
 				}
 			}
 		}
+		return tcList;
 	}
 	
 	public TreeMap<Integer, CteObject> getCteObjects() {

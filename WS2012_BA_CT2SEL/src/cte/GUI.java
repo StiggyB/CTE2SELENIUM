@@ -1,7 +1,6 @@
 package cte;
 
 import java.awt.EventQueue;
-import java.util.Map.Entry;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -10,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -25,7 +25,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import org.openqa.jetty.util.Password;
+
+import test.web.PasswordTest;
 import test.web.WEBTest;
+import c2s.TC;
 
 public class GUI {
 
@@ -61,6 +65,7 @@ public class GUI {
 	private JTextArea txtrJunitoutput = new JTextArea();
 
 	private CTE cte = new CTE();
+	private boolean enableTCsearch = false;
 
 	/**
 	 * Initialize the contents of the frame.
@@ -82,7 +87,9 @@ public class GUI {
 					// jfg.setFileName("test");
 					// jfg.setPackageName("test");
 					// jfg.generateFile();
-					junit.textui.TestRunner.run(WEBTest.class);
+//					junit.textui.TestRunner.run(PasswordTest.class);
+					PasswordTest pt = new PasswordTest();
+					pt.testPassword(true, true, "p4ssw0rd");
 //					org.junit.runner.JUnitCore.runClasses(CTETest.class);
 					// ct.setUp();
 //					JUnit4TestAdapter juta = new JUnit4TestAdapter(
@@ -118,14 +125,12 @@ public class GUI {
 		cte_list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if (arg0.getButton() == MouseEvent.BUTTON1) {
+				if (arg0.getButton() == MouseEvent.BUTTON1 && enableTCsearch) {
 					to_listModel.addElement(cte_list.getSelectedValue());
 					cte_listModel.removeElement(cte_list.getSelectedValue());
 					cte.getNodes();
-					for (Entry<Integer, CteObject> entry : cte.getCteObjects().entrySet())
-					{
-					    System.out.println(entry.getKey() + "/" + entry.getValue());
-					    to_listModel.addElement(entry.toString());
+					for (Iterator<TC> iterator = cte.getTestData().iterator(); iterator.hasNext();) {
+						to_listModel.addElement(iterator.next().toString());
 					}
 				}
 			}
@@ -142,8 +147,8 @@ public class GUI {
 		to_list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON1)
-					to_listModel.removeElement(to_list.getSelectedValue());
+				if (e.getButton() == MouseEvent.BUTTON1) {}
+					//to_listModel.removeElement(to_list.getSelectedValue());
 			}
 		});
 
@@ -170,7 +175,7 @@ public class GUI {
 				File chosenFile = chooser.getSelectedFile();
 
 				try {
-					cte.setUpFile(chosenFile);
+					enableTCsearch = cte.setUpFile(chosenFile);
 					cte_listModel.addElement(chosenFile.getName());
 //					while ((strLine = cte.readCTEfileByLine()) != null) {
 //						if (!strLine.isEmpty()) {
