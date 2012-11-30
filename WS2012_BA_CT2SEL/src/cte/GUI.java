@@ -25,6 +25,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import junit.framework.JUnit4TestAdapter;
+import junit.framework.Test;
+import junit.framework.TestResult;
+
 import org.openqa.jetty.util.Password;
 
 import test.web.PasswordTest;
@@ -87,15 +91,22 @@ public class GUI {
 					// jfg.setFileName("test");
 					// jfg.setPackageName("test");
 					// jfg.generateFile();
-//					junit.textui.TestRunner.run(PasswordTest.class);
-					PasswordTest pt = new PasswordTest();
-					pt.testPassword(true, true, "p4ssw0rd");
+					junit.textui.TestRunner.run(PasswordTest.suite());
+//					PasswordTest pt = new PasswordTest();
+//					pt.testPassword(true, true, "p4ssw0rd");
 //					org.junit.runner.JUnitCore.runClasses(CTETest.class);
 					// ct.setUp();
 //					JUnit4TestAdapter juta = new JUnit4TestAdapter(
-//							CTETest.class);
+//							PasswordTest.class);
 //					TestResult result = new TestResult();
 //					juta.run(result);
+//					for (Iterator<Test> iterator = juta.getTests().iterator(); iterator
+//							.hasNext();) {
+//						Test type = (Test) iterator.next();
+//						iterator.next().
+//						
+//					}
+					
 //					System.out.println("JUnit tests Successful: "
 //							+ result.wasSuccessful());
 					// ct.testLogin();
@@ -177,11 +188,6 @@ public class GUI {
 				try {
 					enableTCsearch = cte.setUpFile(chosenFile);
 					cte_listModel.addElement(chosenFile.getName());
-//					while ((strLine = cte.readCTEfileByLine()) != null) {
-//						if (!strLine.isEmpty()) {
-//							cteElements.add(strLine);
-//						}
-//					}
 					
 				} catch (IOException e) {
 					e.printStackTrace();

@@ -21,11 +21,8 @@ public class CTETest2 {
 	
 	@Before
 	public void setUp() throws Exception {
-		String strLine;
 		File dummyFile = new File("password.cte");
 		cte.setUpFile(dummyFile);
-		while ((strLine = cte.readCTEfileByLine()) != null) {
-		assertNotNull(strLine);}
 		cte.getNodes();
 	}
 
@@ -41,7 +38,6 @@ public class CTETest2 {
 	public void testReadCTEfileByLine() throws IOException {
 		File dummyFile = new File("/password.cte");
 		cte.setUpFile(dummyFile);
-		assertNotNull(cte.readCTEfileByLine());
 	}
 	
 	@Ignore
@@ -63,6 +59,7 @@ public class CTETest2 {
 		for (TC tc : tcList) {
 			assertEquals(TC.class, tc.getClass());
 		} 
+		cte.saveTestCasesToFile();
 	}
 	
 	@After

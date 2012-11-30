@@ -4,13 +4,17 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.lang.annotation.Documented;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -57,6 +61,12 @@ public class CTE {
 		return res;
 	}
 
+	/**
+	 * Intentionally written to read out xml/txt File -> no more use because of XML Parsing
+	 * @return
+	 * @throws IOException
+	 */
+	@Deprecated
 	public String readCTEfileByLine() throws IOException {
 		String strLine = "";
 
@@ -64,7 +74,7 @@ public class CTE {
 		strLine = br.readLine();
 		// // Delete empty Lines... Ne das ist schrott ^^
 		if (strLine != null) {// && strLine.matches(".*[^a-z^A-Z^0-9].*")) {
-		// return strLine;
+			// return strLine;
 			strList.add(strLine);
 		}
 
@@ -73,16 +83,16 @@ public class CTE {
 
 	public boolean getNodes() {
 		boolean res = false;
-		//parse the xml file and get the dom object
+		// parse the xml file and get the dom object
 		if ((res = parseXmlFile())) {
 			return res;
 		}
-		//get each element and create a Cte object
+		// get each element and create a Cte object
 		if ((res = parseDocument())) {
 			return res;
 		}
-		//Iterate through the list and print the data
-//		printData();
+		// Iterate through the list and print the data
+		// printData();
 
 		return res;
 	}
@@ -162,14 +172,22 @@ public class CTE {
 		}
 		return cteObj;
 	}
-	
+
 	private String[] getValue(Element ele, String tagName) {
 		NodeList nl = ele.getElementsByTagName(tagName);
 		String[] textVal = new String[nl.getLength()];
 		if (nl != null && nl.getLength() > 0) {
 			for (int i = 0; i < nl.getLength(); i++) {
 				Element el = (Element) nl.item(i);
-				textVal[i] = el.getAttributes().item(i).getNodeValue();	//das gibt kacke, 0 vom ersten und 1 vom zweiten classobj
+				textVal[i] = el.getAttributes().item(i).getNodeValue(); // das
+																		// gibt
+																		// kacke,
+																		// 0 vom
+																		// ersten
+																		// und 1
+																		// vom
+																		// zweiten
+																		// classobj
 			}
 		}
 
@@ -183,7 +201,7 @@ public class CTE {
 			for (int i = 0; i < nl.getLength(); i++) {
 				Element el = (Element) nl.item(i);
 				// Magic Number 2, to eliminate unused xml data
-				for (int j = 0; j < el.getAttributes().getLength()-2; j++) {
+				for (int j = 0; j < el.getAttributes().getLength() - 2; j++) {
 					textVal[i][j] = el.getAttributes().item(j).getNodeValue();
 				}
 			}
@@ -191,7 +209,7 @@ public class CTE {
 
 		return textVal;
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void printData() {
 
@@ -201,18 +219,18 @@ public class CTE {
 	}
 
 	/**
-	 * Soll TestCase Marks mit Classification(Class)-Marks Verknüpfen so dass
-	 * am ende etwas entsteht wie:
+	 * Soll TestCase Marks mit Classification(Class)-Marks Verknüpfen so dass am
+	 * ende etwas entsteht wie:
 	 * 
 	 * Testcase 1 -> numeric: true; uppercase: true; length: P4ssword
 	 */
 	public ArrayList<TC> getTestData() {
-		
+
 		/**
 		 * <testcaseName, marks>
 		 */
 		Map<String, Integer[]> testcaseMap = new HashMap<String, Integer[]>();
-		
+
 		/**
 		 * <classificationName, ids>
 		 */
@@ -220,37 +238,47 @@ public class CTE {
 
 		for (CteObject element : cteObjectTree.values()) {
 			if (element.getClass().equals(CteTestCase.class)) {
-				testcaseMap.put(element.getName(), ((CteTestCase) element).getMarks());
+				testcaseMap.put(element.getName(),
+						((CteTestCase) element).getMarks());
 			} else if (element.getClass().equals(Classification.class)) {
-				classificationMap.put(element.getId(), ((Classification)element).getTestDataIds());
+				classificationMap.put(element.getId(),
+						((Classification) element).getTestDataIds());
 			}
 		}
-		
-		for (Map.Entry<Integer, Integer[]> entrycl : classificationMap.entrySet()) {
+
+		for (Map.Entry<Integer, Integer[]> entrycl : classificationMap
+				.entrySet()) {
 			for (int i = 0; i < entrycl.getValue().length; i++) {
-				for (Map.Entry<String, Integer[]> entrytc : testcaseMap.entrySet()) {
+				for (Map.Entry<String, Integer[]> entrytc : testcaseMap
+						.entrySet()) {
 					for (int j = 0; j < entrytc.getValue().length; j++) {
 						if (entrycl.getValue()[i].equals(entrytc.getValue()[j])) {
-							for (Iterator<TC> iterator = tcList.iterator(); iterator.hasNext();) {
+							for (Iterator<TC> iterator = tcList.iterator(); iterator
+									.hasNext();) {
 								TC type = iterator.next();
 								if (type.getName().equals(entrytc.getKey())) {
-									String val = ((Classification)cteObjectTree.get(entrycl.getKey())).getTestData()[i];
-									if ( val.equals("true")) {
-										if (cteObjectTree.get(entrycl.getKey()).getName().equalsIgnoreCase("upper case")) {
+									String val = ((Classification) cteObjectTree
+											.get(entrycl.getKey()))
+											.getTestData()[i];
+									if (val.equals("true")) {
+										if (cteObjectTree.get(entrycl.getKey())
+												.getName()
+												.equalsIgnoreCase("upper case")) {
 											type.setUppercase(true);
 										} else {
 											type.setNumeric(true);
 										}
-										}
-									else if ( val.equals("false") ) {
-										if (cteObjectTree.get(entrycl.getKey()).getName().equalsIgnoreCase("upper case")) {
+									} else if (val.equals("false")) {
+										if (cteObjectTree.get(entrycl.getKey())
+												.getName()
+												.equalsIgnoreCase("upper case")) {
 											type.setUppercase(false);
 										} else {
 											type.setNumeric(false);
 										}
-									} else if ( val.equals("p4ss") ) {
+									} else if (val.equals("p4ss")) {
 										type.setLength(val);
-									} else if ( val.equals("P4ssw0rd") ) {
+									} else if (val.equals("P4ssw0rd")) {
 										type.setLength(val);
 									} else {
 										System.out.println("SHOULD NOT HAPPEN");
@@ -264,9 +292,22 @@ public class CTE {
 		}
 		return tcList;
 	}
-	
+
 	public TreeMap<Integer, CteObject> getCteObjects() {
 		return cteObjectTree;
+	}
+
+	public void saveTestCasesToFile() {
+		// serialize the Queue
+		System.out.println("serializing theQueue");
+		try {
+			FileOutputStream fout = new FileOutputStream("TEST_TC.dat");
+			ObjectOutputStream oos = new ObjectOutputStream(fout);
+			oos.writeObject(tcList);
+			oos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void tearDownStream() throws IOException {

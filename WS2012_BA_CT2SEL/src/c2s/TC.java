@@ -1,13 +1,19 @@
 package c2s;
 
+import java.io.Serializable;
+
 /**
  * Test Case to be put into Selenium/JUnit Test
  * 
  * @author Benjamin
  *
  */
-public class TC {
+public class TC implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1915170149210587592L;
 	private String name;
 	private boolean numeric;
 	private boolean uppercase;
@@ -80,6 +86,13 @@ public class TC {
 		this.length = length;
 	}
 
+	public String[] asArray() {
+		String arr[] = new String[3];
+		arr[0] = Boolean.toString(this.numeric);
+		arr[1] = Boolean.toString(this.uppercase);
+		arr[2] = length;
+		return arr;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
