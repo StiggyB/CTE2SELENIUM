@@ -8,13 +8,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
-import java.lang.annotation.Documented;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,7 +29,6 @@ public class CTE {
 
 	private DataInputStream in;
 	private BufferedReader br;
-	private File chosenFile;
 	private ArrayList<String> strList = new ArrayList<String>();
 	private final static String composition = "Composition";
 	private final static String classification = "Classification";
@@ -39,22 +36,9 @@ public class CTE {
 	private TreeMap<Integer, CteObject> cteObjectTree = new TreeMap<Integer, CteObject>();
 	private Document dom;
 	private ArrayList<TC> tcList = new ArrayList<TC>();
-	/**
-	 * Number of Testcases
-	 */
-	private int notc = 0;
-	/**
-	 * Number of Classifications
-	 */
-	private int nocl = 0;
-	/**
-	 * Number of Compositions
-	 */
-	private int noco = 0;
-
+	
 	public boolean setUpFile(File chosenFile) throws IOException {
 		boolean res;
-		this.chosenFile = chosenFile;
 		FileInputStream fstream = new FileInputStream(chosenFile.getName());
 		in = new DataInputStream(fstream);
 		res = ((br = new BufferedReader(new InputStreamReader(in))).ready());
@@ -81,10 +65,10 @@ public class CTE {
 		return strLine;
 	}
 
-	public boolean getNodes() {
+	public boolean getNodes(File chosenFile) {
 		boolean res = false;
 		// parse the xml file and get the dom object
-		if ((res = parseXmlFile())) {
+		if ((res = parseXmlFile(chosenFile))) {
 			return res;
 		}
 		// get each element and create a Cte object
@@ -97,7 +81,7 @@ public class CTE {
 		return res;
 	}
 
-	private boolean parseXmlFile() {
+	private boolean parseXmlFile(File chosenFile) {
 		// get the factory
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
@@ -161,14 +145,11 @@ public class CTE {
 			String marks = getValue(compEl, "Marks")[0];
 			cteObj = new CteTestCase(name, id, marks);
 			tcList.add(new TC(name));
-			notc++;
 		} else if (compEl.getNodeName().equals(classification)) {
 			String[][] cteClass = getClassValue(compEl, "Class");
 			cteObj = new Classification(name, id, cteClass);
-			nocl++;
 		} else {
 			cteObj = new Composition(name, id);
-			noco++;
 		}
 		return cteObj;
 	}

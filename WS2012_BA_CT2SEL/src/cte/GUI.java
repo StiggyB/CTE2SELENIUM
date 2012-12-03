@@ -24,15 +24,9 @@ import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.Test;
-import junit.framework.TestResult;
-
-import org.openqa.jetty.util.Password;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import test.web.PasswordTest;
-import test.web.WEBTest;
 import c2s.TC;
 
 public class GUI {
@@ -69,7 +63,7 @@ public class GUI {
 	private JTextArea txtrJunitoutput = new JTextArea();
 
 	private CTE cte = new CTE();
-	private boolean enableTCsearch = false;
+	private File chosenFile;
 
 	/**
 	 * Initialize the contents of the frame.
@@ -136,10 +130,11 @@ public class GUI {
 		cte_list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if (arg0.getButton() == MouseEvent.BUTTON1 && enableTCsearch) {
+				if (arg0.getButton() == MouseEvent.BUTTON1) {
 					to_listModel.addElement(cte_list.getSelectedValue());
 					cte_listModel.removeElement(cte_list.getSelectedValue());
-					cte.getNodes();
+					cte.getNodes(chosenFile);
+					cte.saveTestCasesToFile();
 					for (Iterator<TC> iterator = cte.getTestData().iterator(); iterator.hasNext();) {
 						to_listModel.addElement(iterator.next().toString());
 					}
@@ -179,19 +174,14 @@ public class GUI {
 				JFileChooser chooser = new JFileChooser();
 
 				chooser.setCurrentDirectory(new File("."));
+				chooser.setFileFilter(new FileNameExtensionFilter(null, "cte"));
+				
 				int choice = chooser.showOpenDialog(chooser);
 
 				if (choice != JFileChooser.APPROVE_OPTION)
 					return;
-				File chosenFile = chooser.getSelectedFile();
-
-				try {
-					enableTCsearch = cte.setUpFile(chosenFile);
-					cte_listModel.addElement(chosenFile.getName());
-					
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				chosenFile = chooser.getSelectedFile();
+				cte_listModel.addElement(chosenFile.getName());
 			}
 		});
 		mnMenu.add(mntmOpencteFile);
@@ -215,6 +205,11 @@ public class GUI {
 		mnMenu.add(separator_2);
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frmAutomaticTestCase.dispose();
+			}
+		});
 		mnMenu.add(mntmExit);
 		
 		JMenu mnEdit = new JMenu("Edit");

@@ -23,7 +23,7 @@ public class CTETest2 {
 	public void setUp() throws Exception {
 		File dummyFile = new File("password.cte");
 		cte.setUpFile(dummyFile);
-		cte.getNodes();
+		cte.getNodes(dummyFile);
 	}
 
 	@Ignore
@@ -35,15 +35,9 @@ public class CTETest2 {
 	
 	@Ignore
 	@Test
-	public void testReadCTEfileByLine() throws IOException {
-		File dummyFile = new File("/password.cte");
-		cte.setUpFile(dummyFile);
-	}
-	
-	@Ignore
-	@Test
 	public void testGetNodes() {
-		assertFalse(cte.getNodes());
+		File dummyFile = new File("password.cte");
+		assertFalse(cte.getNodes(dummyFile));
 	}
 	
 	@Ignore

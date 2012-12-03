@@ -85,14 +85,21 @@ public class TC implements Serializable {
 	public void setLength(String length) {
 		this.length = length;
 	}
-
+	
+	/**
+	 * public String[] asArray()
+	 * @return
+	 * the String-Array representation of this class
+	 */
 	public String[] asArray() {
-		String arr[] = new String[3];
+		// Minus 2 because of UID & Name not needed
+		String arr[] = new String[this.getClass().getDeclaredFields().length-2];
 		arr[0] = Boolean.toString(this.numeric);
 		arr[1] = Boolean.toString(this.uppercase);
 		arr[2] = length;
 		return arr;
 	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
