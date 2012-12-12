@@ -27,7 +27,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import test.web.PasswordTest;
-import c2s.TC;
+import c2s.CTTestCase;
 
 public class GUI {
 
@@ -135,7 +135,7 @@ public class GUI {
 					cte_listModel.removeElement(cte_list.getSelectedValue());
 					cte.getNodes(chosenFile);
 					cte.saveTestCasesToFile();
-					for (Iterator<TC> iterator = cte.getTestData().iterator(); iterator.hasNext();) {
+					for (Iterator<CTTestCase> iterator = cte.getTestData().iterator(); iterator.hasNext();) {
 						to_listModel.addElement(iterator.next().toString());
 					}
 				}

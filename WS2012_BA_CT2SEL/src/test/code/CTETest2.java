@@ -10,8 +10,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
-import c2s.TC;
+import c2s.CTTestCase;
 
 import cte.CTE;
 
@@ -46,14 +47,20 @@ public class CTETest2 {
 		assertFalse(cte.getCteObjects().isEmpty());
 	}
 	
+	@Ignore
 	@Test
 	public void testGetTestData() {
-		ArrayList<TC> tcList = cte.getTestData();
+		ArrayList<CTTestCase> tcList = cte.getTestData();
 		System.out.println(tcList.toString());
-		for (TC tc : tcList) {
-			assertEquals(TC.class, tc.getClass());
+		for (CTTestCase tc : tcList) {
+			assertEquals(CTTestCase.class, tc.getClass());
 		} 
 		cte.saveTestCasesToFile();
+	}
+	
+	@Test
+	public void testSchema() throws SAXException, IOException {
+		cte.testSchema(new File("password.cte"));
 	}
 	
 	@After

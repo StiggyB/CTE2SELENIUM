@@ -1,4 +1,4 @@
-package cte;
+package cte.xmlObjects;
 
 
 public class Composition extends CteObject {

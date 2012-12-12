@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Benjamin
  *
  */
-public class TC implements Serializable {
+public class CTTestCase implements Serializable {
 
 	/**
 	 * 
@@ -19,11 +19,11 @@ public class TC implements Serializable {
 	private boolean uppercase;
 	private String length;
 	
-	public TC(String name) {
+	public CTTestCase(String name) {
 		this.name = name;
 	}
 	
-	public TC(String name, boolean numeric, boolean uppercase, String length) {
+	public CTTestCase(String name, boolean numeric, boolean uppercase, String length) {
 		this.name = name;
 		this.numeric = numeric;
 		this.uppercase = uppercase;

@@ -21,12 +21,13 @@ import org.junit.runners.Parameterized.Parameters;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import tools.Cast;
 
-import c2s.TC;
+import c2s.CTTestCase;
 
 @RunWith(Parameterized.class)
 public class PasswordTest {
@@ -35,7 +36,7 @@ public class PasswordTest {
 	private String numeric;
 	private String uppercase;
 	private String length;
-	private static ArrayList<TC> testcases;
+	private static ArrayList<CTTestCase> testcases;
 
 	public PasswordTest(String numeric, String uppercase, String length) {
 		this.numeric = numeric;
@@ -43,7 +44,7 @@ public class PasswordTest {
 		this.length = length;
 	}
 
-	private static ArrayList<TC> loadTestCaseObjectsFromFile() {
+	private static ArrayList<CTTestCase> loadTestCaseObjectsFromFile() {
 		try {
 			FileInputStream fin = new FileInputStream("TEST_TC.dat");
 			ObjectInputStream ois = new ObjectInputStream(fin);
@@ -57,10 +58,10 @@ public class PasswordTest {
 
 	@Parameters
 	public static List<Object[]> data() {
-		ArrayList<TC> tcs = loadTestCaseObjectsFromFile();
+		ArrayList<CTTestCase> tcs = loadTestCaseObjectsFromFile();
 		Object[][] data = new Object[tcs.size()][tcs.size()];
 		int i = 0;
-		for (Iterator<TC> iterator = tcs.iterator(); iterator.hasNext();) {
+		for (Iterator<CTTestCase> iterator = tcs.iterator(); iterator.hasNext();) {
 			data[i] = iterator.next().asArray();
 			i++;
 		}
@@ -69,7 +70,7 @@ public class PasswordTest {
 
 	@Before
 	public void setUp() throws Exception {
-		driver = new FirefoxDriver();
+		driver = new HtmlUnitDriver();
 		driver.get("http://www.fcmuckefuck.de");
 	}
 
