@@ -58,14 +58,4 @@ public class CTETest2 {
 		cte.saveTestCasesToFile();
 	}
 	
-	@Test
-	public void testSchema() throws SAXException, IOException {
-		cte.testSchema(new File("password.cte"));
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-		
-	}
-
 }

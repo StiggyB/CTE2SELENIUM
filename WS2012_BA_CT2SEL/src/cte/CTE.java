@@ -8,35 +8,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import c2s.CTTestCase;
 import cte.xmlObjects.Classification;
 import cte.xmlObjects.Composition;
 import cte.xmlObjects.CteObject;
 import cte.xmlObjects.CteTestCase;
-
-import c2s.CTTestCase;
 
 public class CTE {
 
@@ -49,29 +40,6 @@ public class CTE {
 	private TreeMap<Integer, CteObject> cteObjectTree = new TreeMap<Integer, CteObject>();
 	private Document dom;
 	private ArrayList<CTTestCase> tcList = new ArrayList<CTTestCase>();
-
-	public void testSchema(File chosenFile) throws SAXException, IOException {
-		System.out.println("Creating schema File...");
-		Source schemaFile = new StreamSource("\\Program Files\\CTE XL 3.1.3 Professional\\api\\cta\\cta.xsd");
-		System.out.println(schemaFile.toString());
-		System.out.println("Loading chosen file...");
-		Source xmlFile = new StreamSource("C:\\Program Files\\CTE XL 3.1.3 Professional\\api\\examples\\com.berner_mattner.cte.remoteclient.demo\\ExampleFiles\\example.cte");
-		System.out.println("Loading schema Factory Instance...");
-		SchemaFactory schemaFactory = SchemaFactory
-		    .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		System.out.println("Creating schema...");
-		Schema schema = schemaFactory.newSchema(schemaFile);
-		System.out.println("Creating validator...");
-		Validator validator = schema.newValidator();
-		try {
-			System.out.println("Validating...");
-			validator.validate(xmlFile);
-			System.out.println(xmlFile.getSystemId() + " is valid");
-		} catch (SAXException e) {
-			System.out.println(xmlFile.getSystemId() + " is NOT valid");
-			System.out.println("Reason: " + e.getLocalizedMessage());
-		}
-	}
 	
 	public boolean setUpFile(File chosenFile) throws IOException {
 		boolean res;
