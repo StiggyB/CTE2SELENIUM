@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:complexType name="CteObject">
+        <xs:complexContent>
+            <xs:extension base="Taggable">
+                <xs:choice>
+                    <xs:element name="Tree" type="CteTree">
+                        <xs:unique name="noMultipleRoot">
+                            <xs:selector xpath=".//*"/>
+                            <xs:field xpath="@root"/>
+                        </xs:unique>
+                    </xs:element>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CteTree">
+        <xs:complexContent>
+            <xs:extension base="Taggable">
+                <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                    <xs:choice>
+                        <xs:element name="Class" type="CteClass">
+                            <xs:unique name="noEqualSiblingNames3">
+                                <xs:selector xpath="./*"/>
+                                <xs:field xpath="@name"/>
+                            </xs:unique>
+                        </xs:element>
+                        <xs:element name="Classification" type="CteClassification">
+                            <xs:unique name="noEqualSiblingNames2">
+                                <xs:selector xpath="./*"/>
+                                <xs:field xpath="@name"/>
+                            </xs:unique>
+                        </xs:element>
+                        <xs:element name="Composition" type="CteComposition">
+                            <xs:unique name="noEqualSiblingNames1">
+                                <xs:selector xpath="./*"/>
+                                <xs:field xpath="@name"/>
+                            </xs:unique>
+                        </xs:element>
+                    </xs:choice>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CteComposition">
+        <xs:complexContent>
+            <xs:extension base="CteTreeItem">
+                <xs:choice maxOccurs="unbounded" minOccurs="0">
+                    <xs:element name="Composition" type="CteComposition">
+                        <xs:unique name="noEqualSiblingNames4">
+                            <xs:selector xpath="./*"/>
+                            <xs:field xpath="@name"/>
+                        </xs:unique>
+                    </xs:element>
+                    <xs:element name="Classification" type="CteClassification">
+                        <xs:unique name="noEqualSiblingNames5">
+                            <xs:selector xpath="./*"/>
+                            <xs:field xpath="@name"/>
+                        </xs:unique>
+                    </xs:element>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CteClassification">
+        <xs:complexContent>
+            <xs:extension base="CteTreeItem">
+                <xs:choice maxOccurs="unbounded" minOccurs="0">
+                    <xs:element name="Class" type="CteClass">
+                        <xs:unique name="noEqualSiblingNames6">
+                            <xs:selector xpath="./*"/>
+                            <xs:field xpath="@name"/>
+                        </xs:unique>
+                    </xs:element>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CteClass">
+        <xs:complexContent>
+            <xs:extension base="CteTreeItem">
+                <xs:choice maxOccurs="unbounded" minOccurs="0">
+                    <xs:element name="Composition" type="CteComposition">
+                        <xs:unique name="noEqualSiblingNames7">
+                            <xs:selector xpath="./*"/>
+                            <xs:field xpath="@name"/>
+                        </xs:unique>
+                    </xs:element>
+                    <xs:element name="Classification" type="CteClassification">
+                        <xs:unique name="noEqualSiblingNames8">
+                            <xs:selector xpath="./*"/>
+                            <xs:field xpath="@name"/>
+                        </xs:unique>
+                    </xs:element>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CteTreeItem">
+        <xs:complexContent>
+            <xs:extension base="Taggable">
+                <xs:attribute name="style" type="CteStyle" use="optional"/>
+                <xs:attribute name="name" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Taggable">
+        <xs:choice>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Description" type="xs:string"/>
+                <xs:element minOccurs="0" name="Specification" type="xs:string"/>
+            </xs:sequence>
+        </xs:choice>
+    </xs:complexType>
+        <xs:simpleType name="CteStyle">
+        <xs:restriction base="xs:string">
+            <!-- Parses CSS strings like "color:#404040; font-family:'Times New Roman TUR'" -->
+            <xs:pattern value="[a-z-]+\:[^:]+(;( )?[a-z-]+\:[^:]+)*"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="CteObject" type="CteObject"/>
+</xs:schema>

@@ -25,6 +25,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import test.web.PasswordTest;
 import c2s.CTTestCase;
@@ -133,8 +136,12 @@ public class GUI {
 				if (arg0.getButton() == MouseEvent.BUTTON1) {
 					to_listModel.addElement(cte_list.getSelectedValue());
 					cte_listModel.removeElement(cte_list.getSelectedValue());
-					cte.getNodes(chosenFile);
-					cte.saveTestCasesToFile();
+					try {
+                        cte.saveTestCasesToFile(chosenFile);
+                    } catch (ParserConfigurationException | SAXException
+                            | IOException e) {
+                        e.printStackTrace();
+                    }
 					for (Iterator<CTTestCase> iterator = cte.getTestData().iterator(); iterator.hasNext();) {
 						to_listModel.addElement(iterator.next().toString());
 					}

@@ -60,7 +60,8 @@ public class Test2profile {
 		}
 	}
 
-	private boolean isElementPresent(By by) throws NoSuchElementException {
+	@SuppressWarnings("unused")
+    private boolean isElementPresent(By by) throws NoSuchElementException {
 		driver.findElement(by);
 		return true;
 	}

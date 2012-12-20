@@ -13,39 +13,40 @@ import org.xml.sax.SAXException;
 
 public class XMLParser {
 
-	private static Document dom;
+    private static Document dom;
 
-	private XMLParser() {
-		super();
-	}
+    private XMLParser() {
+        super();
+    }
 
-	/**
-	 * Parses the given Document(DOM) and returns the root Element e.g. null if no
-	 * root is found.
-	 * 
-	 * @param chosenFile
-	 *            - File to parse
-	 * @return root Element
-	 * @throws IOException 
-	 * @throws SAXException 
-	 * @throws ParserConfigurationException 
-	 */
-	public static Element parse(File chosenFile) throws ParserConfigurationException, SAXException, IOException {
-		parseXmlFile(chosenFile);
-		return dom.getDocumentElement();
-	}
+    /**
+     * Parses the given Document(DOM) and returns the root Element e.g. null if
+     * no root is found.
+     * 
+     * @param chosenFile
+     *            - File to parse
+     * @return root Element
+     * @throws IOException
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     */
+    public static Element parse(File chosenFile)
+            throws ParserConfigurationException, SAXException, IOException {
+        parseXmlFile(chosenFile);
+        return dom.getDocumentElement();
+    }
 
-	private static void parseXmlFile(File chosenFile)
-			throws ParserConfigurationException, SAXException, IOException {
-		// get the factory
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    private static void parseXmlFile(File chosenFile)
+            throws ParserConfigurationException, SAXException, IOException {
+        // get the factory
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
-		// Using factory get an instance of document builder
-		DocumentBuilder db = dbf.newDocumentBuilder();
+        // Using factory get an instance of document builder
+        DocumentBuilder db = dbf.newDocumentBuilder();
 
-		// parse using builder to get DOM representation of the XML file
-		dom = db.parse(chosenFile);
-		dom.normalize();
-	}
+        // parse using builder to get DOM representation of the XML file
+        dom = db.parse(chosenFile);
+        dom.normalize();
+    }
 
 }
