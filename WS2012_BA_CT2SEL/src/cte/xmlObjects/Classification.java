@@ -6,7 +6,8 @@ import java.util.regex.Pattern;
 
 public class Classification extends CteObject {
 
-	private String[][] cteClass;
+    private static final long serialVersionUID = 4107432700167615371L;
+    private String[][] cteClass;
 	private Pattern idPattern = Pattern.compile("\\d+");
 	private Matcher idMatcher;
 	

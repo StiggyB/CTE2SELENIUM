@@ -6,15 +6,14 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import c2s.CTTestCase;
 import cte.xmlObjects.Classification;
 import cte.xmlObjects.CteObject;
 import cte.xmlObjects.CteTestCase;
@@ -22,22 +21,22 @@ import cte.xmlObjects.CteTestCase;
 public class CTE {
 
     private TreeMap<Integer, CteObject> cteObjectTree  = new TreeMap<Integer, CteObject>();
-    private ArrayList<CTTestCase>       tcList         = new ArrayList<CTTestCase>();
+    private ArrayList<CteTestCase>      tcList         = new ArrayList<CteTestCase>();
     private final static String         composition    = "Composition";
     private final static String         classification = "Classification";
     private final static String         testcase       = "TestCase";
+    private CTEParser                   ctep;
 
     /**
      * Specified .cte File is Parsed and serialized written to a File.
      * 
-     * @param cteFile - the File to be parsed and saved in serialized format
+     * @param cteFile
+     *            - the File to be parsed and saved in serialized format
      * @throws ParserConfigurationException
      * @throws SAXException
      * @throws IOException
      */
-    public void saveTestCasesToFile(File cteFile)
-            throws ParserConfigurationException, SAXException, IOException {
-        getCteTree(cteFile);
+    public void saveTestCasesToFile() {
         try {
             FileOutputStream fout = new FileOutputStream("TEST_TC.dat");
             ObjectOutputStream oos = new ObjectOutputStream(fout);
@@ -47,7 +46,52 @@ public class CTE {
             e.printStackTrace();
         }
     }
-    
+
+    public ArrayList<CteTestCase> getTD(File cteFile)
+            throws ParserConfigurationException, SAXException, IOException {
+        getCteTree(cteFile);
+        /**
+         * <testcaseName, marks>
+         */
+        Map<CteTestCase, Integer[]> testcaseMap = new HashMap<CteTestCase, Integer[]>();
+
+        /**
+         * <classificationName, ids>
+         */
+        Map<Classification, Integer[]> classificationMap = new HashMap<Classification, Integer[]>();
+
+        for (CteObject element : cteObjectTree.values()) {
+            if (element.getClass().equals(CteTestCase.class)) {
+                testcaseMap.put((CteTestCase) element,
+                        ((CteTestCase) element).getMarks());
+            } else if (element.getClass().equals(Classification.class)) {
+                classificationMap.put((Classification) element,
+                        ((Classification) element).getTestDataIds());
+            }
+        }
+
+        for (Entry<CteTestCase, Integer[]> entrytc : testcaseMap.entrySet()) {
+            for (int i = 0; i < entrytc.getValue().length; i++) {
+                for (Entry<Classification, Integer[]> entrycl : classificationMap
+                        .entrySet()) {
+                    for (int j = 0; j < entrycl.getValue().length; j++) {
+                        if (entrytc.getValue()[i].equals(entrycl.getKey()
+                                .getTestDataIds()[j])) {
+                            entrytc.getKey().setValueOfMark(
+                                    entrytc.getValue()[i],
+                                    entrycl.getKey().getTestData()[j]);
+                            entrytc.getKey().setCompositionOfMark(
+                                    entrytc.getValue()[i],
+                                    entrycl.getKey().getName());
+                        }
+                    }
+                }
+            }
+            tcList.add(entrytc.getKey());
+        }
+        return tcList;
+    }
+
     /**
      * Soll TestCase Marks mit Classification(Class)-Marks Verknüpfen so dass am
      * ende etwas entsteht wie:
@@ -58,89 +102,90 @@ public class CTE {
      * @throws SAXException
      * @throws ParserConfigurationException
      */
-    public ArrayList<CTTestCase> getTestData() {
-        //TODO: THIS DOES NOT WORK GENERICALLY, NEEDS RIGOROUS UPDATE
-        /**
-         * <testcaseName, marks>
-         */
-        Map<String, Integer[]> testcaseMap = new HashMap<String, Integer[]>();
-
-        /**
-         * <classificationName, ids>
-         */
-        Map<Integer, Integer[]> classificationMap = new HashMap<Integer, Integer[]>();
-
-        for (CteObject element : cteObjectTree.values()) {
-            if (element.getClass().equals(CteTestCase.class)) {
-                testcaseMap.put(element.getName(),
-                        ((CteTestCase) element).getMarks());
-            } else if (element.getClass().equals(Classification.class)) {
-                classificationMap.put(element.getId(),
-                        ((Classification) element).getTestDataIds());
-            }
-        }
-        
-        for (Map.Entry<Integer, Integer[]> entrycl : classificationMap
-                .entrySet()) {
-            for (int i = 0; i < entrycl.getValue().length; i++) {
-                for (Map.Entry<String, Integer[]> entrytc : testcaseMap
-                        .entrySet()) {
-                    for (int j = 0; j < entrytc.getValue().length; j++) {
-                        if (entrycl.getValue()[i]
-                                .equals(entrytc.getValue()[j])) {
-                            for (Iterator<CTTestCase> iterator = tcList
-                                    .iterator(); iterator.hasNext();) {
-                                CTTestCase type = iterator.next();
-                                if (type.getName().equals(entrytc.getKey())) {
-                                    String val = ((Classification) cteObjectTree
-                                            .get(entrycl.getKey()))
-                                            .getTestData()[i];
-                                    System.out.println(val);
-                                    if (val.equals("true")) {
-                                        if (cteObjectTree
-                                                .get(entrycl.getKey())
-                                                .getName()
-                                                .equalsIgnoreCase(
-                                                        "upper case")) {
-                                            type.setUppercase(true);
-                                        } else {
-                                            type.setNumeric(true);
-                                        }
-                                    } else if (val.equals("false")) {
-                                        if (cteObjectTree
-                                                .get(entrycl.getKey())
-                                                .getName()
-                                                .equalsIgnoreCase(
-                                                        "upper case")) {
-                                            type.setUppercase(false);
-                                        } else {
-                                            type.setNumeric(false);
-                                        }
-                                    } else if (val.equals("p4ss")) {
-                                        type.setLength(val);
-                                    } else if (val.equals("P4ssw0rd")) {
-                                        type.setLength(val);
-                                    } else {
-                                        System.out
-                                                .println("SHOULD NOT HAPPEN");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return tcList;
-    }
+    // public ArrayList<CTTestCase> getTestData() {
+    // // TODO: THIS DOES NOT WORK GENERICALLY, NEEDS RIGOROUS UPDATE
+    // /**
+    // * <testcaseName, marks>
+    // */
+    // Map<String, Integer[]> testcaseMap = new HashMap<String, Integer[]>();
+    //
+    // /**
+    // * <classificationName, ids>
+    // */
+    // Map<Integer, Integer[]> classificationMap = new HashMap<Integer,
+    // Integer[]>();
+    //
+    // for (CteObject element : cteObjectTree.values()) {
+    // if (element.getClass().equals(CteTestCase.class)) {
+    // testcaseMap.put(element.getName(),
+    // ((CteTestCase) element).getMarks());
+    // } else if (element.getClass().equals(Classification.class)) {
+    // classificationMap.put(element.getId(),
+    // ((Classification) element).getTestDataIds());
+    // }
+    // }
+    //
+    // for (Map.Entry<Integer, Integer[]> entrycl : classificationMap
+    // .entrySet()) {
+    // for (int i = 0; i < entrycl.getValue().length; i++) {
+    // for (Map.Entry<String, Integer[]> entrytc : testcaseMap
+    // .entrySet()) {
+    // for (int j = 0; j < entrytc.getValue().length; j++) {
+    // if (entrycl.getValue()[i]
+    // .equals(entrytc.getValue()[j])) {
+    // for (Iterator<CTTestCase> iterator = tcList
+    // .iterator(); iterator.hasNext();) {
+    // CTTestCase type = iterator.next();
+    // if (type.getName().equals(entrytc.getKey())) {
+    // String val = ((Classification) cteObjectTree
+    // .get(entrycl.getKey()))
+    // .getTestData()[i];
+    // System.out.println(val);
+    // if (val.equals("true")) {
+    // if (cteObjectTree
+    // .get(entrycl.getKey())
+    // .getName()
+    // .equalsIgnoreCase(
+    // "upper case")) {
+    // type.setUppercase(true);
+    // } else {
+    // type.setNumeric(true);
+    // }
+    // } else if (val.equals("false")) {
+    // if (cteObjectTree
+    // .get(entrycl.getKey())
+    // .getName()
+    // .equalsIgnoreCase(
+    // "upper case")) {
+    // type.setUppercase(false);
+    // } else {
+    // type.setNumeric(false);
+    // }
+    // } else if (val.equals("p4ss")) {
+    // type.setLength(val);
+    // } else if (val.equals("P4ssw0rd")) {
+    // type.setLength(val);
+    // } else {
+    // System.out
+    // .println("SHOULD NOT HAPPEN");
+    // }
+    // }
+    // }
+    // }
+    // }
+    // }
+    // }
+    // }
+    // return tcList;
+    // }
 
     private void getCteTree(File cteFile)
             throws ParserConfigurationException, SAXException, IOException {
-        CTEParser ctep = new CTEParser(cteFile);
+        ctep = new CTEParser(cteFile);
         ctep.getCteObjectByName(composition);
         ctep.getCteObjectByName(classification);
         ctep.getCteObjectByName(testcase);
-        tcList = ctep.getTCList();
+        // tcList = ctep.getTCList();
         cteObjectTree = ctep.getCteTree();
     }
 

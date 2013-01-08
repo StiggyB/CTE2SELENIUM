@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import tools.Cast;
 import tools.XMLParser;
 import c2s.CTTestCase;
+import c2s.SizingTypeAndMediumSectionTC;
 import cte.xmlObjects.Classification;
 import cte.xmlObjects.Composition;
 import cte.xmlObjects.CteObject;
@@ -21,13 +22,14 @@ import cte.xmlObjects.CteTestCase;
 
 public class CTEParser {
 
-    private TreeMap<Integer, CteObject> cteObjectTree  = new TreeMap<Integer, CteObject>();
-    private ArrayList<CTTestCase>       tcList         = new ArrayList<CTTestCase>();
-    private final static String         composition    = "Composition";
-    private final static String         classification = "Classification";
-    private final static String         testcase       = "TestCase";
-    private Element                     rootElement;
-    private String                      actualCteObject;
+    private TreeMap<Integer, CteObject>             cteObjectTree  = new TreeMap<Integer, CteObject>();
+    private ArrayList<CTTestCase>                   tcList         = new ArrayList<CTTestCase>();
+    private ArrayList<SizingTypeAndMediumSectionTC> stamsList      = new ArrayList<SizingTypeAndMediumSectionTC>();
+    private final static String                     composition    = "Composition";
+    private final static String                     classification = "Classification";
+    private final static String                     testcase       = "TestCase";
+    private Element                                 rootElement;
+    private String                                  actualCteObject;
 
     public CTEParser(File cteFile) throws ParserConfigurationException,
             SAXException, IOException {
@@ -52,13 +54,17 @@ public class CTEParser {
                 getNodes(nl));
         return compList;
     }
-    
+
     public TreeMap<Integer, CteObject> getCteTree() {
         return cteObjectTree;
     }
-    
+
     public ArrayList<CTTestCase> getTCList() {
         return tcList;
+    }
+
+    public ArrayList<SizingTypeAndMediumSectionTC> getStamsList() {
+        return stamsList;
     }
 
     private ArrayList<? extends CteObject> getNodes(NodeList nl) {
@@ -93,11 +99,20 @@ public class CTEParser {
             String marks = getValue(el, "Marks");
             cteObj = new CteTestCase(name, id, marks);
             tcList.add(new CTTestCase(name));
+            if (rootElement.getElementsByTagName(composition).item(0)
+                    .getAttributes().item(1).getNodeValue()
+                    .equals("Sizing_Type_and_Medium_Section")) {
+                stamsList.add(new SizingTypeAndMediumSectionTC(name));
+            }
         } else if (el.getNodeName().equals(classification)) {
             String[][] cteClass = getClassValue(el, "Class");
             cteObj = new Classification(name, id, cteClass);
         } else if (el.getNodeName().equals(composition)) {
             cteObj = new Composition(name, id);
+        } else if (el.getNodeName().equals("Class")) {
+            // new Class!?
+            System.out.println("Class found:"
+                    + el.getAttributes().item(0).getNodeValue());
         } else {
             throw new IllegalArgumentException("Unsupported object: "
                     + el.getNodeName());
