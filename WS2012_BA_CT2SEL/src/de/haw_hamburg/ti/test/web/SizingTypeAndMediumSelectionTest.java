@@ -21,6 +21,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
@@ -41,6 +42,7 @@ public class SizingTypeAndMediumSelectionTest {
     private HashMap<Integer, String>      markCompMap;
     private static ArrayList<CteTestCase> testcases;
     private static String                 baseUrl;
+    private static ControlMenu            controlMenu;
 
     public SizingTypeAndMediumSelectionTest(Integer id, String name,
             Integer[] marks, HashMap<Integer, String> markMap,
@@ -64,7 +66,8 @@ public class SizingTypeAndMediumSelectionTest {
         return testcases;
     }
 
-    @Parameters//TODO: Java4.11 binden für @Parameters(name="namestring")
+    @Parameters
+    // TODO: Java4.11 binden für @Parameters(name="namestring")
     public static List<Object[]> data() {
         ArrayList<CteTestCase> tcs = loadTestCaseObjectsFromFile();
         Object[][] data = new Object[tcs.size()][tcs.size()];
@@ -87,10 +90,9 @@ public class SizingTypeAndMediumSelectionTest {
         LoginPage loginPage = PageFactory.initElements(driver,
                 LoginPage.class);
 
-        loginPage.loginAs("BenjaminBurchard", "wirzer");
+        loginPage.loginAs("BenjaminBurchard", "password");
 
-        ControlMenu controlMenu = PageFactory.initElements(driver,
-                ControlMenu.class);
+        controlMenu = PageFactory.initElements(driver, ControlMenu.class);
         controlMenu.openSizingMenu();
         controlMenu.addNewSizing();
         controlMenu.clickNextButton();
@@ -104,36 +106,54 @@ public class SizingTypeAndMediumSelectionTest {
     @Test
     public void test() {
         System.out.println("------------- TC: " + this.name);
-        System.out.println("------------- TCid: " + this.id);
-        // for (Entry<Integer, String> entryMark : markMap.entrySet()) {
-        // System.out.println("Mark - " + entryMark.getKey() + ": " +
-        // entryMark.getValue());
-        // }
-        // for (Entry<Integer, String> entryMarkC : markCompMap.entrySet()) {
-        // System.out.println("MarkComp - " + entryMarkC.getKey() + ": " +
-        // entryMarkC.getValue());
-        // }
 
-        for (int i = 0; i < marks.length; i++) {
-            System.out.print("Mark: " + marks[i]);
-            System.out.print(" Composition Value: "
-                    + markCompMap.get(marks[i]));
-            System.out.println(" - " + markMap.get(marks[i]));
-            if (markCompMap.get(marks[i]).equals("Medium")) {
-                if (markMap.get(marks[i]).equals("Liquid")) {
-                    new Select(
-                            driver.findElement(By
-                                    .id("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")))
-                            .selectByValue("Liquid");
-                } else if (markMap.get(marks[i]).equals("Two-phase flow")) {
-                    new Select(
-                            driver.findElement(By
-                                    .id("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")))
-                            .selectByValue("TwoPhaseFlow");
-                }
-//                driver.navigate().refresh();
+        List<WebElement> medDropDown = new ArrayList<>();
+        System.out.println(markMap.toString());
+        for (Iterator<WebElement> iterator = medDropDown.iterator(); iterator
+                .hasNext();) {
+            WebElement webElement = iterator.next();
+            if (markMap.containsValue(webElement.getText())) {
+                // new Select(
+                // driver.findElement(By
+                // .id("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")))
+                // .selectByVisibleText(webElement.getText());
+                // controlMenu.jsClick("option[value=\"" + webElement.getText()
+                // + "\"]");
+//                clickThis.selectByVisibleText(webElement.getText());
+                controlMenu.jsSelect("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList", webElement.getAttribute("value"));
+                // clickThis.selectByValue(webElement.getText());
+                // System.out.println("byval");
+                // controlMenu.jsClick("option[value=\"Liquid\"]");
             }
         }
+
+        /*
+         * for (int i = 0; i < marks.length; i++) { System.out.print("Mark: " +
+         * marks[i]); System.out.print(" Composition Value: " +
+         * markCompMap.get(marks[i])); System.out.println(" - " +
+         * markMap.get(marks[i])); if
+         * (markCompMap.get(marks[i]).equals("Medium")) { if
+         * (markMap.get(marks[i]).equals("Liquid")) { new Select(
+         * driver.findElement(By
+         * .id("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")))
+         * .selectByValue("Liquid");
+         * controlMenu.jsClick("option[value=\"Liquid\"]"); //
+         * driver.findElement
+         * (By.cssSelector("option[value=\"Liquid\"]")).click(); } else if
+         * (markMap.get(marks[i]).equals("Two-phase flow")) { new Select(
+         * driver.findElement(By
+         * .id("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")))
+         * .selectByValue("TwoPhaseFlow");
+         * controlMenu.jsClick("option[value=\"TwoPhaseFlow\"]"); //
+         * driver.findElement
+         * (By.cssSelector("option[value=\"TwoPhaseFlow\"]")).click(); } } }
+         */
+
+        // new Select(
+        // driver.findElement(By
+        // .id("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")))
+        // .selectByValue(markMap.get(0));
+        // controlMenu.jsClick("option[value=\"Liquid\"]");
         //
         // driver.findElement(By.cssSelector("option[value=\"Liquid\"]")).click();
         // new
@@ -143,8 +163,10 @@ public class SizingTypeAndMediumSelectionTest {
         // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_ReactionForceAd2000A2")).click();
         // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_PDInletIso4126")).click();
         // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_BPOutletNone")).click();
+        controlMenu.clickNextButton();
+        controlMenu.clickBackButton();
         // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_NextButton")).click();
-        // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_CancelButton")).click();
+        // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_BackButton")).click();
     }
 
     @After

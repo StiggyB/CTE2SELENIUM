@@ -1,5 +1,6 @@
 package de.haw_hamburg.ti.c2s.com.valvestar;
 
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -20,7 +21,7 @@ public class ControlMenu {
     private WebElement      Sizing;
     @FindBy(css = "img[alt=\"Add new sizing...\"]")
     private WebElement      addSizing;
-    @FindBy(id = "ctl00_WorkspacePlaceHolder_NextButton")
+    @FindBy(css = "#ctl00_WorkspacePlaceHolder_NextButton")
     private WebElement      nextButton;
     @FindBy(id = "ctl00_WorkspacePlaceHolder_CancelButton")
     private WebElement cancelButton;
@@ -53,25 +54,40 @@ public class ControlMenu {
             throw new IllegalStateException("Sizing Menu not opened");
     }
 
+    public void jsClick(String cssSelector) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("var x = $(\'" + cssSelector + "\');");
+        stringBuilder.append("x.click();");
+        js.executeScript(stringBuilder.toString());
+    }
+    
+    public void jsSelect(String list, String value) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        StringBuilder sb = new StringBuilder();
+        sb.append("var element = document.getElementById(\"" + list + "\");");
+        sb.append("element.value = \"" + value + "\";");
+        js.executeScript(sb.toString());
+    }
     /**
      * Next page.
      */
     public void clickNextButton() {
-        nextButton.click();
+        jsClick("#ctl00_WorkspacePlaceHolder_NextButton");
     }
     
     /**
-     * Next page.
+     * Previous page.
      */
     public void clickBackButton() {
-        backButton.click();
+        jsClick("#ctl00_WorkspacePlaceHolder_BackButton");
     }
     
     /**
      * Cancel.
      */
     public void clickCancelButton() {
-        cancelButton.click();
+        jsClick("#ctl00_WorkspacePlaceHolder_CancelButton");
     }
 
 }
