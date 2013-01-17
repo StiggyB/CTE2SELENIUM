@@ -20,12 +20,12 @@ import de.haw_hamburg.ti.tools.XMLParser;
 
 public class CTEParser {
 
-    private TreeMap<Integer, CteObject>             cteObjectTree  = new TreeMap<Integer, CteObject>();
-    private final static String                     composition    = "Composition";
-    private final static String                     classification = "Classification";
-    private final static String                     testcase       = "TestCase";
-    private Element                                 rootElement;
-    private String                                  actualCteObject;
+    private TreeMap<Integer, CteObject> cteObjectTree  = new TreeMap<Integer, CteObject>();
+    private final static String         composition    = "Composition";
+    private final static String         classification = "Classification";
+    private final static String         testcase       = "TestCase";
+    private Element                     rootElement;
+    private String                      actualCteObject;
 
     public CTEParser(File cteFile) throws ParserConfigurationException,
             SAXException, IOException {
@@ -95,10 +95,18 @@ public class CTEParser {
             cteObj = new Classification(name, id, cteClass);
         } else if (el.getNodeName().equals(composition)) {
             cteObj = new Composition(name, id);
-        } else if (el.getNodeName().equals("Class")) {
-            // new Class!?
-            System.out.println("Class found:"
-                    + el.getAttributes().item(0).getNodeValue());
+            NodeList nl = el.getElementsByTagName(classification);
+            String[][] clarr = new String[nl.getLength()][2];
+            for (int i = 0; i < nl.getLength(); i++) {
+//                classification = new Classification(
+//                        ((Element) nl.item(i)).getAttribute("name"),
+//                        ((Element) nl.item(i)).getAttribute("id"),
+//                        getClassValue(((Element) nl.item(i)), "Class"));
+//                clarr[i] = classification;
+                clarr[i][0] = ((Element) nl.item(i)).getAttribute("id");
+                clarr[i][1] = ((Element) nl.item(i)).getAttribute("name");
+            }
+            ((Composition) cteObj).setClassifications(clarr);
         } else {
             throw new IllegalArgumentException("Unsupported object: "
                     + el.getNodeName());

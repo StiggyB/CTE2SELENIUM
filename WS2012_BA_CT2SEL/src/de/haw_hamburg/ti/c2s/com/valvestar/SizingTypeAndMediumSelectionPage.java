@@ -71,16 +71,16 @@ public class SizingTypeAndMediumSelectionPage {
     /**
      * TODO: NYI
      * 
-     * @param markMap
+     * @param markClassMap
      * @param markCompMap
      */
-    public void checkCdtpBox(HashMap<Integer, String> markMap,
-            HashMap<Integer, String> markCompMap) {
-        for (Entry<Integer, String> mcmEntry : markCompMap.entrySet()) {
+    public void checkCdtpBox(HashMap<Integer, String> markClassMap,
+            HashMap<Integer, String> markClassificationMap) {
+        for (Entry<Integer, String> mcmEntry : markClassificationMap.entrySet()) {
             boolean hasCdtp = false;
             if (mcmEntry.getValue().equalsIgnoreCase("CDTP Calculation")) {
                 hasCdtp  = true;
-                if (markMap.get(mcmEntry.getKey()).equalsIgnoreCase("true")) {
+                if (markClassMap.get(mcmEntry.getKey()).equalsIgnoreCase("true")) {
 //                    CdtpCheckBox.clear();
                     js.uncheck(CdtpCheckBoxCSS);
                     js.click(CdtpCheckBoxCSS);
@@ -96,34 +96,57 @@ public class SizingTypeAndMediumSelectionPage {
     /**
      * TODO: NYI
      * 
-     * @param markMap
-     * @param markCompMap
+     * @param markClassMap
+     * @param markClassificationMap
+     * @param markCompositionMap 
      */
-    public void checkReactionForce(HashMap<Integer, String> markMap,
-            HashMap<Integer, String> markCompMap) {
+    public void checkReactionForce(HashMap<Integer, String> markClassMap,
+            HashMap<Integer, String> markClassificationMap, HashMap<Integer,String> markCompositionMap) {
+        for (Entry<Integer, String> mcomEntry : markCompositionMap.entrySet()) {
+            if (mcomEntry.getValue().equalsIgnoreCase("Reaction Force")) {
+                if (markCompositionMap.get(mcomEntry.getKey()).equalsIgnoreCase("")) {
+                    
+                }
+            }
+        }
         // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_ReactionForceAd2000A2")).click();
     }
 
     /**
      * TODO: NYI
      * 
-     * @param markMap
+     * @param markClassMap
+     * @param markClassificationMap
+     * @param markCompositionMap
+     */
+    public void checkNoise(HashMap<Integer, String> markClassMap,
+            HashMap<Integer, String> markClassificationMap,
+            HashMap<Integer, String> markCompositionMap) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    /**
+     * TODO: NYI
+     * 
+     * @param markClassMap
      * @param markCompMap
      */
-    public void selectRadioPressureDrop(HashMap<Integer, String> markMap,
-            HashMap<Integer, String> markCompMap) {
+    public void selectRadioPressureDrop(HashMap<Integer, String> markClassMap,
+            HashMap<Integer, String> markClassificationMap) {
         // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_PDInletIso4126")).click();
     }
 
     /**
      * TODO: NYI
      * 
-     * @param markMap
+     * @param markClassMap
      * @param markCompMap
      */
-    public void selectRadioBackPressure(HashMap<Integer, String> markMap,
-            HashMap<Integer, String> markCompMap) {
+    public void selectRadioBackPressure(HashMap<Integer, String> markClassMap,
+            HashMap<Integer, String> markClassificationMap) {
         // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_BPOutletNone")).click();
     }
+
 
 }

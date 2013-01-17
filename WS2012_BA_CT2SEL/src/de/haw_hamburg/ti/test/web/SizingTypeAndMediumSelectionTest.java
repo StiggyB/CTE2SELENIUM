@@ -1,7 +1,6 @@
 package de.haw_hamburg.ti.test.web;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +20,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -43,8 +41,9 @@ public class SizingTypeAndMediumSelectionTest {
     private Integer                                 id;
     private String                                  name;
     private Integer[]                               marks;
-    private HashMap<Integer, String>                markMap;
-    private HashMap<Integer, String>                markCompMap;
+    private HashMap<Integer, String>                markClassMap;
+    private HashMap<Integer, String>                markClassificationMap;
+    private HashMap<Integer, String>                markCompositionMap;
     private static ArrayList<CteTestCase>           testcases;
     private static String                           baseUrl;
     private static ControlMenu                      controlMenu;
@@ -54,13 +53,15 @@ public class SizingTypeAndMediumSelectionTest {
     private static SizingTypeAndMediumSelectionPage stams;
 
     public SizingTypeAndMediumSelectionTest(Integer id, String name,
-            Integer[] marks, HashMap<Integer, String> markMap,
-            HashMap<Integer, String> markCompMap) {
+            Integer[] marks, HashMap<Integer, String> markClassMap,
+            HashMap<Integer, String> markClassificationMap,
+            HashMap<Integer, String> markCompositionMap) {
         this.name = name;
         this.id = id;
         this.marks = marks;
-        this.markMap = markMap;
-        this.markCompMap = markCompMap;
+        this.markClassMap = markClassMap;
+        this.markClassificationMap = markClassificationMap;
+        this.markCompositionMap = markCompositionMap;
     }
 
     /*
@@ -138,28 +139,33 @@ public class SizingTypeAndMediumSelectionTest {
     public void test() {
 
         System.out.println(id + ": " + name);
-        System.out.println("Compositions: " + markCompMap.toString());
-        System.out.println("MarkMap: " + markMap.toString());
+        System.out.println("Compositions: "
+                + markCompositionMap);
+        System.out.println("Classifications: "
+                + markClassificationMap.toString());
+        System.out.println("MarkClassMap: " + markClassMap.toString());
         System.out.println("Marks: " + Arrays.toString(marks));
         System.out.println("-----------------------------------------------");
 
-        stams.selectMedium(markMap);
-        stams.selectSizingStandard(markMap);
-        stams.checkCdtpBox(markMap, markCompMap);
+        stams.selectMedium(markClassMap);
+        stams.selectSizingStandard(markClassMap);
+        stams.checkCdtpBox(markClassMap, markClassificationMap);
 
-        if (markMap.containsValue("Two-phase flow")) {
-            for (Entry<Integer, String> mcmEntry : markCompMap.entrySet()) {
-                if (markMap.containsKey(mcmEntry.getKey())
+        if (markClassMap.containsValue("Two-phase flow")) {
+            for (Entry<Integer, String> mcmEntry : markClassificationMap
+                    .entrySet()) {
+                if (markClassMap.containsKey(mcmEntry.getKey())
                         && mcmEntry.getValue().equals("Fire Case")) {
-                    assertTrue(markMap.get(mcmEntry.getKey())
+                    assertTrue(markClassMap.get(mcmEntry.getKey())
                             .equalsIgnoreCase("none"));
                 }
             }
         }
 
-        stams.checkReactionForce(markMap, markCompMap);
-        stams.selectRadioPressureDrop(markMap, markCompMap);
-        stams.selectRadioBackPressure(markMap, markCompMap);
+        stams.checkReactionForce(markClassMap, markClassificationMap, markCompositionMap);
+        stams.checkNoise(markClassMap, markClassificationMap, markCompositionMap);
+        stams.selectRadioPressureDrop(markClassMap, markClassificationMap);
+        stams.selectRadioBackPressure(markClassMap, markClassificationMap);
 
         controlMenu.clickNextButton();
         controlMenu.clickBackButton();

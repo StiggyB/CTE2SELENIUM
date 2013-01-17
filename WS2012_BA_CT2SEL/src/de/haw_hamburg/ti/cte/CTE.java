@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,6 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import de.haw_hamburg.ti.cte.xmlObjects.Classification;
+import de.haw_hamburg.ti.cte.xmlObjects.Composition;
 import de.haw_hamburg.ti.cte.xmlObjects.CteObject;
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 
@@ -69,7 +71,11 @@ public class CTE {
          * <classificationName, ids>
          */
         Map<Classification, Integer[]> classificationMap = new HashMap<Classification, Integer[]>();
-
+        /**
+         * <compositionName, ids>
+         */
+        Map<Composition, Integer[]> compositionMap = new HashMap<Composition, Integer[]>();
+        int k = 0;
         for (CteObject element : cteObjectTree.values()) {
             if (element.getClass().equals(CteTestCase.class)) {
                 testcaseMap.put((CteTestCase) element,
@@ -77,9 +83,13 @@ public class CTE {
             } else if (element.getClass().equals(Classification.class)) {
                 classificationMap.put((Classification) element,
                         ((Classification) element).getTestDataIds());
+            } else if (element.getClass().equals(Composition.class)) {
+                compositionMap.put((Composition) element,
+                        ((Composition) element).getClassificationIds());
             }
         }
-        
+
+        System.out.println(compositionMap);
         System.out.println(classificationMap);
         System.out.println(testcaseMap);
 
@@ -90,13 +100,29 @@ public class CTE {
                     for (int j = 0; j < entrycl.getValue().length; j++) {
                         if (entrytc.getValue()[i].equals(entrycl.getKey()
                                 .getTestDataIds()[j])) {
-                            entrytc.getKey().setValueOfMark(
+                            entrytc.getKey().setClassOfMark(
                                     entrytc.getValue()[i],
                                     entrycl.getKey().getTestData()[j]);
-                            entrytc.getKey().setCompositionOfMark(
+                            entrytc.getKey().setClassificationOfMark(
                                     entrytc.getValue()[i],
                                     entrycl.getKey().getName());
                         }
+                    }
+                    for (Entry<Composition, Integer[]> entryco : compositionMap
+                            .entrySet()) {
+                        /**
+                         * TODO: STH: WENT WRONG HIER WITH NO OF COMPOSITIONS ETC
+                         */
+//                        System.out.println("Composition: " + entryco.getKey() + " - Marks: " + Arrays.toString(entryco.getValue()));
+//                        for (int j = 0; j < entryco.getValue().length; j++) {
+//                            if (entryco.getKey().getClassificationIds()[j]
+//                                    .equals(entrycl.getKey().getId())) {
+//                                entrytc.getKey().setCompositionOfMark(
+//                                        entrytc.getValue()[i],
+//                                        entryco.getKey().getName());
+//                                System.out.println(entrytc.getKey().getClassificationOfMark(201) + " - " + entrytc.getValue()[i] + " : " + entryco.getKey().getName());
+//                            }
+//                        }
                     }
                 }
             }
@@ -113,7 +139,6 @@ public class CTE {
         ctep.getCteObjectByName(TESTCASE);
         // tcList = ctep.getTCList();
         cteObjectTree = ctep.getCteTree();
-        System.out.println(ctep.getCteTree());
     }
 
     @SuppressWarnings("unused")
