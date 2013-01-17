@@ -34,7 +34,6 @@ public class CTETest {
     }
 
     @Test
-    @Ignore
     public void test() {
         try {
             cte.getTestData(new File("Sizing_Type_and_Medium_Section.cte"));
@@ -45,6 +44,7 @@ public class CTETest {
     }
 
     @Test
+    @Ignore
     public void testSavedFile() {
         ArrayList<CteTestCase> cteBefore;
         try {

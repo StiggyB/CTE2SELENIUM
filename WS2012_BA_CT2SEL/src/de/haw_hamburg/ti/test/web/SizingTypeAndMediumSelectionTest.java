@@ -1,5 +1,9 @@
 package de.haw_hamburg.ti.test.web;
 
+import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -7,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.JUnit4TestAdapter;
@@ -16,33 +21,37 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.Select;
 
 import de.haw_hamburg.ti.c2s.com.valvestar.ControlMenu;
 import de.haw_hamburg.ti.c2s.com.valvestar.LoginPage;
+import de.haw_hamburg.ti.c2s.com.valvestar.SizingTypeAndMediumSelectionPage;
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 import de.haw_hamburg.ti.tools.Cast;
+import de.haw_hamburg.ti.tools.FileFinder;
 
 @RunWith(Parameterized.class)
 public class SizingTypeAndMediumSelectionTest {
 
-    private static WebDriver              driver;
-    private Integer                       id;
-    private String                        name;
-    private Integer[]                     marks;
-    private HashMap<Integer, String>      markMap;
-    private HashMap<Integer, String>      markCompMap;
-    private static ArrayList<CteTestCase> testcases;
-    private static String                 baseUrl;
-    private static ControlMenu            controlMenu;
+    private static WebDriver                        driver;
+    private Integer                                 id;
+    private String                                  name;
+    private Integer[]                               marks;
+    private HashMap<Integer, String>                markMap;
+    private HashMap<Integer, String>                markCompMap;
+    private static ArrayList<CteTestCase>           testcases;
+    private static String                           baseUrl;
+    private static ControlMenu                      controlMenu;
+    /**
+     * SizingTypeAndMediumSelectionPage
+     */
+    private static SizingTypeAndMediumSelectionPage stams;
 
     public SizingTypeAndMediumSelectionTest(Integer id, String name,
             Integer[] marks, HashMap<Integer, String> markMap,
@@ -54,20 +63,39 @@ public class SizingTypeAndMediumSelectionTest {
         this.markCompMap = markCompMap;
     }
 
+    /*
+     * public static void main(String[] args) { String path = new
+     * File(System.getProperty("user.dir")).getParent();
+     * System.out.println("Looking in path: " + path); FileFinder ff = new
+     * FileFinder(); List<File> files = ff.find(path, ".gif", ".jpg", ".tif");
+     * System.out.printf("Found %d file%s%n", files.size(), (files.size() == 1 ?
+     * "." : "s.")); for (File f : files)
+     * System.out.println(f.getAbsolutePath()); }
+     */
     private static ArrayList<CteTestCase> loadTestCaseObjectsFromFile() {
         try {
-            FileInputStream fin = new FileInputStream("TEST_TC.dat");
-            ObjectInputStream ois = new ObjectInputStream(fin);
-            testcases = Cast.as(ArrayList.class, ois.readObject());
-            ois.close();
+            String path = new File(System.getProperty("user.dir"))
+                    .getParent();
+            FileFinder ff = new FileFinder();
+            List<File> files = ff.find(path, ".cttc");
+            // TODO: iterate over files and take only suitable .ctte now
+            // iteration takes last ctte
+            // ...
+            for (File file : files) {
+                if (file.getName().endsWith(".cttc")) {
+                    FileInputStream fin = new FileInputStream(file);
+                    ObjectInputStream ois = new ObjectInputStream(fin);
+                    testcases = Cast.as(ArrayList.class, ois.readObject());
+                    ois.close();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return testcases;
     }
 
-    @Parameters
-    // TODO: Java4.11 binden für @Parameters(name="namestring")
+    @Parameters(name = "{index}: {1}")
     public static List<Object[]> data() {
         ArrayList<CteTestCase> tcs = loadTestCaseObjectsFromFile();
         Object[][] data = new Object[tcs.size()][tcs.size()];
@@ -96,6 +124,9 @@ public class SizingTypeAndMediumSelectionTest {
         controlMenu.openSizingMenu();
         controlMenu.addNewSizing();
         controlMenu.clickNextButton();
+
+        stams = PageFactory.initElements(driver,
+                SizingTypeAndMediumSelectionPage.class);
     }
 
     @Before
@@ -105,68 +136,33 @@ public class SizingTypeAndMediumSelectionTest {
 
     @Test
     public void test() {
-        System.out.println("------------- TC: " + this.name);
 
-        List<WebElement> medDropDown = new ArrayList<>();
-        System.out.println(markMap.toString());
-        for (Iterator<WebElement> iterator = medDropDown.iterator(); iterator
-                .hasNext();) {
-            WebElement webElement = iterator.next();
-            if (markMap.containsValue(webElement.getText())) {
-                // new Select(
-                // driver.findElement(By
-                // .id("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")))
-                // .selectByVisibleText(webElement.getText());
-                // controlMenu.jsClick("option[value=\"" + webElement.getText()
-                // + "\"]");
-//                clickThis.selectByVisibleText(webElement.getText());
-                controlMenu.jsSelect("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList", webElement.getAttribute("value"));
-                // clickThis.selectByValue(webElement.getText());
-                // System.out.println("byval");
-                // controlMenu.jsClick("option[value=\"Liquid\"]");
+        System.out.println(id + ": " + name);
+        System.out.println("Compositions: " + markCompMap.toString());
+        System.out.println("MarkMap: " + markMap.toString());
+        System.out.println("Marks: " + Arrays.toString(marks));
+        System.out.println("-----------------------------------------------");
+
+        stams.selectMedium(markMap);
+        stams.selectSizingStandard(markMap);
+        stams.checkCdtpBox(markMap, markCompMap);
+
+        if (markMap.containsValue("Two-phase flow")) {
+            for (Entry<Integer, String> mcmEntry : markCompMap.entrySet()) {
+                if (markMap.containsKey(mcmEntry.getKey())
+                        && mcmEntry.getValue().equals("Fire Case")) {
+                    assertTrue(markMap.get(mcmEntry.getKey())
+                            .equalsIgnoreCase("none"));
+                }
             }
         }
 
-        /*
-         * for (int i = 0; i < marks.length; i++) { System.out.print("Mark: " +
-         * marks[i]); System.out.print(" Composition Value: " +
-         * markCompMap.get(marks[i])); System.out.println(" - " +
-         * markMap.get(marks[i])); if
-         * (markCompMap.get(marks[i]).equals("Medium")) { if
-         * (markMap.get(marks[i]).equals("Liquid")) { new Select(
-         * driver.findElement(By
-         * .id("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")))
-         * .selectByValue("Liquid");
-         * controlMenu.jsClick("option[value=\"Liquid\"]"); //
-         * driver.findElement
-         * (By.cssSelector("option[value=\"Liquid\"]")).click(); } else if
-         * (markMap.get(marks[i]).equals("Two-phase flow")) { new Select(
-         * driver.findElement(By
-         * .id("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")))
-         * .selectByValue("TwoPhaseFlow");
-         * controlMenu.jsClick("option[value=\"TwoPhaseFlow\"]"); //
-         * driver.findElement
-         * (By.cssSelector("option[value=\"TwoPhaseFlow\"]")).click(); } } }
-         */
+        stams.checkReactionForce(markMap, markCompMap);
+        stams.selectRadioPressureDrop(markMap, markCompMap);
+        stams.selectRadioBackPressure(markMap, markCompMap);
 
-        // new Select(
-        // driver.findElement(By
-        // .id("ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")))
-        // .selectByValue(markMap.get(0));
-        // controlMenu.jsClick("option[value=\"Liquid\"]");
-        //
-        // driver.findElement(By.cssSelector("option[value=\"Liquid\"]")).click();
-        // new
-        // Select(driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_SizingStandardDropDownList"))).selectByVisibleText("AD 2000:A2 / TRD 421");
-        // driver.findElement(By.cssSelector("option[value=\"TGVzZXIuVmFsdmVzdGFyLkNvcmUuU2l6aW5ncy5BRDIwMDBBMi5BRDIwMDBBMlNpemluZywgTGVzZXIuVmFsdmVzdGFyLkNvcmU=\"]")).click();
-        // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_CdtpCheckBox")).click();
-        // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_ReactionForceAd2000A2")).click();
-        // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_PDInletIso4126")).click();
-        // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_BPOutletNone")).click();
         controlMenu.clickNextButton();
         controlMenu.clickBackButton();
-        // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_NextButton")).click();
-        // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_BackButton")).click();
     }
 
     @After

@@ -30,7 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
-import de.haw_hamburg.ti.test.web.PasswordTest;
+import de.haw_hamburg.ti.test.web.SizingTypeAndMediumSelectionTest;
 
 public class GUI {
 
@@ -90,7 +90,7 @@ public class GUI {
                     // jfg.setFileName("test");
                     // jfg.setPackageName("test");
                     // jfg.generateFile();
-                    junit.textui.TestRunner.run(PasswordTest.suite());
+                    junit.textui.TestRunner.run(SizingTypeAndMediumSelectionTest.suite());
                     // PasswordTest pt = new PasswordTest();
                     // pt.testPassword(true, true, "p4ssw0rd");
                     // org.junit.runner.JUnitCore.runClasses(CTETest.class);

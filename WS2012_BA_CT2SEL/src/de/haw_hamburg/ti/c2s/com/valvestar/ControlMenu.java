@@ -1,10 +1,11 @@
 package de.haw_hamburg.ti.c2s.com.valvestar;
 
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
+
+import de.haw_hamburg.ti.tools.Javascript;
 
 /**
  * Represents the Control Menu of the VALVESTAR Website. The Header Menu as well
@@ -24,12 +25,15 @@ public class ControlMenu {
     @FindBy(css = "#ctl00_WorkspacePlaceHolder_NextButton")
     private WebElement      nextButton;
     @FindBy(id = "ctl00_WorkspacePlaceHolder_CancelButton")
-    private WebElement cancelButton;
+    private WebElement      cancelButton;
     @FindBy(id = "ctl00_WorkspacePlaceHolder_BackButton")
-    private WebElement backButton;
+    private WebElement      backButton;
+
+    private Javascript      js;
 
     public ControlMenu(WebDriver driver) {
         this.driver = driver;
+        js = new Javascript(driver);
     }
 
     /**
@@ -54,40 +58,25 @@ public class ControlMenu {
             throw new IllegalStateException("Sizing Menu not opened");
     }
 
-    public void jsClick(String cssSelector) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("var x = $(\'" + cssSelector + "\');");
-        stringBuilder.append("x.click();");
-        js.executeScript(stringBuilder.toString());
-    }
-    
-    public void jsSelect(String list, String value) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        StringBuilder sb = new StringBuilder();
-        sb.append("var element = document.getElementById(\"" + list + "\");");
-        sb.append("element.value = \"" + value + "\";");
-        js.executeScript(sb.toString());
-    }
     /**
      * Next page.
      */
     public void clickNextButton() {
-        jsClick("#ctl00_WorkspacePlaceHolder_NextButton");
+        js.click("#ctl00_WorkspacePlaceHolder_NextButton");
     }
-    
+
     /**
      * Previous page.
      */
     public void clickBackButton() {
-        jsClick("#ctl00_WorkspacePlaceHolder_BackButton");
+        js.click("#ctl00_WorkspacePlaceHolder_BackButton");
     }
-    
+
     /**
      * Cancel.
      */
     public void clickCancelButton() {
-        jsClick("#ctl00_WorkspacePlaceHolder_CancelButton");
+        js.click("#ctl00_WorkspacePlaceHolder_CancelButton");
     }
 
 }
