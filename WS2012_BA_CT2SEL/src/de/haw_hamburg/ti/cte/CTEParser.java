@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -86,25 +87,24 @@ public class CTEParser {
         if (el.getNodeName().equals(testcase)) {
             String marks = getValue(el, "Marks");
             cteObj = new CteTestCase(name, id, marks);
-            if (rootElement.getElementsByTagName(composition).item(0)
-                    .getAttributes().item(1).getNodeValue()
-                    .equals("Sizing_Type_and_Medium_Section")) {
-            }
         } else if (el.getNodeName().equals(classification)) {
             String[][] cteClass = getClassValue(el, "Class");
             cteObj = new Classification(name, id, cteClass);
         } else if (el.getNodeName().equals(composition)) {
             cteObj = new Composition(name, id);
-            NodeList nl = el.getElementsByTagName(classification);
-            String[][] clarr = new String[nl.getLength()][2];
+            NodeList nl = el.getChildNodes();
+            ArrayList<Element> eles = new ArrayList<>();
             for (int i = 0; i < nl.getLength(); i++) {
-//                classification = new Classification(
-//                        ((Element) nl.item(i)).getAttribute("name"),
-//                        ((Element) nl.item(i)).getAttribute("id"),
-//                        getClassValue(((Element) nl.item(i)), "Class"));
-//                clarr[i] = classification;
-                clarr[i][0] = ((Element) nl.item(i)).getAttribute("id");
-                clarr[i][1] = ((Element) nl.item(i)).getAttribute("name");
+                if (nl.item(i).getNodeType() == Node.ELEMENT_NODE
+                        && !el.getChildNodes().item(i).getNodeName()
+                                .equalsIgnoreCase("Tag")) {
+                    eles.add((Element)nl.item(i));
+                }
+            }
+            String[][] clarr = new String[eles.size()][2];
+            for (int i = 0; i < eles.size(); i++) {
+                clarr[i][0] = eles.get(i).getAttribute("id");
+                clarr[i][1] = eles.get(i).getAttribute("name");
             }
             ((Composition) cteObj).setClassifications(clarr);
         } else {

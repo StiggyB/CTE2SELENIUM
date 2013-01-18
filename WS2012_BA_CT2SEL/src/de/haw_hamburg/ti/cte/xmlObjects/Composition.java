@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class Composition extends CteObject {
 
     private static final long serialVersionUID = -8300766669210613807L;
-    private String[][]  classifications;
+    private String[][]  childs;
     private Pattern idPattern = Pattern.compile("\\d+");
     private Matcher idMatcher;
 
@@ -16,31 +16,23 @@ public class Composition extends CteObject {
     }
 
     public void setClassifications(String[][] clarr) {
-        this.classifications = clarr;
+        this.childs = clarr;
     }
-
-//    public String[] getClassificationIds() {
-//        String[] ids = new String[classifications.length];
-//        for (int i = 0, j = 0; i < classifications.length; i++) {
-//            ids[i] = classifications[i][j];
-//        }
-//        return ids;
-//    }
     
-    public Integer[] getClassificationIds() {
-        Integer[] intId = new Integer[classifications.length];
+    public Integer[] getChildIds() {
+        Integer[] intId = new Integer[childs.length];
         for (int i = 0, j = 0; i < intId.length; i++) {
-            idMatcher = idPattern.matcher(classifications[i][j]);
+            idMatcher = idPattern.matcher(childs[i][j]);
             idMatcher.find();
             intId[i] = Integer.parseInt(idMatcher.group());
         }
         return intId;
     }
     
-    public String[] getClassificationNames() {
-        String[] names = new String[classifications.length];
-        for (int i = 0, j = 1; i < classifications.length; i++) {
-            names[i] = classifications[i][j];
+    public String[] getChildNames() {
+        String[] names = new String[childs.length];
+        for (int i = 0, j = 1; i < childs.length; i++) {
+            names[i] = childs[i][j];
         }
         return names;
     }
@@ -48,8 +40,8 @@ public class Composition extends CteObject {
     @Override
     public String toString() {
         return "Composition [getId()=" + getId() + ", getName()=" + getName()
-                + ", classifications=[Ids=" + Arrays.toString(getClassificationIds())
-                + ", names=" + Arrays.toString(getClassificationNames()) + "]";
+                + ", childs=[Ids=" + Arrays.toString(getChildIds())
+                + ", names=" + Arrays.toString(getChildNames()) + "]";
     }
 
 }

@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -75,25 +74,30 @@ public class CTE {
          * <compositionName, ids>
          */
         Map<Composition, Integer[]> compositionMap = new HashMap<Composition, Integer[]>();
-        int k = 0;
-        for (CteObject element : cteObjectTree.values()) {
-            if (element.getClass().equals(CteTestCase.class)) {
-                testcaseMap.put((CteTestCase) element,
-                        ((CteTestCase) element).getMarks());
-            } else if (element.getClass().equals(Classification.class)) {
-                classificationMap.put((Classification) element,
-                        ((Classification) element).getTestDataIds());
-            } else if (element.getClass().equals(Composition.class)) {
-                compositionMap.put((Composition) element,
-                        ((Composition) element).getClassificationIds());
-            }
-        }
+        
+        fillMaps(testcaseMap, classificationMap, compositionMap);
 
         System.out.println(compositionMap);
         System.out.println(classificationMap);
         System.out.println(testcaseMap);
 
+        setMarkParents(testcaseMap, classificationMap,
+                compositionMap);
+        
+        return tcList;
+    }
+
+    /**
+     * @param testcaseMap
+     * @param classificationMap
+     * @param compositionMap
+     */
+    private void setMarkParents(
+            Map<CteTestCase, Integer[]> testcaseMap,
+            Map<Classification, Integer[]> classificationMap,
+            Map<Composition, Integer[]> compositionMap) {
         for (Entry<CteTestCase, Integer[]> entrytc : testcaseMap.entrySet()) {
+            System.out.println(entrytc.getKey().getName());
             for (int i = 0; i < entrytc.getValue().length; i++) {
                 for (Entry<Classification, Integer[]> entrycl : classificationMap
                         .entrySet()) {
@@ -108,29 +112,79 @@ public class CTE {
                                     entrycl.getKey().getName());
                         }
                     }
-                    for (Entry<Composition, Integer[]> entryco : compositionMap
-                            .entrySet()) {
-                        /**
-                         * TODO: STH: WENT WRONG HIER WITH NO OF COMPOSITIONS ETC
-                         */
-//                        System.out.println("Composition: " + entryco.getKey() + " - Marks: " + Arrays.toString(entryco.getValue()));
-//                        for (int j = 0; j < entryco.getValue().length; j++) {
-//                            if (entryco.getKey().getClassificationIds()[j]
-//                                    .equals(entrycl.getKey().getId())) {
-//                                entrytc.getKey().setCompositionOfMark(
-//                                        entrytc.getValue()[i],
-//                                        entryco.getKey().getName());
-//                                System.out.println(entrytc.getKey().getClassificationOfMark(201) + " - " + entrytc.getValue()[i] + " : " + entryco.getKey().getName());
-//                            }
-//                        }
-                    }
                 }
+                markCompositions(classificationMap, compositionMap, entrytc,
+                        i);
             }
             tcList.add(entrytc.getKey());
         }
-        return tcList;
     }
 
+    /**
+     * @param classificationMap
+     * @param compositionMap
+     * @param entrytc
+     * @param i
+     */
+    private void markCompositions(
+            Map<Classification, Integer[]> classificationMap,
+            Map<Composition, Integer[]> compositionMap,
+            Entry<CteTestCase, Integer[]> entrytc, int i) {
+        for (Entry<Composition, Integer[]> entryco : compositionMap
+                .entrySet()) {
+            for (int k = 0; k < entryco.getValue().length; k++) {
+                for (Entry<Classification, Integer[]> entrycl : classificationMap
+                        .entrySet()) {
+                    if (entrycl.getKey().getId()
+                            .equals(entryco.getValue()[k])) {
+                        for (int j = 0; j < entrycl.getValue().length; j++) {
+                            if (entrytc.getValue()[i].equals(entrycl
+                                    .getValue()[j])) {
+                                entrytc.getKey()
+                                        .setCompositionOfMark(
+                                                entrycl.getValue()[j],
+                                                entryco.getKey()
+                                                        .getName());
+                                System.out.println("[" +entrytc.getKey().getCompositionOfMark(entrycl.getValue()[j]) + " (id=" + entryco.getKey().getId() + ")" +
+                                        entrytc.getKey().getClassificationOfMark(entrycl.getValue()[j]) + " (id=" + entrycl.getKey().getId() + ")" +
+                                        entrytc.getKey().getClassOfMark(entrycl.getValue()[j]) + " (id=" + entrytc.getValue()[i] + ")" + "]");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param testcaseMap
+     * @param classificationMap
+     * @param compositionMap
+     */
+    private void fillMaps(Map<CteTestCase, Integer[]> testcaseMap,
+            Map<Classification, Integer[]> classificationMap,
+            Map<Composition, Integer[]> compositionMap) {
+        for (CteObject element : cteObjectTree.values()) {
+            if (element.getClass().equals(CteTestCase.class)) {
+                testcaseMap.put((CteTestCase) element,
+                        ((CteTestCase) element).getMarks());
+            } else if (element.getClass().equals(Classification.class)) {
+                classificationMap.put((Classification) element,
+                        ((Classification) element).getTestDataIds());
+            } else if (element.getClass().equals(Composition.class)) {
+                compositionMap.put((Composition) element,
+                        ((Composition) element).getChildIds());
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param cteFile
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     */
     private void getCteTree(File cteFile)
             throws ParserConfigurationException, SAXException, IOException {
         ctep = new CTEParser(cteFile);

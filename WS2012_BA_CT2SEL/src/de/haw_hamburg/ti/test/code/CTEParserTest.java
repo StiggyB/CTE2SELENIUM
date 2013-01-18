@@ -1,6 +1,6 @@
 package de.haw_hamburg.ti.test.code;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -19,22 +18,22 @@ import org.junit.runners.Parameterized.Parameters;
 import de.haw_hamburg.ti.cte.CTEParser;
 import de.haw_hamburg.ti.cte.xmlObjects.CteObject;
 
-//@RunWith(Parameterized.class)
+@RunWith(Parameterized.class)
 public class CTEParserTest {
 
     private CTEParser cp;
     private String    s;
 
-//    public CTEParserTest(String s) {
-//        this.s = s;
-//    }
+    public CTEParserTest(String s) {
+        this.s = s;
+    }
 
-//    @Parameters
-//    public static List<Object[]> data() {
-//        Object[][] data = new Object[][] { { "Composition" },
-//                { "Classification" }, { "TestCase" } };
-//        return Arrays.asList(data);
-//    }
+    @Parameters
+    public static List<Object[]> data() {
+        Object[][] data = new Object[][] { { "Composition" },
+                { "Classification" }, { "TestCase" } };
+        return Arrays.asList(data);
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -44,13 +43,14 @@ public class CTEParserTest {
     @Test
     public void testGetCteObjectByName() {
         int i = 0;
-        ArrayList<CteObject> cteObjects = cp.getCteObjectByName("Composition");
-        assertThat(cteObjects, is(ArrayList.class));
+        ArrayList<CteObject> cteObjects = cp.getCteObjectByName(s);
+        assertThat(cteObjects, isA(ArrayList.class));
         for (Iterator<?> iterator = cteObjects.iterator(); iterator.hasNext();) {
             CteObject o = (CteObject) iterator.next();
-            assertThat(o, is(CteObject.class));
+            assertThat(o, isA(CteObject.class));
             ++i;
-            System.out.println(o);
+            
+            System.out.println(o.toString());
         }
         System.out.println("No. of " + s + " Objects: " + i);
     }
