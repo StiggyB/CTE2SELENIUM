@@ -1,6 +1,6 @@
 package de.haw_hamburg.ti.test.tools;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
@@ -29,7 +29,7 @@ public class XMLParserTest {
 	@Test
 	public void testParse() {
 		try {
-			assertThat(XMLParser.parse(new File("password.cte")), is(Element.class));
+			assertThat(XMLParser.parse(new File("password.cte")), isA(Element.class));
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -135,9 +135,8 @@ public class SizingTypeAndMediumSelectionTest {
 
     }
 
-    @Test
-    public void test() {
-
+    @SuppressWarnings("unused")
+    private void printActualTestInfo() {
         System.out.println(id + ": " + name);
         System.out.println("Compositions: "
                 + markCompositionMap);
@@ -146,9 +145,17 @@ public class SizingTypeAndMediumSelectionTest {
         System.out.println("MarkClassMap: " + markClassMap.toString());
         System.out.println("Marks: " + Arrays.toString(marks));
         System.out.println("-----------------------------------------------");
+    }
+    
+    @Test
+    public void testSTAMS() {
+
+//        printActualTestInfo();
 
         stams.selectMedium(markClassMap);
+        wait(1);
         stams.selectSizingStandard(markClassMap);
+        wait(1);
         stams.checkCdtpBox(markClassMap, markClassificationMap);
 
         if (markClassMap.containsValue("Two-phase flow")) {
@@ -162,19 +169,34 @@ public class SizingTypeAndMediumSelectionTest {
             }
         }
 
-        stams.checkReactionForce(markClassMap, markClassificationMap, markCompositionMap);
-        stams.checkNoise(markClassMap, markClassificationMap, markCompositionMap);
-        stams.selectRadioPressureDrop(markClassMap, markClassificationMap);
-        stams.selectRadioBackPressure(markClassMap, markClassificationMap);
+        wait(1);
+        if (!markClassMap.containsValue("Two-phase flow")) { 
+            stams.checkReactionForce(markClassMap, markClassificationMap, markCompositionMap);
+            stams.checkNoise(markClassMap, markClassificationMap, markCompositionMap);
+            stams.selectRadioPressureDrop(markClassMap, markClassificationMap);
+            stams.selectRadioBackPressure(markClassMap, markClassificationMap);
+        }
 
         controlMenu.clickNextButton();
         controlMenu.clickBackButton();
     }
 
+    private void wait(int seconds) {
+        try {
+            Thread.sleep(seconds*1000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
     @After
     public void tearDown() throws Exception {
         driver.get(baseUrl
                 + "/UI/MainForm/Workspace/Sizing/NewSizingWizard.aspx");
+        /**
+         * TODO: RESET PAGE?
+         */
     }
 
     @AfterClass

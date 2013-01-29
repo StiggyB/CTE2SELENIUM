@@ -6,38 +6,60 @@ import org.openqa.selenium.WebDriver;
 public class Javascript {
 
     private WebDriver driver;
-    
+
     public Javascript(WebDriver driver) {
         this.driver = driver;
     }
 
     /**
-     * Uncheck RadioButton or CheckBox
+     * Uncheck RadioButton or CheckBox by id
+     * 
+     * @param id
+     */
+    public void uncheck(String id) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        StringBuilder stringBuilder = new StringBuilder();
+        // stringBuilder.append("var x = $(\'" + cssSelector + "\');");
+        // stringBuilder.append("x.checked = false");
+        stringBuilder.append("document.getElementById(\"" + id
+                + "\").checked = false;");
+        js.executeScript(stringBuilder.toString());
+    }
+
+    /**
+     * Click Button or CheckBox by CSS
      * 
      * @param cssSelector
      */
-    public void uncheck(String cssSelector) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("var x = $(\'" + cssSelector + "\');");
-        stringBuilder.append("x.checked = false");
-        js.executeScript(stringBuilder.toString());
-    }
-    
     public void click(String cssSelector) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("var x = $(\'" + cssSelector + "\');");
         stringBuilder.append("x.click();");
-        js.executeScript(stringBuilder.toString());
+        jse.executeScript(stringBuilder.toString());
     }
-    
+
     public void select(String listId, String value) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
         StringBuilder sb = new StringBuilder();
-        sb.append("var element = document.getElementById(\"" + listId + "\");");
-        sb.append("element.value = \"" + value + "\";");
-        js.executeScript(sb.toString());
+        sb.append("var obj = document.getElementById(\"" + listId + "\");");
+        sb.append("obj.value = \"" + value + "\";");
+        /**
+         * TODO: Element has do be clicked or sth.
+         */
+        sb.append("var idx=0;");
+        sb.append("while(obj[idx]) {");
+        sb.append("if(obj[idx].value==\"" + value
+                + "\") obj[idx].setAttribute(\'selected\',true);");
+//                + "obj[idx].value = \"" + value + "\";");
+//                + "obj[idx].selected = true;");
+        sb.append("else  obj[idx].removeAttribute(\'selected\');");
+        sb.append("idx++;}");
+        // Trigger onChange event
+        sb.append("$(\"#" + listId +"\").trigger(\"change\");");
+        // sb.append("for (var i = 0; i < dd.options.length; i++) { if (dd.options[i].text === \""
+        // + value + "\") { dd.selectedIndex = i; break;}}");
+        jse.executeScript(sb.toString());
     }
-    
+
 }
