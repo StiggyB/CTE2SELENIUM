@@ -2,6 +2,7 @@ package de.haw_hamburg.ti.tools;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 
 public class Javascript {
 
@@ -31,7 +32,7 @@ public class Javascript {
      * 
      * @param cssSelector
      */
-    public void click(String cssSelector) {
+    public void click(String cssSelector) throws WebDriverException {
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("var x = $(\'" + cssSelector + "\');");

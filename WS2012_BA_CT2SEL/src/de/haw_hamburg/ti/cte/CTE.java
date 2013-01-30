@@ -1,6 +1,7 @@
 package de.haw_hamburg.ti.cte;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -38,15 +39,31 @@ public class CTE {
      * @throws IOException
      */
     public void saveTestCasesToFile() {
+        FileOutputStream fout = null;
+        ObjectOutputStream oos = null;
         try {
-            FileOutputStream fout = new FileOutputStream(cteObjectTree
-                    .firstEntry().getValue().getName()
+            fout = new FileOutputStream(cteObjectTree.firstEntry().getValue()
+                    .getName()
                     + ".cttc");
-            ObjectOutputStream oos = new ObjectOutputStream(fout);
+            oos = new ObjectOutputStream(fout);
             oos.writeObject(tcList);
-            oos.close();
-        } catch (Exception e) {
+
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found.");
             e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Read/Write error.");
+            e.printStackTrace();
+        } finally {
+            if (oos != null) {
+                try {
+                    oos.close();
+                    fout.close();
+                } catch (IOException e) {
+                    System.err.println("Read/Write error.");
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -74,16 +91,15 @@ public class CTE {
          * <compositionName, ids>
          */
         Map<Composition, Integer[]> compositionMap = new HashMap<Composition, Integer[]>();
-        
+
         fillMaps(testcaseMap, classificationMap, compositionMap);
 
         System.out.println(compositionMap);
         System.out.println(classificationMap);
         System.out.println(testcaseMap);
 
-        setMarkParents(testcaseMap, classificationMap,
-                compositionMap);
-        
+        setMarkParents(testcaseMap, classificationMap, compositionMap);
+
         return tcList;
     }
 
@@ -92,8 +108,7 @@ public class CTE {
      * @param classificationMap
      * @param compositionMap
      */
-    private void setMarkParents(
-            Map<CteTestCase, Integer[]> testcaseMap,
+    private void setMarkParents(Map<CteTestCase, Integer[]> testcaseMap,
             Map<Classification, Integer[]> classificationMap,
             Map<Composition, Integer[]> compositionMap) {
         for (Entry<CteTestCase, Integer[]> entrytc : testcaseMap.entrySet()) {
@@ -140,14 +155,32 @@ public class CTE {
                         for (int j = 0; j < entrycl.getValue().length; j++) {
                             if (entrytc.getValue()[i].equals(entrycl
                                     .getValue()[j])) {
-                                entrytc.getKey()
-                                        .setCompositionOfMark(
-                                                entrycl.getValue()[j],
-                                                entryco.getKey()
-                                                        .getName());
-                                System.out.println("[" +entrytc.getKey().getCompositionOfMark(entrycl.getValue()[j]) + " (id=" + entryco.getKey().getId() + ")" +
-                                        entrytc.getKey().getClassificationOfMark(entrycl.getValue()[j]) + " (id=" + entrycl.getKey().getId() + ")" +
-                                        entrytc.getKey().getClassOfMark(entrycl.getValue()[j]) + " (id=" + entrytc.getValue()[i] + ")" + "]");
+                                entrytc.getKey().setCompositionOfMark(
+                                        entrycl.getValue()[j],
+                                        entryco.getKey().getName());
+                                System.out
+                                        .println("["
+                                                + entrytc
+                                                        .getKey()
+                                                        .getCompositionOfMark(
+                                                                entrycl.getValue()[j])
+                                                + " (id="
+                                                + entryco.getKey().getId()
+                                                + ")"
+                                                + entrytc
+                                                        .getKey()
+                                                        .getClassificationOfMark(
+                                                                entrycl.getValue()[j])
+                                                + " (id="
+                                                + entrycl.getKey().getId()
+                                                + ")"
+                                                + entrytc
+                                                        .getKey()
+                                                        .getClassOfMark(
+                                                                entrycl.getValue()[j])
+                                                + " (id="
+                                                + entrytc.getValue()[i] + ")"
+                                                + "]");
                             }
                         }
                     }

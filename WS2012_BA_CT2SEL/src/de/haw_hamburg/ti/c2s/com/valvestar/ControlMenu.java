@@ -1,6 +1,7 @@
 package de.haw_hamburg.ti.c2s.com.valvestar;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
@@ -69,7 +70,12 @@ public class ControlMenu {
      * Previous page.
      */
     public void clickBackButton() {
-        js.click("#ctl00_WorkspacePlaceHolder_BackButton");
+        try {
+            js.click("#ctl00_WorkspacePlaceHolder_BackButton");
+        } catch (WebDriverException wde) {
+            wde.printStackTrace();
+            System.err.println("WDE");
+        }
     }
 
     /**

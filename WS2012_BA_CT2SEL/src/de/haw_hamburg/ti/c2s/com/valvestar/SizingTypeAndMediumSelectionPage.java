@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -45,8 +44,17 @@ public class SizingTypeAndMediumSelectionPage {
                                                              + reactionForceIso4126Id;
     private String          noiseAD2000A2Id          = "ctl00_WorkspacePlaceHolder_ctl00_NoiseAd2000A2";
     private String          noiseAD2000A2CSS         = "#" + noiseAD2000A2Id;
-    private String          noiseAPI520Id            = "ctl00_WorkspacePlaceHolder_ctl00_NoiseApi20";
+    private String          noiseAPI520Id            = "ctl00_WorkspacePlaceHolder_ctl00_NoiseApi520";
     private String          noiseAPI520CSS           = "#" + noiseAPI520Id;
+    private String          pressureDropAD2000A2Id   = "ctl00_WorkspacePlaceHolder_ctl00_PDInletAd2000A2";
+    private String          pressureDropAD2000A2CSS  = "#"
+                                                             + pressureDropAD2000A2Id;
+    private String          pressureDropIso4126Id    = "ctl00_WorkspacePlaceHolder_ctl00_PDInletIso4126";             ;
+    private String          pressureDropIso4126CSS   = "#"
+                                                             + pressureDropIso4126Id;
+    private String          pressureDropNoneId       = "ctl00_WorkspacePlaceHolder_ctl00_PDInletNone";                ;
+    private String          pressureDropNoneCSS      = "#"
+                                                             + pressureDropNoneId;
 
     public SizingTypeAndMediumSelectionPage(WebDriver driver) {
         this.driver = driver;
@@ -93,9 +101,6 @@ public class SizingTypeAndMediumSelectionPage {
                 return;
             }
             if (map.containsValue(replaceUmlaut(webElement.getText()))) {
-                System.out.println("Normal: " + webElement.getText()
-                        + " - Spell checked: "
-                        + replaceUmlaut(webElement.getText()));
                 js.select(sizingDDLid, webElement.getAttribute("value"));
                 selected = true;
             }
@@ -114,19 +119,18 @@ public class SizingTypeAndMediumSelectionPage {
      */
     public void checkCdtpBox(HashMap<Integer, String> markClassMap,
             HashMap<Integer, String> markClassificationMap) {
-        for (Entry<Integer, String> mcmEntry : markClassificationMap
+        for (Entry<Integer, String> mclacaEntry : markClassificationMap
                 .entrySet()) {
             boolean checked = false;
-            if (mcmEntry.getValue().equalsIgnoreCase("CDTP Calculation")) {
+            if (mclacaEntry.getValue().equalsIgnoreCase("CDTP Calculation")) {
                 if (checked)
                     return;
-                if (Boolean.parseBoolean(markClassMap.get(mcmEntry.getKey()))) {
+                if (Boolean.parseBoolean(markClassMap.get(mclacaEntry
+                        .getKey()))) {
                     js.uncheck(CdtpCheckBoxId);
                     js.click(CdtpCheckBoxCSS);
                     checked = true;
-                    System.out.println("CDTP ++ACTIVE++");
                 } else {
-                    System.out.println("CDTP --INACTIVE--");
                     js.uncheck(CdtpCheckBoxId);
                 }
             }
@@ -134,7 +138,7 @@ public class SizingTypeAndMediumSelectionPage {
     }
 
     /**
-     * Click Reaction Force CheckBoxes if needed
+     * Click Reaction Force CheckBoxes if selected in testcase
      * 
      * @param markClassMap
      * @param markClassificationMap
@@ -160,7 +164,8 @@ public class SizingTypeAndMediumSelectionPage {
                                     .get(mclacaEntry.getKey()))) {
                                 js.uncheck(reactionForceAD2000A2Id);
                                 js.click(reactionForceAD2000A2CSS);
-                                System.out.println("AD2000 ++ACTIVE++");
+                                printTestCaseElement(mcomEntry.getValue(),
+                                        mclacaEntry.getValue());
                             }
                         } else if (mclacaEntry.getValue().equalsIgnoreCase(
                                 "API 520")) {
@@ -168,15 +173,17 @@ public class SizingTypeAndMediumSelectionPage {
                                     .get(mclacaEntry.getKey()))) {
                                 js.uncheck(reactionForceAPI520Id);
                                 js.click(reactionForceAPI520CSS);
-                                System.out.println("API520 ++ACTIVE++");
+                                printTestCaseElement(mcomEntry.getValue(),
+                                        mclacaEntry.getValue());
                             }
                         } else if (mclacaEntry.getValue().equalsIgnoreCase(
                                 "ISO / CD 4126-9")) {
                             if (Boolean.parseBoolean(markClassMap
                                     .get(mclacaEntry.getKey()))) {
-                                js.uncheck(reactionForceAPI520Id);
+                                js.uncheck(reactionForceIso4126Id);
                                 js.click(reactionForceIso4126CSS);
-                                System.out.println("Iso4126 ++ACTIVE++");
+                                printTestCaseElement(mcomEntry.getValue(),
+                                        mclacaEntry.getValue());
                             }
                         }
                     }
@@ -187,7 +194,7 @@ public class SizingTypeAndMediumSelectionPage {
     }
 
     /**
-     * TODO: NYI - FUNZT NOCH NICHT RICHTIG
+     * Click Noise-CheckBoxes if selected in testcase
      * 
      * @param markClassMap
      * @param markClassificationMap
@@ -208,7 +215,8 @@ public class SizingTypeAndMediumSelectionPage {
                                     .get(mclacaEntry.getKey()))) {
                                 js.uncheck(noiseAD2000A2Id);
                                 js.click(noiseAD2000A2CSS);
-                                System.out.println("AD2000 ++ACTIVE++");
+                                printTestCaseElement(mcomEntry.getValue(),
+                                        mclacaEntry.getValue());
                             }
                         } else if (mclacaEntry.getValue().equalsIgnoreCase(
                                 "API 520")) {
@@ -216,10 +224,50 @@ public class SizingTypeAndMediumSelectionPage {
                                     .get(mclacaEntry.getKey()))) {
                                 js.uncheck(noiseAPI520Id);
                                 js.click(noiseAPI520CSS);
-                                System.out.println("API520 ++ACTIVE++");
+                                printTestCaseElement(mcomEntry.getValue(),
+                                        mclacaEntry.getValue());
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
 
+    /**
+     * TODO: NONE Produces failures because it can be more than once in class map
+     * specific radio btn prob
+     * 
+     * @param markClassMap
+     * @param markCompositionMap
+     * @param markCompMap
+     */
+    public void selectRadioPressureDrop(
+            HashMap<Integer, String> markClassMap,
+            HashMap<Integer, String> markClassificationMap) {
+        for (Entry<Integer, String> mclacaEntry : markClassificationMap
+                .entrySet()) {
+            if (mclacaEntry.getValue().equalsIgnoreCase(
+                    "Pressure drop inlet line")) {
+                System.out.println("found pdil");
+                for (Entry<Integer, String> mclEntry : markClassMap
+                        .entrySet()) {
+                    if (mclEntry.getValue().equalsIgnoreCase("AD2000:A2")) {
+                        js.uncheck(pressureDropAD2000A2Id);
+                        js.click(pressureDropAD2000A2CSS);
+                        printTestCaseElement(mclacaEntry.getValue(),
+                                mclEntry.getValue());
+                    } else if (mclEntry.getValue().equalsIgnoreCase(
+                            "ISO / CD 4126-9")) {
+                        js.uncheck(pressureDropIso4126Id);
+                        js.click(pressureDropIso4126CSS);
+                        printTestCaseElement(mclacaEntry.getValue(),
+                                mclEntry.getValue());
+                    } else if (mclEntry.getValue().equalsIgnoreCase("None")) {
+                        js.uncheck(pressureDropNoneId);
+                        js.click(pressureDropNoneCSS);
+                        printTestCaseElement(mclacaEntry.getValue(),
+                                mclEntry.getValue());
                     }
                 }
             }
@@ -233,21 +281,21 @@ public class SizingTypeAndMediumSelectionPage {
      * @param markClassMap
      * @param markCompMap
      */
-    public void selectRadioPressureDrop(
-            HashMap<Integer, String> markClassMap,
-            HashMap<Integer, String> markClassificationMap) {
-        // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_PDInletIso4126")).click();
-    }
-
-    /**
-     * TODO: NYI
-     * 
-     * @param markClassMap
-     * @param markCompMap
-     */
     public void selectRadioBackPressure(
             HashMap<Integer, String> markClassMap,
             HashMap<Integer, String> markClassificationMap) {
         // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_BPOutletNone")).click();
     }
+
+    public void selectRadioFireCase(HashMap<Integer, String> markClassMap,
+            HashMap<Integer, String> markClassificationMap) {
+
+    }
+
+    private void printTestCaseElement(String composition,
+            String classification) {
+        System.out.println("Selected: " + composition + " -- "
+                + classification);
+    }
+
 }

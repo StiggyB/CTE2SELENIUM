@@ -157,6 +157,7 @@ public class SizingTypeAndMediumSelectionTest {
         stams.selectSizingStandard(markClassMap);
         wait(1);
         stams.checkCdtpBox(markClassMap, markClassificationMap);
+        wait(1);
 
         if (markClassMap.containsValue("Two-phase flow")) {
             for (Entry<Integer, String> mcmEntry : markClassificationMap
@@ -169,12 +170,19 @@ public class SizingTypeAndMediumSelectionTest {
             }
         }
 
-        wait(1);
         if (!markClassMap.containsValue("Two-phase flow")) { 
             stams.checkReactionForce(markClassMap, markClassificationMap, markCompositionMap);
+            wait(1);
             stams.checkNoise(markClassMap, markClassificationMap, markCompositionMap);
+            wait(1);
             stams.selectRadioPressureDrop(markClassMap, markClassificationMap);
+            wait(1);
             stams.selectRadioBackPressure(markClassMap, markClassificationMap);
+            wait(1);
+            if (markClassMap.containsValue("Gas")) {
+                stams.selectRadioFireCase(markClassMap, markClassificationMap);
+                wait(1);
+            }
         }
 
         controlMenu.clickNextButton();
@@ -185,7 +193,6 @@ public class SizingTypeAndMediumSelectionTest {
         try {
             Thread.sleep(seconds*1000);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
