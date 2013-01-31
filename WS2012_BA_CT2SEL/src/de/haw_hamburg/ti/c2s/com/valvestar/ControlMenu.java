@@ -1,5 +1,6 @@
 package de.haw_hamburg.ti.c2s.com.valvestar;
 
+import org.apache.commons.logging.impl.Log4JLogger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -18,9 +19,9 @@ import de.haw_hamburg.ti.tools.Javascript;
 public class ControlMenu {
 
     private final WebDriver driver;
-    private boolean         sizingMenuOpen = false;
+    private transient boolean         sizingMenuOpen = false;
     @FindBy(id = "ctl00_HeaderPlaceHolder_HeaderPageControl_HeaderMenu_9")
-    private WebElement      Sizing;
+    private WebElement      sizing;
     @FindBy(css = "img[alt=\"Add new sizing...\"]")
     private WebElement      addSizing;
     @FindBy(css = "#ctl00_WorkspacePlaceHolder_NextButton")
@@ -30,22 +31,21 @@ public class ControlMenu {
     @FindBy(id = "ctl00_WorkspacePlaceHolder_BackButton")
     private WebElement      backButton;
 
-    private Javascript      js;
+    private final Javascript      jscript;
+    //TODO: LOGGER INTEGRATION
+    private Log4JLogger logger;
 
-    public ControlMenu(WebDriver driver) {
+    public ControlMenu(final WebDriver driver) {
         this.driver = driver;
-        js = new Javascript(driver);
+        jscript = new Javascript(driver);
     }
 
     /**
      * Open the Sizing Menu to add a new Sizing.
      */
     public void openSizingMenu() {
-        Actions builder = new Actions(driver);
-        // Sizing = driver
-        // .findElement(By
-        // .id("ctl00_HeaderPlaceHolder_HeaderPageControl_HeaderMenu_9"));
-        builder.moveToElement(Sizing).build().perform();
+        final Actions builder = new Actions(driver);
+        builder.moveToElement(sizing).build().perform();
         sizingMenuOpen = true;
     }
 
@@ -53,17 +53,18 @@ public class ControlMenu {
      * Add a new Sizing.
      */
     public void addNewSizing() {
-        if (sizingMenuOpen)
+        if (sizingMenuOpen) {
             addSizing.click();
-        else
+        } else {
             throw new IllegalStateException("Sizing Menu not opened");
+        }
     }
 
     /**
      * Next page.
      */
     public void clickNextButton() {
-        js.click("#ctl00_WorkspacePlaceHolder_NextButton");
+        jscript.click("#ctl00_WorkspacePlaceHolder_NextButton");
     }
 
     /**
@@ -71,10 +72,9 @@ public class ControlMenu {
      */
     public void clickBackButton() {
         try {
-            js.click("#ctl00_WorkspacePlaceHolder_BackButton");
+            jscript.click("#ctl00_WorkspacePlaceHolder_BackButton");
         } catch (WebDriverException wde) {
-            wde.printStackTrace();
-            System.err.println("WDE");
+            logger.error("Web Driver Exception");
         }
     }
 
@@ -82,7 +82,7 @@ public class ControlMenu {
      * Cancel.
      */
     public void clickCancelButton() {
-        js.click("#ctl00_WorkspacePlaceHolder_CancelButton");
+        jscript.click("#ctl00_WorkspacePlaceHolder_CancelButton");
     }
 
 }

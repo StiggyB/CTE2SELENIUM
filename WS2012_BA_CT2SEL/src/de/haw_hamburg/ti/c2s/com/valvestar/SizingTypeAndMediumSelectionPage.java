@@ -55,6 +55,19 @@ public class SizingTypeAndMediumSelectionPage {
     private String          pressureDropNoneId       = "ctl00_WorkspacePlaceHolder_ctl00_PDInletNone";                ;
     private String          pressureDropNoneCSS      = "#"
                                                              + pressureDropNoneId;
+    private String          backPressureAD2000A2Id   = "ctl00_WorkspacePlaceHolder_ctl00_BPOutletAd2000A2";
+    private String          backPressureAD2000A2CSS  = "#"
+                                                             + backPressureAD2000A2Id;
+    private String          backPressureIso4126Id    = "ctl00_WorkspacePlaceHolder_ctl00_BPOutletIso4126";            ;
+    private String          backPressureIso4126CSS   = "#"
+                                                             + backPressureIso4126Id;
+    private String          backPressureNoneId       = "ctl00_WorkspacePlaceHolder_ctl00_BPOutletNone";
+    private String          backPressureNoneCSS      = "#"
+                                                             + backPressureNoneId;
+    private String          fireCaseApi520Id         = "ctl00_WorkspacePlaceHolder_ctl00_FirecaseApi520";
+    private String          fireCaseApi520CSS        = "#" + fireCaseApi520Id;
+    private String          fireCaseNoneId           = "ctl00_WorkspacePlaceHolder_ctl00_FirecaseNone";
+    private String          fireCaseNoneCSS          = "#" + fireCaseNoneId;
 
     public SizingTypeAndMediumSelectionPage(WebDriver driver) {
         this.driver = driver;
@@ -235,8 +248,7 @@ public class SizingTypeAndMediumSelectionPage {
     }
 
     /**
-     * TODO: NONE Produces failures because it can be more than once in class map
-     * specific radio btn prob
+     * Selects the given Pressure drop Standard
      * 
      * @param markClassMap
      * @param markCompositionMap
@@ -249,34 +261,35 @@ public class SizingTypeAndMediumSelectionPage {
                 .entrySet()) {
             if (mclacaEntry.getValue().equalsIgnoreCase(
                     "Pressure drop inlet line")) {
-                System.out.println("found pdil");
                 for (Entry<Integer, String> mclEntry : markClassMap
                         .entrySet()) {
-                    if (mclEntry.getValue().equalsIgnoreCase("AD2000:A2")) {
-                        js.uncheck(pressureDropAD2000A2Id);
-                        js.click(pressureDropAD2000A2CSS);
-                        printTestCaseElement(mclacaEntry.getValue(),
-                                mclEntry.getValue());
-                    } else if (mclEntry.getValue().equalsIgnoreCase(
-                            "ISO / CD 4126-9")) {
-                        js.uncheck(pressureDropIso4126Id);
-                        js.click(pressureDropIso4126CSS);
-                        printTestCaseElement(mclacaEntry.getValue(),
-                                mclEntry.getValue());
-                    } else if (mclEntry.getValue().equalsIgnoreCase("None")) {
-                        js.uncheck(pressureDropNoneId);
-                        js.click(pressureDropNoneCSS);
-                        printTestCaseElement(mclacaEntry.getValue(),
-                                mclEntry.getValue());
+                    if (mclEntry.getKey().equals(mclacaEntry.getKey())) {
+                        if (mclEntry.getValue().equalsIgnoreCase("AD2000:A2")) {
+                            js.uncheck(pressureDropAD2000A2Id);
+                            js.click(pressureDropAD2000A2CSS);
+                            printTestCaseElement(mclacaEntry.getValue(),
+                                    mclEntry.getValue());
+                        } else if (mclEntry.getValue().equalsIgnoreCase(
+                                "ISO / CD 4126-9")) {
+                            js.uncheck(pressureDropIso4126Id);
+                            js.click(pressureDropIso4126CSS);
+                            printTestCaseElement(mclacaEntry.getValue(),
+                                    mclEntry.getValue());
+                        } else if (mclEntry.getValue().equalsIgnoreCase(
+                                "None")) {
+                            js.uncheck(pressureDropNoneId);
+                            js.click(pressureDropNoneCSS);
+                            printTestCaseElement(mclacaEntry.getValue(),
+                                    mclEntry.getValue());
+                        }
                     }
                 }
             }
         }
-
     }
 
     /**
-     * TODO: NYI
+     * TODO: Selects the given Back pressure outlet pipe Standard
      * 
      * @param markClassMap
      * @param markCompMap
@@ -284,12 +297,61 @@ public class SizingTypeAndMediumSelectionPage {
     public void selectRadioBackPressure(
             HashMap<Integer, String> markClassMap,
             HashMap<Integer, String> markClassificationMap) {
-        // driver.findElement(By.id("ctl00_WorkspacePlaceHolder_ctl00_BPOutletNone")).click();
+        for (Entry<Integer, String> mclacaEntry : markClassificationMap
+                .entrySet()) {
+            if (mclacaEntry.getValue().equalsIgnoreCase(
+                    "Built up back pressure outlet pipe")) {
+                for (Entry<Integer, String> mclEntry : markClassMap
+                        .entrySet()) {
+                    if (mclEntry.getKey().equals(mclacaEntry.getKey())) {
+                        if (mclEntry.getValue().equalsIgnoreCase("AD2000:A2")) {
+                            js.uncheck(backPressureAD2000A2Id);
+                            js.click(backPressureAD2000A2CSS);
+                            printTestCaseElement(mclacaEntry.getValue(),
+                                    mclEntry.getValue());
+                        } else if (mclEntry.getValue().equalsIgnoreCase(
+                                "ISO / CD 4126-9")) {
+                            js.uncheck(backPressureIso4126Id);
+                            js.click(backPressureIso4126CSS);
+                            printTestCaseElement(mclacaEntry.getValue(),
+                                    mclEntry.getValue());
+                        } else if (mclEntry.getValue().equalsIgnoreCase(
+                                "None")) {
+                            js.uncheck(backPressureNoneId);
+                            js.click(backPressureNoneCSS);
+                            printTestCaseElement(mclacaEntry.getValue(),
+                                    mclEntry.getValue());
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public void selectRadioFireCase(HashMap<Integer, String> markClassMap,
             HashMap<Integer, String> markClassificationMap) {
-
+        for (Entry<Integer, String> mclacaEntry : markClassificationMap
+                .entrySet()) {
+            if (mclacaEntry.getValue().equalsIgnoreCase("Fire Case")) {
+                for (Entry<Integer, String> mclEntry : markClassMap
+                        .entrySet()) {
+                    if (mclEntry.getKey().equals(mclacaEntry.getKey())) {
+                        if (mclEntry.getValue().equalsIgnoreCase("API520")) {
+                            js.uncheck(fireCaseApi520Id);
+                            js.click(fireCaseApi520CSS);
+                            printTestCaseElement(mclacaEntry.getValue(),
+                                    mclEntry.getValue());
+                        } else if (mclEntry.getValue().equalsIgnoreCase(
+                                "None")) {
+                            js.uncheck(fireCaseNoneId);
+                            js.click(fireCaseNoneCSS);
+                            printTestCaseElement(mclacaEntry.getValue(),
+                                    mclEntry.getValue());
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void printTestCaseElement(String composition,

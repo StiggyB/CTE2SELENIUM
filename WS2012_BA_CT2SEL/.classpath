@@ -38,7 +38,7 @@
 	<classpathentry kind="lib" path="C:/Users/Benjamin/Documents/Code Model Libraries/codemodel-2.5-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Benjamin/Documents/Code Model Libraries/codemodel-2.5-SNAPSHOT-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Benjamin/Documents/Code Model Libraries/codemodel-2.5-SNAPSHOT-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Benjamin/Documents/Selenium Libraries/selenium-java-2.25.0/selenium-2.25.0/selenium-java-2.25.0.jar">
+	<classpathentry kind="lib" path="C:/Users/Benjamin/Documents/Selenium Libraries/selenium-java-2.25.0/selenium-2.25.0/selenium-java-2.25.0.jar" sourcepath="C:/Users/Benjamin/Documents/Selenium Libraries/selenium-java-2.25.0/selenium-2.25.0/selenium-java-2.25.0-srcs.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://selenium.googlecode.com/svn/trunk/docs/api/java/"/>
 		</attributes>

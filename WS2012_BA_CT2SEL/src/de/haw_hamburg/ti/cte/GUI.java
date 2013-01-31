@@ -25,12 +25,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
 
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 import de.haw_hamburg.ti.test.web.SizingTypeAndMediumSelectionTest;
+import de.haw_hamburg.ti.tools.PrintAction;
 
 public class GUI {
 
@@ -77,58 +75,29 @@ public class GUI {
         frmAutomaticTestCase = new JFrame();
         frmAutomaticTestCase
                 .setTitle("Automatic Test Case Generation withClassification Trees for Web Testing");
-        frmAutomaticTestCase.setBounds(100, 100, 450, 573);
+        frmAutomaticTestCase.setBounds(100, 100, 999, 666);
         frmAutomaticTestCase.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frmAutomaticTestCase.getContentPane().setLayout(null);
 
-        JButton btnStartJUnitTest = new JButton("Start JUnit Test");
+        JButton btnStartJUnitTest = new JButton("Start Unit Test");
         btnStartJUnitTest.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                // CTETest ct = new CTETest();
-                try {
-                    // JFileGenerator jfg = new JFileGenerator();
-                    // jfg.setFileName("test");
-                    // jfg.setPackageName("test");
-                    // jfg.generateFile();
-                    junit.textui.TestRunner.run(SizingTypeAndMediumSelectionTest.suite());
-                    // PasswordTest pt = new PasswordTest();
-                    // pt.testPassword(true, true, "p4ssw0rd");
-                    // org.junit.runner.JUnitCore.runClasses(CTETest.class);
-                    // ct.setUp();
-                    // JUnit4TestAdapter juta = new JUnit4TestAdapter(
-                    // PasswordTest.class);
-                    // TestResult result = new TestResult();
-                    // juta.run(result);
-                    // for (Iterator<Test> iterator =
-                    // juta.getTests().iterator(); iterator
-                    // .hasNext();) {
-                    // Test type = (Test) iterator.next();
-                    // iterator.next().
-                    //
-                    // }
-
-                    // System.out.println("JUnit tests Successful: "
-                    // + result.wasSuccessful());
-                    // ct.testLogin();
-                    // ct.tearDown();
-                } catch (AssertionError | Exception e) {
-                    System.err.println(": ");
-                    System.err.println(e);
-                }
+                junit.textui.TestRunner.run(SizingTypeAndMediumSelectionTest
+                        .suite());
             }
         });
-        btnStartJUnitTest.setBounds(120, 272, 195, 23);
+        btnStartJUnitTest.setBounds(20, 272, 195, 23);
         frmAutomaticTestCase.getContentPane().add(btnStartJUnitTest);
 
         JScrollPane scrollPane_2 = new JScrollPane();
-        scrollPane_2.setBounds(10, 308, 410, 179);
+        scrollPane_2.setBounds(10, 308, 959, 272);
         frmAutomaticTestCase.getContentPane().add(scrollPane_2);
         txtrJunitoutput.setEditable(false);
 
         scrollPane_2.setViewportView(txtrJunitoutput);
 
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane.setBounds(10, 13, 203, 246);
+        tabbedPane.setBounds(10, 13, 410, 246);
         frmAutomaticTestCase.getContentPane().add(tabbedPane);
 
         JScrollPane scrollPane = new JScrollPane();
@@ -136,17 +105,19 @@ public class GUI {
         cte_list.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                if (arg0.getButton() == MouseEvent.BUTTON1) {
+                if (arg0.getButton() == MouseEvent.BUTTON1
+                        && !cte_listModel.isEmpty()) {
                     to_listModel.addElement(cte_list.getSelectedValue());
                     cte_listModel.removeElement(cte_list.getSelectedValue());
                     try {
-                        for (Iterator<CteTestCase> iterator = cte.getTestData(
-                                chosenFile).iterator(); iterator.hasNext();) {
-                            to_listModel.addElement(iterator.next()
-                                    .toString());
+                        for (Iterator<CteTestCase> iterator = cte
+                                .getTestData(chosenFile).iterator(); iterator
+                                .hasNext();) {
+                            to_listModel
+                                    .addElement(iterator.next().getName());
                         }
-                    } catch (ParserConfigurationException | SAXException
-                            | IOException e) {
+                    } catch (IOException e) {
+                        System.err.println("IO Err");
                         e.printStackTrace();
                     }
                     cte.saveTestCasesToFile();
@@ -157,7 +128,7 @@ public class GUI {
         scrollPane.setViewportView(cte_list);
 
         JTabbedPane tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane_1.setBounds(221, 13, 199, 246);
+        tabbedPane_1.setBounds(432, 13, 537, 246);
         frmAutomaticTestCase.getContentPane().add(tabbedPane_1);
 
         JScrollPane scrollPane_1 = new JScrollPane();
@@ -203,6 +174,7 @@ public class GUI {
         mnMenu.add(separator);
 
         JMenuItem mntmPrintTestcases = new JMenuItem("Print Testcases");
+        mntmPrintTestcases.addActionListener(new PrintAction());
         mnMenu.add(mntmPrintTestcases);
 
         JSeparator separator_1 = new JSeparator();

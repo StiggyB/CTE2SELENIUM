@@ -150,7 +150,7 @@ public class SizingTypeAndMediumSelectionTest {
     @Test
     public void testSTAMS() {
 
-//        printActualTestInfo();
+        printActualTestInfo();
 
         stams.selectMedium(markClassMap);
         wait(1);

@@ -5,12 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import de.haw_hamburg.ti.cte.xmlObjects.Classification;
 import de.haw_hamburg.ti.cte.xmlObjects.Composition;
@@ -28,8 +25,7 @@ public class CTEParser {
     private Element                     rootElement;
     private String                      actualCteObject;
 
-    public CTEParser(File cteFile) throws ParserConfigurationException,
-            SAXException, IOException {
+    public CTEParser(File cteFile) throws IOException {
         rootElement = XMLParser.parse(cteFile);
     }
 

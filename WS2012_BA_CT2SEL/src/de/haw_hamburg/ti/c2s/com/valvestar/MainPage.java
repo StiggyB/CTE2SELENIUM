@@ -8,9 +8,9 @@ public class MainPage {
     
     private final WebDriver driver;
     @FindBy(css = "#ctl00_ProjectExplorerPlaceHolder_ProjectExplorerPageControl_ExplorerTreeView_item_0_expcol > img")
-    private WebElement projectExplorer;
+    private static WebElement projectExplorer;
 
-    public MainPage(WebDriver driver) {
+    public MainPage(final WebDriver driver) {
         this.driver = driver;
 
         // Check that we're on the right page.
@@ -22,7 +22,10 @@ public class MainPage {
         }
     }
 
-    public void openProjectExplorer() {
+    /**
+     * Open the Project Explorer
+     */
+    public final void openProjectExplorer() {
         projectExplorer.click();
     }
     

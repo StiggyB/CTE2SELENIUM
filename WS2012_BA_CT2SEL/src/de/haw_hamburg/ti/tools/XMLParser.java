@@ -30,22 +30,29 @@ public class XMLParser {
      * @throws SAXException
      * @throws ParserConfigurationException
      */
-    public static Element parse(File chosenFile)
-            throws ParserConfigurationException, SAXException, IOException {
+    public static Element parse(File chosenFile) throws IOException {
         parseXmlFile(chosenFile);
         return dom.getDocumentElement();
     }
 
-    private static void parseXmlFile(File chosenFile)
-            throws ParserConfigurationException, SAXException, IOException {
+    private static void parseXmlFile(File chosenFile) throws IOException {
         // get the factory
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
         // Using factory get an instance of document builder
-        DocumentBuilder db = dbf.newDocumentBuilder();
+        DocumentBuilder db;
+        try {
+            db = dbf.newDocumentBuilder();
+            // parse using builder to get DOM representation of the XML file
+            dom = db.parse(chosenFile);
+        } catch (ParserConfigurationException e) {
+            System.err.println("Configuration error");
+            e.printStackTrace();
+        } catch (SAXException e) {
+            System.err.println("Parse error");
+            e.printStackTrace();
+        }
 
-        // parse using builder to get DOM representation of the XML file
-        dom = db.parse(chosenFile);
         dom.normalize();
     }
 

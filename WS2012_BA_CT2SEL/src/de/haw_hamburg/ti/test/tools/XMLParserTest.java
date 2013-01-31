@@ -30,7 +30,7 @@ public class XMLParserTest {
 	public void testParse() {
 		try {
 			assertThat(XMLParser.parse(new File("password.cte")), isA(Element.class));
-		} catch (ParserConfigurationException | SAXException | IOException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

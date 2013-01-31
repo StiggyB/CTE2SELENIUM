@@ -37,7 +37,7 @@ public class CTETest {
     public void test() {
         try {
             cte.getTestData(new File("Sizing_Type_and_Medium_Section.cte"));
-        } catch (ParserConfigurationException | SAXException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         cte.saveTestCasesToFile();
@@ -57,8 +57,7 @@ public class CTETest {
                     ois.readObject());
             ois.close();
             assertEquals(cteBefore, testcases);
-        } catch (ParserConfigurationException | SAXException | IOException
-                | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

@@ -75,8 +75,8 @@ public class CTE {
      * @throws SAXException
      * @throws ParserConfigurationException
      */
-    public ArrayList<CteTestCase> getTestData(File cteFile)
-            throws ParserConfigurationException, SAXException, IOException {
+    public ArrayList<CteTestCase> getTestData(File cteFile) throws IOException
+             {
         getCteTree(cteFile);
         /**
          * <testcaseName, marks>
@@ -94,9 +94,9 @@ public class CTE {
 
         fillMaps(testcaseMap, classificationMap, compositionMap);
 
-        System.out.println(compositionMap);
-        System.out.println(classificationMap);
-        System.out.println(testcaseMap);
+//        System.out.println(compositionMap);
+//        System.out.println(classificationMap);
+//        System.out.println(testcaseMap);
 
         setMarkParents(testcaseMap, classificationMap, compositionMap);
 
@@ -112,7 +112,6 @@ public class CTE {
             Map<Classification, Integer[]> classificationMap,
             Map<Composition, Integer[]> compositionMap) {
         for (Entry<CteTestCase, Integer[]> entrytc : testcaseMap.entrySet()) {
-            System.out.println(entrytc.getKey().getName());
             for (int i = 0; i < entrytc.getValue().length; i++) {
                 for (Entry<Classification, Integer[]> entrycl : classificationMap
                         .entrySet()) {
@@ -158,29 +157,29 @@ public class CTE {
                                 entrytc.getKey().setCompositionOfMark(
                                         entrycl.getValue()[j],
                                         entryco.getKey().getName());
-                                System.out
-                                        .println("["
-                                                + entrytc
-                                                        .getKey()
-                                                        .getCompositionOfMark(
-                                                                entrycl.getValue()[j])
-                                                + " (id="
-                                                + entryco.getKey().getId()
-                                                + ")"
-                                                + entrytc
-                                                        .getKey()
-                                                        .getClassificationOfMark(
-                                                                entrycl.getValue()[j])
-                                                + " (id="
-                                                + entrycl.getKey().getId()
-                                                + ")"
-                                                + entrytc
-                                                        .getKey()
-                                                        .getClassOfMark(
-                                                                entrycl.getValue()[j])
-                                                + " (id="
-                                                + entrytc.getValue()[i] + ")"
-                                                + "]");
+                                // System.out
+                                // .println("["
+                                // + entrytc
+                                // .getKey()
+                                // .getCompositionOfMark(
+                                // entrycl.getValue()[j])
+                                // + " (id="
+                                // + entryco.getKey().getId()
+                                // + ")"
+                                // + entrytc
+                                // .getKey()
+                                // .getClassificationOfMark(
+                                // entrycl.getValue()[j])
+                                // + " (id="
+                                // + entrycl.getKey().getId()
+                                // + ")"
+                                // + entrytc
+                                // .getKey()
+                                // .getClassOfMark(
+                                // entrycl.getValue()[j])
+                                // + " (id="
+                                // + entrytc.getValue()[i] + ")"
+                                // + "]");
                             }
                         }
                     }
@@ -219,7 +218,7 @@ public class CTE {
      * @throws IOException
      */
     private void getCteTree(File cteFile)
-            throws ParserConfigurationException, SAXException, IOException {
+            throws IOException {
         ctep = new CTEParser(cteFile);
         ctep.getCteObjectByName(COMPOSITION);
         ctep.getCteObjectByName(CLASSIFICATION);
