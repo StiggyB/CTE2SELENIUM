@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<CteObject id="c0">
+    <!--Created by CTE XL Professional 3.1.3-->
+    <Tree id="c1" name="Sizing_Type_and_Medium_Section2.cte" root="c2">
+        <Composition id="c2" name="Sizing_Type_and_Medium_Selection2" style="color:#000000; font-size:9px; background-color:#ffffff; font-family:'Segoe UI'" x="456" y="32">
+            <Composition id="c21" name="Main selection" x="532" y="92">
+                <Classification id="c24" name="Medium" x="-116" y="150">
+                    <Class id="c32" name="Wetted steam" x="-413" y="204"/>
+                    <Class id="c88" name="Gas" x="-290" y="204"/>
+                    <Class id="c68" name="Superheated steam" x="-234" y="204"/>
+                    <Class id="c52" name="Liquid" x="-76" y="204"/>
+                    <Class id="c60" name="Two-phase flow" x="-5" y="204"/>
+                    <Class id="c76" name="Saturated steam" x="131" y="204"/>
+                </Classification>
+                <Classification id="c36" name="Sizing standard" x="650" y="150">
+                    <Class id="c72" name="VdTUEV-Merkblatt SV 100/2" x="269" y="204"/>
+                    <Class id="c48" name="ASME VIII" x="486" y="204"/>
+                    <Class id="c64" name="API 520" x="580" y="204"/>
+                    <Class id="c28" name="DIN EN ISO 4126" x="661" y="204"/>
+                    <Class id="c80" name="AD 2000:A2 / TRD 421" x="804" y="204"/>
+                    <Class id="c40" name="LESER catalogue 20/50" x="983" y="204"/>
+                </Classification>
+                <Classification id="c56" name="CDTP Calculation" x="1166" y="150">
+                    <Class id="c84" name="true" x="1181" y="204"/>
+                    <Class id="c44" name="false" x="1237" y="204"/>
+                </Classification>
+                <Tag id="c22" type="AutoLayout">
+                    <Content key="style" value="type:1"/>
+                </Tag>
+            </Composition>
+            <Tag id="c5" type="AutoLayout">
+                <Content key="style" value="type:2"/>
+            </Tag>
+        </Composition>
+    </Tree>
+    <TestGroup id="c3" name="">
+        <TestCase id="c157" name="Testcase 1">
+            <Marks true="c88 c64 c84 "/>
+        </TestCase>
+    </TestGroup>
+</CteObject>
