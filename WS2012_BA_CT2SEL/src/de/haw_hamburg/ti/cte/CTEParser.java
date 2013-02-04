@@ -3,6 +3,7 @@ package de.haw_hamburg.ti.cte;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.TreeMap;
 
 import org.w3c.dom.Element;
@@ -94,7 +95,7 @@ public class CTEParser {
                 if (nl.item(i).getNodeType() == Node.ELEMENT_NODE
                         && !el.getChildNodes().item(i).getNodeName()
                                 .equalsIgnoreCase("Tag")) {
-                    eles.add((Element)nl.item(i));
+                    eles.add((Element) nl.item(i));
                 }
             }
             String[][] clarr = new String[eles.size()][2];
@@ -120,17 +121,24 @@ public class CTEParser {
 
     private String[][] getClassValue(Element ele, String tagName) {
         NodeList nl = ele.getElementsByTagName(tagName);
-        String[][] textVal = new String[nl.getLength()][nl.getLength()];
+        ArrayList<String[]> val = new ArrayList<>();
+        int dim1 = 0;
         if (nl != null && nl.getLength() > 0) {
             for (int i = 0; i < nl.getLength(); i++) {
                 Element el = (Element) nl.item(i);
-                // Magic Number 2, to eliminate unused xml data
-                for (int j = 0; j < el.getAttributes().getLength() - 2; j++) {
-                    textVal[i][j] = el.getAttributes().item(j).getNodeValue();
+                if (el.getParentNode().equals(ele)) {
+                    val.add(new String[] { el.getAttribute("id"),
+                            el.getAttribute("name") });
                 }
             }
         }
-        return textVal;
+        String[][] textVal1 = new String[val.size()][2];
+        for (Iterator iterator = val.iterator(); iterator.hasNext();) {
+            String[] strings = (String[]) iterator.next();
+            textVal1[dim1] = strings;
+            dim1++;
+        }
+        return textVal1;
     }
 
 }

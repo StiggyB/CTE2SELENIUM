@@ -21,48 +21,58 @@ import de.haw_hamburg.ti.cte.xmlObjects.CteObject;
 @RunWith(Parameterized.class)
 public class CTEParserTest {
 
-    private CTEParser cp;
-    private String    s;
+    private CTEParser           cp;
+    private File                file;
 
-    public CTEParserTest(String s) {
-        this.s = s;
+    private enum CteObj {
+        Composition, Classification, TestCase;
+    }
+
+    public CTEParserTest(File file) {
+        this.file = file;
     }
 
     @Parameters
     public static List<Object[]> data() {
-        Object[][] data = new Object[][] { { "Composition" },
-                { "Classification" }, { "TestCase" } };
+        Object[][] data = new Object[][] {
+                { new File("Sizing_Type_and_Medium_Section.cte") },
+                { new File("Service_condition.cte") } };
         return Arrays.asList(data);
     }
 
     @Before
     public void setUp() throws Exception {
-        cp = new CTEParser(new File("Sizing_Type_and_Medium_Section.cte"));
+        cp = new CTEParser(file);
     }
 
     @Test
     public void testGetCteObjectByName() {
-        int i = 0;
-        ArrayList<CteObject> cteObjects = cp.getCteObjectByName(s);
-        assertThat(cteObjects, isA(ArrayList.class));
-        for (Iterator<?> iterator = cteObjects.iterator(); iterator.hasNext();) {
-            CteObject o = (CteObject) iterator.next();
-            assertThat(o, isA(CteObject.class));
-            ++i;
-            
-            System.out.println(o.toString());
+        for (CteObj obj : CteObj.values()) {
+            ArrayList<CteObject> cteObjects = cp.getCteObjectByName(obj
+                    .name());
+            assertThat(cteObjects, isA(ArrayList.class));
+            for (Iterator<?> iterator = cteObjects.iterator(); iterator
+                    .hasNext();) {
+                CteObject o = (CteObject) iterator.next();
+                assertThat(o, isA(CteObject.class));
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(o.toString());
+            }
         }
-        System.out.println("No. of " + s + " Objects: " + i);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testGetCteObjectByNameException() {
-            cp.getCteObjectByName("someObj");
+        cp.getCteObjectByName("someObj");
     }
-    
-    @Test(expected=IllegalArgumentException.class)
+
+    @Test(expected = IllegalArgumentException.class)
     public void testGetCteObjectByNameException2() {
-            cp.getCteObjectByName("Class");
+        cp.getCteObjectByName("Class");
     }
 
 }

@@ -14,7 +14,6 @@ import de.haw_hamburg.ti.tools.Javascript;
 
 public class SizingTypeAndMediumSelectionPage {
 
-    private final WebDriver driver;
     private Javascript      js;
 
     @FindBy(css = "#ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")
@@ -70,7 +69,6 @@ public class SizingTypeAndMediumSelectionPage {
     private String          fireCaseNoneCSS          = "#" + fireCaseNoneId;
 
     public SizingTypeAndMediumSelectionPage(WebDriver driver) {
-        this.driver = driver;
         js = new Javascript(driver);
     }
 
@@ -289,7 +287,7 @@ public class SizingTypeAndMediumSelectionPage {
     }
 
     /**
-     * TODO: Selects the given Back pressure outlet pipe Standard
+     * Selects the given Back pressure outlet pipe Standard
      * 
      * @param markClassMap
      * @param markCompMap
@@ -328,6 +326,12 @@ public class SizingTypeAndMediumSelectionPage {
         }
     }
 
+    /**
+     * Select Fire Case Radio Button
+     * 
+     * @param markClassMap
+     * @param markClassificationMap
+     */
     public void selectRadioFireCase(HashMap<Integer, String> markClassMap,
             HashMap<Integer, String> markClassificationMap) {
         for (Entry<Integer, String> mclacaEntry : markClassificationMap

@@ -6,13 +6,10 @@ import org.openqa.selenium.support.FindBy;
 
 public class MainPage {
     
-    private final WebDriver driver;
     @FindBy(css = "#ctl00_ProjectExplorerPlaceHolder_ProjectExplorerPageControl_ExplorerTreeView_item_0_expcol > img")
     private static WebElement projectExplorer;
 
     public MainPage(final WebDriver driver) {
-        this.driver = driver;
-
         // Check that we're on the right page.
         if (!"http://www.valvestar.com/UI/MainForm/MainForm.aspx"
                 .equals(driver.getCurrentUrl())) {

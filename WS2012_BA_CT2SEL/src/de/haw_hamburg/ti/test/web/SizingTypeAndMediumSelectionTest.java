@@ -150,14 +150,14 @@ public class SizingTypeAndMediumSelectionTest {
     @Test
     public void testSTAMS() {
 
-        printActualTestInfo();
+//        printActualTestInfo();
 
         stams.selectMedium(markClassMap);
-        wait(1);
+//        wait(1);
         stams.selectSizingStandard(markClassMap);
-        wait(1);
+//        wait(1);
         stams.checkCdtpBox(markClassMap, markClassificationMap);
-        wait(1);
+//        wait(1);
 
         if (markClassMap.containsValue("Two-phase flow")) {
             for (Entry<Integer, String> mcmEntry : markClassificationMap
@@ -172,16 +172,16 @@ public class SizingTypeAndMediumSelectionTest {
 
         if (!markClassMap.containsValue("Two-phase flow")) { 
             stams.checkReactionForce(markClassMap, markClassificationMap, markCompositionMap);
-            wait(1);
+//            wait(1);
             stams.checkNoise(markClassMap, markClassificationMap, markCompositionMap);
-            wait(1);
+//            wait(1);
             stams.selectRadioPressureDrop(markClassMap, markClassificationMap);
-            wait(1);
+//            wait(1);
             stams.selectRadioBackPressure(markClassMap, markClassificationMap);
-            wait(1);
+//            wait(1);
             if (markClassMap.containsValue("Gas")) {
                 stams.selectRadioFireCase(markClassMap, markClassificationMap);
-                wait(1);
+//                wait(1);
             }
         }
 
@@ -189,6 +189,11 @@ public class SizingTypeAndMediumSelectionTest {
         controlMenu.clickBackButton();
     }
 
+    /**
+     * Wait some <b>seconds</b>
+     * 
+     * @param seconds
+     */
     private void wait(int seconds) {
         try {
             Thread.sleep(seconds*1000);
@@ -202,7 +207,7 @@ public class SizingTypeAndMediumSelectionTest {
         driver.get(baseUrl
                 + "/UI/MainForm/Workspace/Sizing/NewSizingWizard.aspx");
         /**
-         * TODO: RESET PAGE?
+         * TODO: RESET PAGE AND STORE PAGE STATE
          */
     }
 
