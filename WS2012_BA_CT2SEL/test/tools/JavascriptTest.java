@@ -20,6 +20,8 @@ import de.haw_hamburg.ti.c2s.com.valvestar.ControlMenu;
 import de.haw_hamburg.ti.c2s.com.valvestar.LoginPage;
 import de.haw_hamburg.ti.tools.Javascript;
 
+
+
 public class JavascriptTest {
 
     private static WebDriver   driver;

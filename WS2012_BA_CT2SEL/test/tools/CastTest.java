@@ -8,6 +8,8 @@ import org.junit.Test;
 import de.haw_hamburg.ti.tools.Cast;
 
 
+
+
 public class CastTest {
 
     @Test

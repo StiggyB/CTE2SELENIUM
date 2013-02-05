@@ -17,6 +17,8 @@ import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 import de.haw_hamburg.ti.tools.Cast;
 import de.haw_hamburg.ti.tools.XMLParser;
 
+
+
 public class CTEParser {
 
     private TreeMap<Integer, CteObject> cteObjectTree  = new TreeMap<Integer, CteObject>();

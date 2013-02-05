@@ -1,5 +1,6 @@
 package de.haw_hamburg.ti.cte;
 
+import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
@@ -67,6 +72,7 @@ public class GUI {
 
     private CTE                      cte             = new CTE();
     private File                     chosenFile;
+    private ArrayList<File>          files           = new ArrayList<>();
 
     /**
      * Initialize the contents of the frame.
@@ -74,7 +80,7 @@ public class GUI {
     private void initialize() {
         frmAutomaticTestCase = new JFrame();
         frmAutomaticTestCase
-                .setTitle("Automatic Test Case Generation withClassification Trees for Web Testing");
+                .setTitle("Automatic Test Case Generation withClassification Trees for Web Testing" + getDate());
         frmAutomaticTestCase.setBounds(100, 100, 999, 666);
         frmAutomaticTestCase.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frmAutomaticTestCase.getContentPane().setLayout(null);
@@ -82,22 +88,41 @@ public class GUI {
         JButton btnStartJUnitTest = new JButton("Start Unit Test");
         btnStartJUnitTest.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                junit.textui.TestRunner.run(SizingTypeAndMediumSelectionTest
-                        .suite());
+
+                JFileChooser chooser = new JFileChooser();
+
+                chooser.setCurrentDirectory(new File("."));
+                chooser.setFileFilter(new FileNameExtensionFilter(null,
+                        "cttc"));
+
+                int choice = chooser.showOpenDialog(chooser);
+
+                if (choice != JFileChooser.APPROVE_OPTION)
+                    return;
+                chosenFile = chooser.getSelectedFile();
+
+                frmAutomaticTestCase.setCursor(Cursor
+                        .getPredefinedCursor(Cursor.WAIT_CURSOR));
+                junit.framework.Test t = SizingTypeAndMediumSelectionTest
+                        .suite(chosenFile);
+                junit.textui.TestRunner.run(t);
+                frmAutomaticTestCase.setCursor(Cursor.getDefaultCursor());
+                // progressBar.setValue(t.getProgress());
+
             }
         });
-        btnStartJUnitTest.setBounds(20, 272, 195, 23);
+        btnStartJUnitTest.setBounds(10, 298, 195, 23);
         frmAutomaticTestCase.getContentPane().add(btnStartJUnitTest);
 
         JScrollPane scrollPane_2 = new JScrollPane();
-        scrollPane_2.setBounds(10, 308, 959, 272);
+        scrollPane_2.setBounds(10, 334, 959, 246);
         frmAutomaticTestCase.getContentPane().add(scrollPane_2);
         txtrJunitoutput.setEditable(false);
 
         scrollPane_2.setViewportView(txtrJunitoutput);
 
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane.setBounds(10, 13, 410, 246);
+        tabbedPane.setBounds(10, 13, 410, 272);
         frmAutomaticTestCase.getContentPane().add(tabbedPane);
 
         JScrollPane scrollPane = new JScrollPane();
@@ -108,11 +133,12 @@ public class GUI {
                 if (arg0.getButton() == MouseEvent.BUTTON1
                         && !cte_listModel.isEmpty()) {
                     to_listModel.addElement(cte_list.getSelectedValue());
-                    cte_listModel.removeElement(cte_list.getSelectedValue());
                     try {
+                        System.out.println(cte_list.getSelectedIndex());
                         for (Iterator<CteTestCase> iterator = cte
-                                .getTestData(chosenFile).iterator(); iterator
-                                .hasNext();) {
+                                .getTestData(
+                                        files.get(cte_list.getSelectedIndex()))
+                                .iterator(); iterator.hasNext();) {
                             to_listModel
                                     .addElement(iterator.next().getName());
                         }
@@ -121,6 +147,8 @@ public class GUI {
                         e.printStackTrace();
                     }
                     cte.saveTestCasesToFile();
+                    files.remove(cte_list.getSelectedIndex());
+                    cte_listModel.removeElement(cte_list.getSelectedValue());
                 }
             }
         });
@@ -128,7 +156,7 @@ public class GUI {
         scrollPane.setViewportView(cte_list);
 
         JTabbedPane tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane_1.setBounds(432, 13, 537, 246);
+        tabbedPane_1.setBounds(432, 13, 537, 272);
         frmAutomaticTestCase.getContentPane().add(tabbedPane_1);
 
         JScrollPane scrollPane_1 = new JScrollPane();
@@ -143,6 +171,7 @@ public class GUI {
         });
 
         scrollPane_1.setViewportView(to_list);
+
         redirectSystemStreams();
 
         JMenuBar menuBar = new JMenuBar();
@@ -165,6 +194,8 @@ public class GUI {
                 if (choice != JFileChooser.APPROVE_OPTION)
                     return;
                 chosenFile = chooser.getSelectedFile();
+                files.add(chooser.getSelectedFile());
+
                 cte_listModel.addElement(chosenFile.getName());
             }
         });
@@ -250,5 +281,29 @@ public class GUI {
 
         System.setOut(new PrintStream(out, true));
         System.setErr(new PrintStream(out, true));
+    }
+    
+    private String getDate() {
+        //
+        // Create a DateFormatter object for displaying date information.
+        //
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        
+        //
+        // Get date and time information in milliseconds
+        //
+        long now = System.currentTimeMillis();
+
+        //
+        // Create a calendar object that will convert the date and time value
+        // in milliseconds to date. We use the setTimeInMillis() method of the
+        // Calendar object.
+        //
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(now);
+        
+        System.out.println(formatter.format(calendar.getTime()));
+        return formatter.format(calendar.getTime());
     }
 }

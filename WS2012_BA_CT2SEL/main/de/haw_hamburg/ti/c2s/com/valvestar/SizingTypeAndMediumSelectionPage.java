@@ -12,6 +12,8 @@ import org.openqa.selenium.support.ui.Select;
 
 import de.haw_hamburg.ti.tools.Javascript;
 
+
+
 public class SizingTypeAndMediumSelectionPage {
 
     private Javascript      js;

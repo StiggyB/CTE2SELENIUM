@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,12 +34,12 @@ import de.haw_hamburg.ti.c2s.com.valvestar.LoginPage;
 import de.haw_hamburg.ti.c2s.com.valvestar.SizingTypeAndMediumSelectionPage;
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 import de.haw_hamburg.ti.tools.Cast;
-import de.haw_hamburg.ti.tools.FileFinder;
 
 @RunWith(Parameterized.class)
 public class SizingTypeAndMediumSelectionTest {
 
     private static WebDriver                        driver;
+    private static File                             cttcfile;
     private Integer                                 id;
     private String                                  name;
     private Integer[]                               marks;
@@ -51,6 +53,7 @@ public class SizingTypeAndMediumSelectionTest {
      * SizingTypeAndMediumSelectionPage
      */
     private static SizingTypeAndMediumSelectionPage stams;
+    private static boolean externalCall = false;
 
     public SizingTypeAndMediumSelectionTest(Integer id, String name,
             Integer[] marks, HashMap<Integer, String> markClassMap,
@@ -64,35 +67,29 @@ public class SizingTypeAndMediumSelectionTest {
         this.markCompositionMap = markCompositionMap;
     }
 
-    /*
-     * public static void main(String[] args) { String path = new
-     * File(System.getProperty("user.dir")).getParent();
-     * System.out.println("Looking in path: " + path); FileFinder ff = new
-     * FileFinder(); List<File> files = ff.find(path, ".gif", ".jpg", ".tif");
-     * System.out.printf("Found %d file%s%n", files.size(), (files.size() == 1 ?
-     * "." : "s.")); for (File f : files)
-     * System.out.println(f.getAbsolutePath()); }
-     */
     private static ArrayList<CteTestCase> loadTestCaseObjectsFromFile() {
+        ObjectInputStream ois = null;
         try {
-            String path = new File(System.getProperty("user.dir"))
-                    .getParent();
-            FileFinder ff = new FileFinder();
-            List<File> files = ff.find(path, ".cttc");
-            // TODO: iterate over files and take only suitable .ctte now
-            // iteration takes last ctte
-            // ...
-            
-            for (File file : files) {
-                if (file.getName().endsWith(".cttc")) {
-                    FileInputStream fin = new FileInputStream(file);
-                    ObjectInputStream ois = new ObjectInputStream(fin);
-                    testcases = Cast.as(ArrayList.class, ois.readObject());
-                    ois.close();
-                }
+            if (!externalCall) {
+                cttcfile = new File("Sizing_Type_and_Medium_Selection.cttc");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            FileInputStream fin = new FileInputStream(cttcfile);
+            ois = new ObjectInputStream(fin);
+            testcases = Cast.as(ArrayList.class, ois.readObject());
+            // }
+            // }
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found...");
+        } catch (ClassNotFoundException e) {
+            System.err.println("Loading failed...");
+        } catch (IOException e) {
+            System.err.println("Read/Write error...");
+        } finally {
+            try {
+                ois.close();
+            } catch (IOException e) {
+                System.err.println("Read/Write error...");
+            }
         }
         return testcases;
     }
@@ -133,32 +130,31 @@ public class SizingTypeAndMediumSelectionTest {
 
     @Before
     public void setUp() throws Exception {
-
+        
     }
 
     @SuppressWarnings("unused")
     private void printActualTestInfo() {
         System.out.println(id + ": " + name);
-        System.out.println("Compositions: "
-                + markCompositionMap);
+        System.out.println("Compositions: " + markCompositionMap);
         System.out.println("Classifications: "
                 + markClassificationMap.toString());
         System.out.println("MarkClassMap: " + markClassMap.toString());
         System.out.println("Marks: " + Arrays.toString(marks));
         System.out.println("-----------------------------------------------");
     }
-    
+
     @Test
     public void testSTAMS() {
 
-//        printActualTestInfo();
+        // printActualTestInfo();
 
         stams.selectMedium(markClassMap);
-//        wait(1);
+        // wait(1);
         stams.selectSizingStandard(markClassMap);
-//        wait(1);
+        // wait(1);
         stams.checkCdtpBox(markClassMap, markClassificationMap);
-//        wait(1);
+        // wait(1);
 
         if (markClassMap.containsValue("Two-phase flow")) {
             for (Entry<Integer, String> mcmEntry : markClassificationMap
@@ -171,18 +167,20 @@ public class SizingTypeAndMediumSelectionTest {
             }
         }
 
-        if (!markClassMap.containsValue("Two-phase flow")) { 
-            stams.checkReactionForce(markClassMap, markClassificationMap, markCompositionMap);
-//            wait(1);
-            stams.checkNoise(markClassMap, markClassificationMap, markCompositionMap);
-//            wait(1);
+        if (!markClassMap.containsValue("Two-phase flow")) {
+            stams.checkReactionForce(markClassMap, markClassificationMap,
+                    markCompositionMap);
+            // wait(1);
+            stams.checkNoise(markClassMap, markClassificationMap,
+                    markCompositionMap);
+            // wait(1);
             stams.selectRadioPressureDrop(markClassMap, markClassificationMap);
-//            wait(1);
+            // wait(1);
             stams.selectRadioBackPressure(markClassMap, markClassificationMap);
-//            wait(1);
+            // wait(1);
             if (markClassMap.containsValue("Gas")) {
                 stams.selectRadioFireCase(markClassMap, markClassificationMap);
-//                wait(1);
+                // wait(1);
             }
         }
 
@@ -198,12 +196,12 @@ public class SizingTypeAndMediumSelectionTest {
     @SuppressWarnings("unused")
     private void wait(int seconds) {
         try {
-            Thread.sleep(seconds*1000);
+            Thread.sleep(seconds * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
-    
+
     @After
     public void tearDown() throws Exception {
         driver.get(baseUrl
@@ -218,7 +216,10 @@ public class SizingTypeAndMediumSelectionTest {
         driver.close();
     }
 
-    public static junit.framework.Test suite() {
+    public static junit.framework.Test suite(File file) {
+        cttcfile = file;
+        externalCall  = true;
         return new JUnit4TestAdapter(SizingTypeAndMediumSelectionTest.class);
     }
+
 }

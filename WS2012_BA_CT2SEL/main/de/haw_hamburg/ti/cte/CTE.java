@@ -20,6 +20,8 @@ import de.haw_hamburg.ti.cte.xmlObjects.Composition;
 import de.haw_hamburg.ti.cte.xmlObjects.CteObject;
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 
+
+
 public class CTE {
 
     private TreeMap<Integer, CteObject> cteObjectTree  = new TreeMap<Integer, CteObject>();
