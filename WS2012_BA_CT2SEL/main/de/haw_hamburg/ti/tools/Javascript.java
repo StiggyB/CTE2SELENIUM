@@ -18,13 +18,22 @@ public class Javascript {
      * @param id
      */
     public void uncheck(String id) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
         StringBuilder stringBuilder = new StringBuilder();
         // stringBuilder.append("var x = $(\'" + cssSelector + "\');");
         // stringBuilder.append("x.checked = false");
+        stringBuilder.append("if (document.getElementById(\"" + id
+                + "\") != null) {");
         stringBuilder.append("document.getElementById(\"" + id
-                + "\").checked = false;");
-        js.executeScript(stringBuilder.toString());
+                + "\").checked = false; return true; } else {"
+                + "return false}");
+        try {
+            if (!((boolean) jse.executeScript(stringBuilder.toString()))) {
+                uncheck(id);
+            }
+        } catch (WebDriverException e) {
+            uncheck(id);
+        }
     }
 
     /**
@@ -32,12 +41,20 @@ public class Javascript {
      * 
      * @param cssSelector
      */
-    public void click(String cssSelector) throws WebDriverException {
+    public void click(String cssSelector) {
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("var x = $(\'" + cssSelector + "\');");
-        stringBuilder.append("x.click();");
-        jse.executeScript(stringBuilder.toString());
+        stringBuilder.append("if (x != null) {");
+        stringBuilder.append("x.click(); return true; } else {"
+                + "return false;}");
+        try {
+            if (!((boolean) jse.executeScript(stringBuilder.toString()))) {
+                click(cssSelector);
+            }
+        } catch (WebDriverException e) {
+            click(cssSelector);
+        }
     }
 
     public void select(String listId, String value) {
@@ -52,15 +69,19 @@ public class Javascript {
         sb.append("while(obj[idx]) {");
         sb.append("if(obj[idx].value==\"" + value
                 + "\") obj[idx].setAttribute(\'selected\',true);");
-//                + "obj[idx].value = \"" + value + "\";");
-//                + "obj[idx].selected = true;");
+        // + "obj[idx].value = \"" + value + "\";");
+        // + "obj[idx].selected = true;");
         sb.append("else  obj[idx].removeAttribute(\'selected\');");
         sb.append("idx++;}");
         // Trigger onChange event
-        sb.append("$(\"#" + listId +"\").trigger(\"change\");");
+        sb.append("$(\"#" + listId + "\").trigger(\"change\");");
         // sb.append("for (var i = 0; i < dd.options.length; i++) { if (dd.options[i].text === \""
         // + value + "\") { dd.selectedIndex = i; break;}}");
-        jse.executeScript(sb.toString());
+        try {
+            jse.executeScript(sb.toString());
+        } catch (WebDriverException e) {
+            select(listId, value);
+        }
     }
 
 }

@@ -3,8 +3,9 @@ package de.haw_hamburg.ti.c2s.com.valvestar;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
-public class LoginPage {
+public class LoginPage extends ControlMenu {
 
     private final WebDriver driver;
     @FindBy(id = "ctl00_AgreementCheckBox")
@@ -17,6 +18,7 @@ public class LoginPage {
     private WebElement      submitButton;
 
     public LoginPage(WebDriver driver) {
+        super(driver);
         this.driver = driver;
 
         // Check that we're on the right page.
@@ -46,7 +48,7 @@ public class LoginPage {
         // method signature
         // for this method will mean that all tests that rely on this behaviour
         // won't compile.
-        return new MainPage(driver);
+        return PageFactory.initElements(driver, MainPage.class);
     }
 
 }

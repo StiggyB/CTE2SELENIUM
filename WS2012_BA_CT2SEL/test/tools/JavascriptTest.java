@@ -18,6 +18,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import de.haw_hamburg.ti.c2s.com.valvestar.ControlMenu;
 import de.haw_hamburg.ti.c2s.com.valvestar.LoginPage;
+import de.haw_hamburg.ti.c2s.com.valvestar.MainPage;
 import de.haw_hamburg.ti.tools.Javascript;
 
 
@@ -40,12 +41,9 @@ public class JavascriptTest {
         LoginPage loginPage = PageFactory.initElements(driver,
                 LoginPage.class);
 
-        loginPage.loginAs("BenjaminBurchard", "password");
+        MainPage mainPage = loginPage.loginAs("BenjaminBurchard", "password");
 
-        controlMenu = PageFactory.initElements(driver, ControlMenu.class);
-        controlMenu.openSizingMenu();
-        controlMenu.addNewSizing();
-        controlMenu.clickNextButton();
+        mainPage.addNewSizing().clickNextButton();
 
         js = new Javascript(driver);
         CdtpCheckBox = driver.findElement(By

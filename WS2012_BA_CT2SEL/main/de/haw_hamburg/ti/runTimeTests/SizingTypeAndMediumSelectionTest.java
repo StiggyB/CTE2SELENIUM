@@ -22,6 +22,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -29,8 +31,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 
-import de.haw_hamburg.ti.c2s.com.valvestar.ControlMenu;
+import de.haw_hamburg.ti.c2s.com.valvestar.HomePage;
 import de.haw_hamburg.ti.c2s.com.valvestar.LoginPage;
+import de.haw_hamburg.ti.c2s.com.valvestar.MainPage;
+import de.haw_hamburg.ti.c2s.com.valvestar.MediumSelectionPage;
+import de.haw_hamburg.ti.c2s.com.valvestar.ServiceConditionPage;
 import de.haw_hamburg.ti.c2s.com.valvestar.SizingTypeAndMediumSelectionPage;
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 import de.haw_hamburg.ti.tools.Cast;
@@ -38,22 +43,26 @@ import de.haw_hamburg.ti.tools.Cast;
 @RunWith(Parameterized.class)
 public class SizingTypeAndMediumSelectionTest {
 
-    private static WebDriver                        driver;
-    private static File                             cttcfile;
-    private Integer                                 id;
-    private String                                  name;
-    private Integer[]                               marks;
-    private HashMap<Integer, String>                markClassMap;
-    private HashMap<Integer, String>                markClassificationMap;
-    private HashMap<Integer, String>                markCompositionMap;
-    private static ArrayList<CteTestCase>           testcases;
-    private static String                           baseUrl;
-    private static ControlMenu                      controlMenu;
+    /**
+     * 
+     */
+    private static WebDriver                                   driver;
+    private static File                                        cttcfile;
+    private Integer                                            id;
+    private String                                             name;
+    private Integer[]                                          marks;
+    private HashMap<Integer, String>                           markClassMap;
+    private HashMap<Integer, String>                           markClassificationMap;
+    private HashMap<Integer, String>                           markCompositionMap;
+    private static ArrayList<SizingTypeAndMediumSelectionPage> stamsList    = new ArrayList<>();
+    private static ArrayList<CteTestCase>                      testcases;
+    private static String                                      baseUrl;
+    // private static ControlMenu controlMenu;
     /**
      * SizingTypeAndMediumSelectionPage
      */
-    private static SizingTypeAndMediumSelectionPage stams;
-    private static boolean externalCall = false;
+    private static SizingTypeAndMediumSelectionPage            stams;
+    private static boolean                                     externalCall = false;
 
     public SizingTypeAndMediumSelectionTest(Integer id, String name,
             Integer[] marks, HashMap<Integer, String> markClassMap,
@@ -76,8 +85,6 @@ public class SizingTypeAndMediumSelectionTest {
             FileInputStream fin = new FileInputStream(cttcfile);
             ois = new ObjectInputStream(fin);
             testcases = Cast.as(ArrayList.class, ois.readObject());
-            // }
-            // }
         } catch (FileNotFoundException e) {
             System.err.println("File not found...");
         } catch (ClassNotFoundException e) {
@@ -117,20 +124,12 @@ public class SizingTypeAndMediumSelectionTest {
         LoginPage loginPage = PageFactory.initElements(driver,
                 LoginPage.class);
 
-        loginPage.loginAs("BenjaminBurchard", "password");
-
-        controlMenu = PageFactory.initElements(driver, ControlMenu.class);
-        controlMenu.openSizingMenu();
-        controlMenu.addNewSizing();
-        controlMenu.clickNextButton();
-
-        stams = PageFactory.initElements(driver,
-                SizingTypeAndMediumSelectionPage.class);
+        MainPage mainPage = loginPage.loginAs("BenjaminBurchard", "password");
+        stams = mainPage.addNewSizing().clickNextButton();
     }
 
     @Before
     public void setUp() throws Exception {
-        
     }
 
     @SuppressWarnings("unused")
@@ -146,7 +145,7 @@ public class SizingTypeAndMediumSelectionTest {
 
     @Test
     public void testSTAMS() {
-
+        System.out.println(id + ": " + name);
         // printActualTestInfo();
 
         stams.selectMedium(markClassMap);
@@ -155,17 +154,6 @@ public class SizingTypeAndMediumSelectionTest {
         // wait(1);
         stams.checkCdtpBox(markClassMap, markClassificationMap);
         // wait(1);
-
-        if (markClassMap.containsValue("Two-phase flow")) {
-            for (Entry<Integer, String> mcmEntry : markClassificationMap
-                    .entrySet()) {
-                if (markClassMap.containsKey(mcmEntry.getKey())
-                        && mcmEntry.getValue().equals("Fire Case")) {
-                    assertTrue(markClassMap.get(mcmEntry.getKey())
-                            .equalsIgnoreCase("none"));
-                }
-            }
-        }
 
         if (!markClassMap.containsValue("Two-phase flow")) {
             stams.checkReactionForce(markClassMap, markClassificationMap,
@@ -182,10 +170,30 @@ public class SizingTypeAndMediumSelectionTest {
                 stams.selectRadioFireCase(markClassMap, markClassificationMap);
                 // wait(1);
             }
+        } else {
+            for (Entry<Integer, String> mcmEntry : markCompositionMap
+                    .entrySet()) {
+                if (mcmEntry.getValue().equalsIgnoreCase(
+                        "Additional calculations")
+                        || mcmEntry.getValue().equalsIgnoreCase("Noise")
+                        || mcmEntry.getValue().equalsIgnoreCase(
+                                "Reaction force")) {
+                    if (markClassMap.containsKey(mcmEntry.getKey())) {
+                        try {
+                            assertTrue(markClassMap.get(mcmEntry.getKey())
+                                    .equalsIgnoreCase("none")
+                                    || markClassMap.get(mcmEntry.getKey())
+                                            .equalsIgnoreCase("false"));
+                        } catch (AssertionError e) {
+                            // System.err.println("TestCase " + name
+                            // + " not accepted.");
+                            throw e;
+                        }
+                    }
+                }
+            }
         }
-
-        controlMenu.clickNextButton();
-        controlMenu.clickBackButton();
+        stamsList.add(stams);
     }
 
     /**
@@ -204,11 +212,28 @@ public class SizingTypeAndMediumSelectionTest {
 
     @After
     public void tearDown() throws Exception {
-        driver.get(baseUrl
-                + "/UI/MainForm/Workspace/Sizing/NewSizingWizard.aspx");
-        /**
-         * TODO: RESET PAGE AND STORE PAGE STATE
-         */
+        HomePage hp = stams.clickNextButton();
+        org.junit.runner.JUnitCore jc = new JUnitCore();
+        Result r = new Result();
+        if (hp instanceof ServiceConditionPage) {
+            System.out.println("scp");
+            ServiceConditionPage scp = (ServiceConditionPage) hp;
+            r = jc.run(ServiceCondtitionTest.suite(scp, stams.getMedium()));
+            stams = (SizingTypeAndMediumSelectionPage) scp.clickBackButton();
+        } else {
+            System.out.println("msp");
+            MediumSelectionPage msp = (MediumSelectionPage) hp;
+            r = jc.run(MediumSelectionTest.suite(msp, stams
+                    .getMedium()));
+            // junit.textui.TestRunner.run(MediumSelectionTest.suite(msp,
+            // stams.getMedium()));
+            stams = (SizingTypeAndMediumSelectionPage) msp.clickBackButton();
+        }
+        System.out.println("nof: " + r.getFailureCount() + " nor: "
+                + r.getRunCount() + " time: " + r.getRunTime());
+        System.out.println(this.getClass().getSimpleName()
+                + " -> deleting all cookies");
+        driver.manage().deleteAllCookies();
     }
 
     @AfterClass
@@ -218,7 +243,7 @@ public class SizingTypeAndMediumSelectionTest {
 
     public static junit.framework.Test suite(File file) {
         cttcfile = file;
-        externalCall  = true;
+        externalCall = true;
         return new JUnit4TestAdapter(SizingTypeAndMediumSelectionTest.class);
     }
 

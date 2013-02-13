@@ -71,7 +71,7 @@ public class GUI {
     private JTextArea                txtrJunitoutput = new JTextArea();
 
     private CTE                      cte             = new CTE();
-    private File                     chosenFile;
+//    private File                     chosenFile;
     private ArrayList<File>          files           = new ArrayList<>();
 
     /**
@@ -89,17 +89,7 @@ public class GUI {
         btnStartJUnitTest.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
 
-                JFileChooser chooser = new JFileChooser();
-
-                chooser.setCurrentDirectory(new File("."));
-                chooser.setFileFilter(new FileNameExtensionFilter(null,
-                        "cttc"));
-
-                int choice = chooser.showOpenDialog(chooser);
-
-                if (choice != JFileChooser.APPROVE_OPTION)
-                    return;
-                chosenFile = chooser.getSelectedFile();
+                File chosenFile = chooseFile("cttc");
 
                 frmAutomaticTestCase.setCursor(Cursor
                         .getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -132,12 +122,14 @@ public class GUI {
             public void mouseClicked(MouseEvent arg0) {
                 if (arg0.getButton() == MouseEvent.BUTTON1
                         && !cte_listModel.isEmpty()) {
+                    frmAutomaticTestCase.setCursor(Cursor
+                            .getPredefinedCursor(Cursor.WAIT_CURSOR));
                     to_listModel.addElement(cte_list.getSelectedValue());
                     try {
-                        System.out.println(cte_list.getSelectedIndex());
-                        for (Iterator<CteTestCase> iterator = cte
-                                .getTestData(
-                                        files.get(cte_list.getSelectedIndex()))
+                        ArrayList<CteTestCase> ctes = cte.getTestData(files.get(cte_list.getSelectedIndex()));
+                        TestHandler.addList(ctes);
+                        
+                        for (Iterator<CteTestCase> iterator = ctes
                                 .iterator(); iterator.hasNext();) {
                             to_listModel
                                     .addElement(iterator.next().getName());
@@ -149,6 +141,7 @@ public class GUI {
                     cte.saveTestCasesToFile();
                     files.remove(cte_list.getSelectedIndex());
                     cte_listModel.removeElement(cte_list.getSelectedValue());
+                    frmAutomaticTestCase.setCursor(Cursor.getDefaultCursor());
                 }
             }
         });
@@ -184,17 +177,8 @@ public class GUI {
         mntmOpencteFile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
 
-                JFileChooser chooser = new JFileChooser();
-
-                chooser.setCurrentDirectory(new File("."));
-                chooser.setFileFilter(new FileNameExtensionFilter(null, "cte"));
-
-                int choice = chooser.showOpenDialog(chooser);
-
-                if (choice != JFileChooser.APPROVE_OPTION)
-                    return;
-                chosenFile = chooser.getSelectedFile();
-                files.add(chooser.getSelectedFile());
+                File chosenFile = chooseFile("cte");
+                files.add(chosenFile);
 
                 cte_listModel.addElement(chosenFile.getName());
             }
@@ -305,5 +289,24 @@ public class GUI {
         
         System.out.println(formatter.format(calendar.getTime()));
         return formatter.format(calendar.getTime());
+    }
+
+    /**
+     * @param extension 
+     * @return 
+     * 
+     */
+    private File chooseFile(String extension) {
+        JFileChooser chooser = new JFileChooser();
+
+        chooser.setCurrentDirectory(new File("."));
+        chooser.setFileFilter(new FileNameExtensionFilter(null,
+                extension));
+
+        int choice = chooser.showOpenDialog(chooser);
+
+        if (choice != JFileChooser.APPROVE_OPTION)
+            return null;
+        return chooser.getSelectedFile();
     }
 }

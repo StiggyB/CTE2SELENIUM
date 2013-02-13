@@ -159,29 +159,6 @@ public class CTE {
                                 entrytc.getKey().setCompositionOfMark(
                                         entrycl.getValue()[j],
                                         entryco.getKey().getName());
-                                // System.out
-                                // .println("["
-                                // + entrytc
-                                // .getKey()
-                                // .getCompositionOfMark(
-                                // entrycl.getValue()[j])
-                                // + " (id="
-                                // + entryco.getKey().getId()
-                                // + ")"
-                                // + entrytc
-                                // .getKey()
-                                // .getClassificationOfMark(
-                                // entrycl.getValue()[j])
-                                // + " (id="
-                                // + entrycl.getKey().getId()
-                                // + ")"
-                                // + entrytc
-                                // .getKey()
-                                // .getClassOfMark(
-                                // entrycl.getValue()[j])
-                                // + " (id="
-                                // + entrytc.getValue()[i] + ")"
-                                // + "]");
                             }
                         }
                     }
