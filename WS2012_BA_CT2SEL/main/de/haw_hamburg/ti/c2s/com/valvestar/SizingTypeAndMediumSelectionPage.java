@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.CacheLookup;
@@ -20,6 +19,9 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
     private Javascript js;
     private WebDriver driver;
 
+    /**
+     * TODO ALL THIS IN PROPERTIES CLASS?
+     */
     @FindBy(css = "#ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList")
     @CacheLookup
     private WebElement mediumDropDownList;

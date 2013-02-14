@@ -39,30 +39,26 @@ import de.haw_hamburg.ti.c2s.com.valvestar.ServiceConditionPage;
 import de.haw_hamburg.ti.c2s.com.valvestar.SizingTypeAndMediumSelectionPage;
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 import de.haw_hamburg.ti.tools.Cast;
+import de.haw_hamburg.ti.tools.FileHandler;
 
 @RunWith(Parameterized.class)
 public class SizingTypeAndMediumSelectionTest {
 
     /**
-     * 
+     * TODO WEBDRIVER SINGLETON OBJECT
      */
-    private static WebDriver                                   driver;
-    private static File                                        cttcfile;
-    private Integer                                            id;
-    private String                                             name;
-    private Integer[]                                          marks;
-    private HashMap<Integer, String>                           markClassMap;
-    private HashMap<Integer, String>                           markClassificationMap;
-    private HashMap<Integer, String>                           markCompositionMap;
-    private static ArrayList<SizingTypeAndMediumSelectionPage> stamsList    = new ArrayList<>();
-    private static ArrayList<CteTestCase>                      testcases;
-    private static String                                      baseUrl;
-    // private static ControlMenu controlMenu;
+    private static WebDriver                        driver;
+    private static File                             cttcfile;
+    private Integer                                 id;
+    private String                                  name;
+    private HashMap<Integer, String>                markClassMap;
+    private HashMap<Integer, String>                markClassificationMap;
+    private HashMap<Integer, String>                markCompositionMap;
     /**
      * SizingTypeAndMediumSelectionPage
      */
-    private static SizingTypeAndMediumSelectionPage            stams;
-    private static boolean                                     externalCall = false;
+    private static SizingTypeAndMediumSelectionPage stams;
+    private static boolean                          externalCall = false;
 
     public SizingTypeAndMediumSelectionTest(Integer id, String name,
             Integer[] marks, HashMap<Integer, String> markClassMap,
@@ -70,7 +66,6 @@ public class SizingTypeAndMediumSelectionTest {
             HashMap<Integer, String> markCompositionMap) {
         this.name = name;
         this.id = id;
-        this.marks = marks;
         this.markClassMap = markClassMap;
         this.markClassificationMap = markClassificationMap;
         this.markCompositionMap = markCompositionMap;
@@ -78,6 +73,7 @@ public class SizingTypeAndMediumSelectionTest {
 
     private static ArrayList<CteTestCase> loadTestCaseObjectsFromFile() {
         ObjectInputStream ois = null;
+        ArrayList<CteTestCase> testcases = new ArrayList<>();
         try {
             if (!externalCall) {
                 cttcfile = new File("Sizing_Type_and_Medium_Selection.cttc");
@@ -103,7 +99,11 @@ public class SizingTypeAndMediumSelectionTest {
 
     @Parameters(name = "{index}: {1}")
     public static List<Object[]> data() {
-        ArrayList<CteTestCase> tcs = loadTestCaseObjectsFromFile();
+        if (!externalCall) {
+            cttcfile = new File("Sizing_Type_and_Medium_Section.cttc");
+        }
+        ArrayList<CteTestCase> tcs = Cast.as(ArrayList.class, FileHandler
+                .loadObjectsFromFile(cttcfile));
         Object[][] data = new Object[tcs.size()][tcs.size()];
         int i = 0;
         for (Iterator<CteTestCase> iterator = tcs.iterator(); iterator
@@ -117,9 +117,10 @@ public class SizingTypeAndMediumSelectionTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         driver = new FirefoxDriver();
-        baseUrl = "http://www.valvestar.com/";
+        String baseUrl = "http://www.valvestar.com/";
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         driver.get(baseUrl);
+        driver.manage().deleteAllCookies();
 
         LoginPage loginPage = PageFactory.initElements(driver,
                 LoginPage.class);
@@ -139,7 +140,6 @@ public class SizingTypeAndMediumSelectionTest {
         System.out.println("Classifications: "
                 + markClassificationMap.toString());
         System.out.println("MarkClassMap: " + markClassMap.toString());
-        System.out.println("Marks: " + Arrays.toString(marks));
         System.out.println("-----------------------------------------------");
     }
 
@@ -193,7 +193,6 @@ public class SizingTypeAndMediumSelectionTest {
                 }
             }
         }
-        stamsList.add(stams);
     }
 
     /**
@@ -210,6 +209,11 @@ public class SizingTypeAndMediumSelectionTest {
         }
     }
 
+    /**
+     * TODO STH WITH CLICK BACK AND FORTH GOING WRONG
+     * 
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         HomePage hp = stams.clickNextButton();
@@ -218,22 +222,25 @@ public class SizingTypeAndMediumSelectionTest {
         if (hp instanceof ServiceConditionPage) {
             System.out.println("scp");
             ServiceConditionPage scp = (ServiceConditionPage) hp;
-            r = jc.run(ServiceCondtitionTest.suite(scp, stams.getMedium()));
+            scp.setMedium(stams.getMedium());
+            r = jc.run(ServiceCondtitionTest.suite(scp));
             stams = (SizingTypeAndMediumSelectionPage) scp.clickBackButton();
         } else {
             System.out.println("msp");
             MediumSelectionPage msp = (MediumSelectionPage) hp;
-            r = jc.run(MediumSelectionTest.suite(msp, stams
-                    .getMedium()));
+            msp.setMedium(stams.getMedium());
+            r = jc.run(MediumSelectionTest.suite(msp));
             // junit.textui.TestRunner.run(MediumSelectionTest.suite(msp,
             // stams.getMedium()));
-            stams = (SizingTypeAndMediumSelectionPage) msp.clickBackButton();
+            stams = msp.clickBackButton();
         }
-        System.out.println("nof: " + r.getFailureCount() + " nor: "
-                + r.getRunCount() + " time: " + r.getRunTime());
-        System.out.println(this.getClass().getSimpleName()
-                + " -> deleting all cookies");
-        driver.manage().deleteAllCookies();
+        if (r.getFailureCount() > 0) {
+            System.out.println(this.getClass().getSimpleName() + "->nof: "
+                    + r.getFailureCount() + " nor: " + r.getRunCount()
+                    + " time: " + r.getRunTime() + " failuredescr.: "
+                    + r.getFailures().get(0).getTrace() + " message: "
+                    + r.getFailures().get(0).getMessage());
+        }
     }
 
     @AfterClass
