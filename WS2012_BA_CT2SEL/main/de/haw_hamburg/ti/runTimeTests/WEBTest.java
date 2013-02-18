@@ -16,7 +16,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class WEBTest extends TestCase {
 	WebDriver driver = new FirefoxDriver();
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		driver.get("http://www.fcmuckefuck.de");
 	}
@@ -42,14 +43,16 @@ public class WEBTest extends TestCase {
 		driver.findElement(By.name("loginPassword")).submit();
 
 		new WebDriverWait(driver, 10).until(new ExpectedCondition<Boolean>() {
-			public Boolean apply(WebDriver d) {
+			@Override
+            public Boolean apply(WebDriver d) {
 				return d.getTitle().equalsIgnoreCase("Startseite - FC Muckefuck Bergedorf ..::Freizeitfuﬂball::..");
 			}
 		});
 		assertEquals("Angemeldet als Benny.", driver.findElement(By.id("userNote")).getText());
 	}
 	
-	@After
+	@Override
+    @After
 	public void tearDown() {
 		driver.quit();
 	}

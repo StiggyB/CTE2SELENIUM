@@ -84,4 +84,39 @@ public class Javascript {
         }
     }
 
+    public void clear(String id) {
+        System.out.println(this.getClass().getSimpleName() + "-> clear:" + id);
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
+        StringBuilder sb = new StringBuilder();
+        sb.append("document.getElementById(\"" + id + "\").value = \"\";");
+        try {
+            jse.executeScript(sb.toString());
+        } catch (WebDriverException e) {
+            e.printStackTrace();
+            System.out.println("clear again and wait 2 sec");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            clear(id);
+        }
+    }
+
+    public void input(String id, String text) {
+        System.out.println(this.getClass().getSimpleName() + "-> input: " + id);
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
+        StringBuilder sb = new StringBuilder();
+        sb.append(" var TheTextBox = document.getElementById(\"" + id
+                + "\");" + " TheTextBox.value = TheTextBox.value + \"" + text
+                + "\";");
+        try {
+            jse.executeScript(sb.toString());
+        } catch (WebDriverException e) {
+            e.printStackTrace();
+            input(id, text);
+        }
+    }
+
 }

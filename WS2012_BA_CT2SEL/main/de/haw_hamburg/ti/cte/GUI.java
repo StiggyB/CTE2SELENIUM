@@ -28,6 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -44,6 +45,7 @@ public class GUI {
      */
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 try {
                     GUI window = new GUI();
@@ -87,6 +89,7 @@ public class GUI {
 
         JButton btnStartJUnitTest = new JButton("Start Unit Test");
         btnStartJUnitTest.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
 
                 File chosenFile = chooseFile("cttc");
@@ -111,7 +114,7 @@ public class GUI {
 
         scrollPane_2.setViewportView(txtrJunitoutput);
 
-        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
         tabbedPane.setBounds(10, 13, 410, 272);
         frmAutomaticTestCase.getContentPane().add(tabbedPane);
 
@@ -148,7 +151,7 @@ public class GUI {
 
         scrollPane.setViewportView(cte_list);
 
-        JTabbedPane tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
+        JTabbedPane tabbedPane_1 = new JTabbedPane(SwingConstants.TOP);
         tabbedPane_1.setBounds(432, 13, 537, 272);
         frmAutomaticTestCase.getContentPane().add(tabbedPane_1);
 
@@ -175,6 +178,7 @@ public class GUI {
 
         JMenuItem mntmOpencteFile = new JMenuItem("Open .cte File");
         mntmOpencteFile.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
 
                 File chosenFile = chooseFile("cte");
@@ -206,6 +210,7 @@ public class GUI {
 
         JMenuItem mntmExit = new JMenuItem("Exit");
         mntmExit.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 frmAutomaticTestCase.dispose();
             }
@@ -239,6 +244,7 @@ public class GUI {
 
     private void updateTextArea(final String text) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 txtrJunitoutput.append(text);
             }

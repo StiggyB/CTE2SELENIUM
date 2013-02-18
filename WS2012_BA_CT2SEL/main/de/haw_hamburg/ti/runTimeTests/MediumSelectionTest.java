@@ -20,27 +20,18 @@ public class MediumSelectionTest {
 
     @Before
     public void setUp() throws Exception {
-        System.out.println(this.getClass().getSimpleName() + "-> setting up");
         msp.clickSelectButton();
-        System.out.println(this.getClass().getSimpleName()
-                + "-> clicked select");
     }
 
     @Test
     public void testMSP() {
-        System.out.print(this.getClass().getSimpleName()
-                + "-> assert right page");
         assertThat(msp, isA(MediumSelectionPage.class));
-        System.out.println("-> did work");
     }
 
     @After
     public void tearDown() throws Exception {
-        System.out.println(this.getClass().getSimpleName() + "-> tear down");
-        ServiceConditionPage scp = msp.clickNextButton();
+        ServiceConditionPage scp = (ServiceConditionPage) msp.clickNextButton();
         scp.setMedium(msp.getMedium());
-        System.out.println(this.getClass().getSimpleName()
-                + "-> clicked next");
         org.junit.runner.JUnitCore jc = new JUnitCore();
         Result r = new Result();
         r = jc.run(ServiceCondtitionTest.suite(scp));
@@ -52,8 +43,6 @@ public class MediumSelectionTest {
                     + r.getFailures().get(0).getMessage());
         }
         msp = (MediumSelectionPage) scp.clickBackButton();
-        System.out.println(this.getClass().getSimpleName()
-                + "-> clicked back");
     }
 
     public static junit.framework.Test suite(MediumSelectionPage msp) {

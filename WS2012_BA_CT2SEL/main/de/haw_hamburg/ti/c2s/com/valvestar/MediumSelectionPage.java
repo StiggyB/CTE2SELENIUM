@@ -8,12 +8,12 @@ import de.haw_hamburg.ti.tools.Javascript;
 
 public class MediumSelectionPage extends ControlMenu {
 
-    private WebDriver driver;
+    private WebDriver  driver;
     private Javascript jscript;
-    private String medium;
-    private String selectMediumBtnId = "ctl00_WorkspacePlaceHolder_ctl00_DbMediumSelectButton";
-    private String selectMediumBtnCSS = "#" + selectMediumBtnId;
-    
+    private String     medium;
+    private String     selectMediumBtnId  = "ctl00_WorkspacePlaceHolder_ctl00_DbMediumSelectButton";
+    private String     selectMediumBtnCSS = "#" + selectMediumBtnId;
+    private boolean    fireCase           = false;
 
     public MediumSelectionPage(WebDriver driver) {
         super(driver);
@@ -30,11 +30,15 @@ public class MediumSelectionPage extends ControlMenu {
         jscript.click(selectMediumBtnCSS);
         return this;
     }
-    
+
     @Override
-    public ServiceConditionPage clickNextButton() {
+    public HomePage clickNextButton() {
         super.clickNextButton();
-        return PageFactory.initElements(driver, ServiceConditionPage.class);
+        if (fireCase) {
+            return PageFactory.initElements(driver, ExternalFirePage.class);
+        } else {
+            return PageFactory.initElements(driver, ServiceConditionPage.class);
+        }
     }
 
     @Override
@@ -52,7 +56,16 @@ public class MediumSelectionPage extends ControlMenu {
         this.medium = medium;
     }
 
+    public boolean getFireCase() {
+        return fireCase;
+    }
+    
+    public void setFireCase(boolean fireCase) {
+        this.fireCase = fireCase;
+    }
+    
     public String getPageName() {
-        return driver.findElement(By.id("ctl00_WorkspacePlaceHolder_PageNameLabel")).getText();
+        return driver.findElement(
+                By.id("ctl00_WorkspacePlaceHolder_PageNameLabel")).getText();
     }
 }

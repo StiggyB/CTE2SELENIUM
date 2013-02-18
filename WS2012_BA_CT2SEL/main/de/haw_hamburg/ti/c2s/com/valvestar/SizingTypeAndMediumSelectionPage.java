@@ -17,7 +17,7 @@ import de.haw_hamburg.ti.tools.Javascript;
 public class SizingTypeAndMediumSelectionPage extends ControlMenu {
 
     private Javascript js;
-    private WebDriver driver;
+    private WebDriver  driver;
 
     /**
      * TODO ALL THIS IN PROPERTIES CLASS?
@@ -36,7 +36,7 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
     private WebElement CdtpCheckBox;
     private String     CdtpCheckBoxId           = "ctl00_WorkspacePlaceHolder_ctl00_CdtpCheckBox";
     private String     CdtpCheckBoxCSS          = "#" + CdtpCheckBoxId;
-    boolean cdtpChecked = false;
+    boolean            cdtpChecked              = false;
 
     @FindBy(id = "ctl00_WorkspacePlaceHolder_ctl00_ReactionForceAd2000A2")
     private WebElement reactionForceAD2000A2;
@@ -70,8 +70,9 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
     private String     fireCaseApi520CSS        = "#" + fireCaseApi520Id;
     private String     fireCaseNoneId           = "ctl00_WorkspacePlaceHolder_ctl00_FirecaseNone";
     private String     fireCaseNoneCSS          = "#" + fireCaseNoneId;
-    
-    private String medium;
+
+    private String     medium                   = "";
+    private boolean    fireCase                 = false;
 
     public SizingTypeAndMediumSelectionPage(WebDriver driver) {
         super(driver);
@@ -87,7 +88,8 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
      * @param map
      *            - the HashMap in which the Medium is stored
      */
-    public SizingTypeAndMediumSelectionPage selectMedium(HashMap<Integer, String> map) {
+    public SizingTypeAndMediumSelectionPage selectMedium(
+            HashMap<Integer, String> map) {
         List<WebElement> mediumDropDownListOptions = new ArrayList<>();
         mediumDropDownListOptions = new Select(mediumDropDownList)
                 .getOptions();
@@ -327,6 +329,7 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
                         if (mclEntry.getValue().equalsIgnoreCase("API520")) {
                             js.uncheck(fireCaseApi520Id);
                             js.click(fireCaseApi520CSS);
+                            fireCase = true;
                         } else if (mclEntry.getValue().equalsIgnoreCase(
                                 "None")) {
                             js.uncheck(fireCaseNoneId);
@@ -338,23 +341,29 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
         }
     }
 
+    @Override
     public HomePage clickNextButton() {
         super.clickNextButton();
         if (medium.matches(".*[Ss]team")) {
-            return PageFactory.initElements(driver, ServiceConditionPage.class);
+            return PageFactory.initElements(driver,
+                    ServiceConditionPage.class);
         } else {
-            return PageFactory.initElements(driver, MediumSelectionPage.class);
+            return PageFactory
+                    .initElements(driver, MediumSelectionPage.class);
         }
     }
-    
+
     public boolean getCdtpBoxState() {
         System.out.println("trying to get state of cdtp...");
         return CdtpCheckBox.isSelected();
     }
-    
+
     public String getMedium() {
         return medium;
     }
-    
-    
+
+    public boolean getFireCase() {
+        return fireCase;
+    }
+
 }

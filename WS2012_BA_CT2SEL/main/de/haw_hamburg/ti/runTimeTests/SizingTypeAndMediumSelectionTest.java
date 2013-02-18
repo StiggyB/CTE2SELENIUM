@@ -3,10 +3,6 @@ package de.haw_hamburg.ti.runTimeTests;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,32 +65,6 @@ public class SizingTypeAndMediumSelectionTest {
         this.markClassMap = markClassMap;
         this.markClassificationMap = markClassificationMap;
         this.markCompositionMap = markCompositionMap;
-    }
-
-    private static ArrayList<CteTestCase> loadTestCaseObjectsFromFile() {
-        ObjectInputStream ois = null;
-        ArrayList<CteTestCase> testcases = new ArrayList<>();
-        try {
-            if (!externalCall) {
-                cttcfile = new File("Sizing_Type_and_Medium_Selection.cttc");
-            }
-            FileInputStream fin = new FileInputStream(cttcfile);
-            ois = new ObjectInputStream(fin);
-            testcases = Cast.as(ArrayList.class, ois.readObject());
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found...");
-        } catch (ClassNotFoundException e) {
-            System.err.println("Loading failed...");
-        } catch (IOException e) {
-            System.err.println("Read/Write error...");
-        } finally {
-            try {
-                ois.close();
-            } catch (IOException e) {
-                System.err.println("Read/Write error...");
-            }
-        }
-        return testcases;
     }
 
     @Parameters(name = "{index}: {1}")
@@ -196,39 +166,31 @@ public class SizingTypeAndMediumSelectionTest {
     }
 
     /**
-     * Wait some <b>seconds</b>
-     * 
-     * @param seconds
-     */
-    @SuppressWarnings("unused")
-    private void wait(int seconds) {
-        try {
-            Thread.sleep(seconds * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * TODO STH WITH CLICK BACK AND FORTH GOING WRONG
      * 
      * @throws Exception
      */
     @After
     public void tearDown() throws Exception {
-        HomePage hp = stams.clickNextButton();
         org.junit.runner.JUnitCore jc = new JUnitCore();
         Result r = new Result();
+        System.out.println("Next auf STAMS");
+        Thread.sleep(2000);
+        HomePage hp = stams.clickNextButton();
         if (hp instanceof ServiceConditionPage) {
             System.out.println("scp");
             ServiceConditionPage scp = (ServiceConditionPage) hp;
             scp.setMedium(stams.getMedium());
+            scp.setFireCase(stams.getFireCase());
             r = jc.run(ServiceCondtitionTest.suite(scp));
+            System.out.println("Back auf STAMS");
+            Thread.sleep(2000);
             stams = (SizingTypeAndMediumSelectionPage) scp.clickBackButton();
         } else {
             System.out.println("msp");
             MediumSelectionPage msp = (MediumSelectionPage) hp;
             msp.setMedium(stams.getMedium());
+            msp.setFireCase(stams.getFireCase());
             r = jc.run(MediumSelectionTest.suite(msp));
             // junit.textui.TestRunner.run(MediumSelectionTest.suite(msp,
             // stams.getMedium()));

@@ -10,6 +10,7 @@ import java.util.List;
 import junit.framework.JUnit4TestAdapter;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +58,17 @@ public class ServiceCondtitionTest {
             data[i] = iterator.next().asArray();
             i++;
         }
+        System.out.println("Parameter method called");
         return Arrays.asList(data);
+    }
+
+    private void printActualTestInfo() {
+        System.out.println(id + ": " + name);
+        System.out.println("Compositions: " + markCompositionMap);
+        System.out.println("Classifications: "
+                + markClassificationMap.toString());
+        System.out.println("MarkClassMap: " + markClassMap.toString());
+        System.out.println("-----------------------------------------------");
     }
 
     @Before
@@ -67,15 +78,27 @@ public class ServiceCondtitionTest {
 
     @Test
     public void test() {
-        System.out.println(this.getClass().getSimpleName()
-                + "-> nothin to do here...");
+        System.out.println(this.getClass().getSimpleName() + "-> test");
+        printActualTestInfo();
+        scp.inputMaxAllowableWorkingPresure();
+        scp.inputSetPressure();
+        scp.inputSuperimposedBackPressure();
+        scp.inputOverpressure();
+        scp.clickCalculate();
     }
 
     @After
     public void tearDown() throws Exception {
-        scp.clickNextButton();
         System.out.println(this.getClass().getSimpleName() + "-> tear down");
-        scp.clickBackButton();
+        System.out.println(this.getClass().getSimpleName() + "-> click next+back");
+        scp.clickNextButton().clickNextButton();
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+        System.out.println("# " + ServiceCondtitionTest.class.getSimpleName()
+                + "-> TEAR DOWN AFTER CLASS e.g. SCP TEST ENDED ##########");
+         scp.clickBackButton();
     }
 
     public static junit.framework.Test suite(ServiceConditionPage scp) {

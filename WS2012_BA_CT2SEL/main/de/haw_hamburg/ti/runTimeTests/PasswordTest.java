@@ -88,6 +88,7 @@ public class PasswordTest {
 
             new WebDriverWait(driver, 10)
                     .until(new ExpectedCondition<Boolean>() {
+                        @Override
                         public Boolean apply(WebDriver d) {
                             return d.getTitle()
                                     .equalsIgnoreCase(
@@ -103,6 +104,7 @@ public class PasswordTest {
 
             new WebDriverWait(driver, 10)
                     .until(new ExpectedCondition<Boolean>() {
+                        @Override
                         public Boolean apply(WebDriver d) {
                             return d.getTitle()
                                     .equalsIgnoreCase(

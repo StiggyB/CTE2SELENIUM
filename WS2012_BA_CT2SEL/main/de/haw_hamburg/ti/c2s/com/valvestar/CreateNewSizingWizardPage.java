@@ -12,11 +12,13 @@ public class CreateNewSizingWizardPage extends ControlMenu {
         this.driver = driver;
     }
 
+    @Override
     public SizingTypeAndMediumSelectionPage clickNextButton() {
         super.clickNextButton();
         return PageFactory.initElements(driver, SizingTypeAndMediumSelectionPage.class);
     }
     
+    @Override
     public MainPage clickBackButton() {
         super.clickBackButton();
         return PageFactory.initElements(driver, MainPage.class);

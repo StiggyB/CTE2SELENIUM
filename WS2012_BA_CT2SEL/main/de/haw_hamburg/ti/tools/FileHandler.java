@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 public abstract class FileHandler {
 
+    private FileHandler() {}
+    
     public static ArrayList<Object> loadObjectsFromFile(File f) {
         ObjectInputStream ois = null;
         ArrayList<Object> objects = new ArrayList<>();
