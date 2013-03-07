@@ -39,9 +39,9 @@ public class Composition extends CteObject {
     
     @Override
     public String toString() {
-        return "Composition [getId()=" + getId() + ", getName()=" + getName()
-                + ", childs=[Ids=" + Arrays.toString(getChildIds())
-                + ", names=" + Arrays.toString(getChildNames()) + "]";
+        return "Composition [getId()=" + getId() + ", getName()=" + getName();
+//                + ", childs=[Ids=" + Arrays.toString(getChildIds())
+//                + ", names=" + Arrays.toString(getChildNames()) + "]";
     }
 
 }

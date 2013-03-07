@@ -3,6 +3,7 @@ package de.haw_hamburg.ti.c2s.com.valvestar;
 import org.apache.commons.logging.impl.Log4JLogger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.CacheLookup;
 import org.openqa.selenium.support.FindBy;
 
 import de.haw_hamburg.ti.tools.Javascript;
@@ -17,10 +18,13 @@ import de.haw_hamburg.ti.tools.Javascript;
 public abstract class ControlMenu implements HomePage {
 
     @FindBy(css = "#ctl00_WorkspacePlaceHolder_NextButton")
+    @CacheLookup
     private WebElement       nextButton;
     @FindBy(id = "ctl00_WorkspacePlaceHolder_CancelButton")
+    @CacheLookup
     private WebElement       cancelButton;
     @FindBy(id = "ctl00_WorkspacePlaceHolder_BackButton")
+    @CacheLookup
     private WebElement       backButton;
 
     private final Javascript jscript;
@@ -53,19 +57,35 @@ public abstract class ControlMenu implements HomePage {
      */
     @Override
     public HomePage clickBackButton() {
-        // try {
         jscript.click("#ctl00_WorkspacePlaceHolder_BackButton");
-        // } catch (WebDriverException wde) {
-        // logger.error("Web Driver Exception");
-        // }
         return this;
     }
 
     /**
      * Cancel.
      */
-    public void clickCancelButton() {
+    public HomePage clickCancelButton() {
         jscript.click("#ctl00_WorkspacePlaceHolder_CancelButton");
+        return this;
+    }
+    
+    public HomePage clickFinishButton() {
+        jscript.click("#ctl00_WorkspacePlaceHolder_UpperFinishButton");
+        return this;
+    }
+    
+    /**
+     * @return the nextButton
+     */
+    protected WebElement getNextButton() {
+        return nextButton;
     }
 
+    /**
+     * @param nextButton the nextButton to set
+     */
+    protected void setNextButton(WebElement nextButton) {
+        this.nextButton = nextButton;
+    }
+    
 }

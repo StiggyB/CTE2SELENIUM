@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <CteObject id="c0">
     <!--Created by CTE XL Professional 3.1.3-->
-    <Tree id="c1" name="Sizing_Type_and_Medium_Section.cte" root="c2">
-        <Composition id="c2" name="Sizing_Type_and_Medium_Section" style="color:#000000; font-size:9px; background-color:#ffffff; font-family:'Segoe UI'" x="182" y="32">
+    <Tree id="c1" name="Sizing_Type_and_Medium_Selection.cte" root="c2">
+        <Composition id="c2" name="Sizing_Type_and_Medium_Selection" style="color:#000000; font-size:9px; background-color:#ffffff; font-family:'Segoe UI'" x="182" y="32">
             <Composition id="c32" name="Main selection" x="-522" y="92">
                 <Classification id="c41" name="Medium" x="-1166" y="150">
                     <Class id="c65" name="Gas" x="-1463" y="204"/>

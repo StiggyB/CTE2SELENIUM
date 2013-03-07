@@ -34,6 +34,7 @@ public class MainPage extends ControlMenu {
      */
     private void openSizingMenu() {
         final Actions builder = new Actions(driver);
+        driver.navigate().refresh();
         builder.moveToElement(sizing).build().perform();
         sizingMenuOpen = true;
     }

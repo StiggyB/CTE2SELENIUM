@@ -19,17 +19,14 @@ import de.haw_hamburg.ti.cte.xmlObjects.Classification;
 import de.haw_hamburg.ti.cte.xmlObjects.Composition;
 import de.haw_hamburg.ti.cte.xmlObjects.CteObject;
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
-
-
+import de.haw_hamburg.ti.tools.tree.Tree;
 
 public class CTE {
 
     private TreeMap<Integer, CteObject> cteObjectTree  = new TreeMap<Integer, CteObject>();
     private ArrayList<CteTestCase>      tcList         = new ArrayList<CteTestCase>();
-    private final static String         COMPOSITION    = "Composition";
-    private final static String         CLASSIFICATION = "Classification";
-    private final static String         TESTCASE       = "TestCase";
     private CTEParser                   ctep;
+    private Tree<CteObject>             cteTree;
 
     /**
      * Specified .cte File is Parsed and serialized written to a File.
@@ -40,15 +37,18 @@ public class CTE {
      * @throws SAXException
      * @throws IOException
      */
-    public void saveTestCasesToFile() {
+    public void saveTestCasesToFile(File cteFile) throws IOException {
+        getCteTree(cteFile);
         FileOutputStream fout = null;
         ObjectOutputStream oos = null;
         try {
-            fout = new FileOutputStream(cteObjectTree.firstEntry().getValue()
+            fout = new FileOutputStream(cteTree.getRootNode().getContent()
                     .getName()
                     + ".cttc");
+
             oos = new ObjectOutputStream(fout);
             oos.writeObject(tcList);
+            oos.writeObject(cteTree);
 
         } catch (FileNotFoundException e) {
             System.err.println("File not found.");
@@ -77,8 +77,8 @@ public class CTE {
      * @throws SAXException
      * @throws ParserConfigurationException
      */
-    public ArrayList<CteTestCase> getTestData(File cteFile) throws IOException
-             {
+    public ArrayList<CteTestCase> getTestData(File cteFile)
+            throws IOException {
         getCteTree(cteFile);
         /**
          * <testcaseName, marks>
@@ -96,12 +96,11 @@ public class CTE {
 
         fillMaps(testcaseMap, classificationMap, compositionMap);
 
-//        System.out.println(compositionMap);
-//        System.out.println(classificationMap);
-//        System.out.println(testcaseMap);
+        // System.out.println(compositionMap);
+        // System.out.println(classificationMap);
+        // System.out.println(testcaseMap);
 
         setMarkParents(testcaseMap, classificationMap, compositionMap);
-
         return tcList;
     }
 
@@ -132,7 +131,7 @@ public class CTE {
                 markCompositions(classificationMap, compositionMap, entrytc,
                         i);
             }
-            tcList.add(entrytc.getKey());
+            // tcList.add(entrytc.getKey());
         }
     }
 
@@ -151,8 +150,7 @@ public class CTE {
             for (int k = 0; k < entryco.getValue().length; k++) {
                 for (Entry<Classification, Integer[]> entrycl : classificationMap
                         .entrySet()) {
-                    if (entrycl.getKey().getId()
-                            .equals(entryco.getValue()[k])) {
+                    if (entrycl.getKey().getId() == (entryco.getValue()[k])) {
                         for (int j = 0; j < entrycl.getValue().length; j++) {
                             if (entrytc.getValue()[i].equals(entrycl
                                     .getValue()[j])) {
@@ -196,14 +194,14 @@ public class CTE {
      * @throws SAXException
      * @throws IOException
      */
-    private void getCteTree(File cteFile)
-            throws IOException {
+    private void getCteTree(File cteFile) throws IOException {
         ctep = new CTEParser(cteFile);
-        ctep.getCteObjectByName(COMPOSITION);
-        ctep.getCteObjectByName(CLASSIFICATION);
-        ctep.getCteObjectByName(TESTCASE);
-        // tcList = ctep.getTCList();
-        cteObjectTree = ctep.getCteTree();
+//        ctep.getCteObjectByName(COMPOSITION);
+//        ctep.getCteObjectByName(CLASSIFICATION);
+//        ctep.getCteObjectByName(TESTCASE);
+        cteTree = ctep.getTree();
+        tcList = ctep.getTcList();
+//        cteObjectTree = ctep.getCteTree();
     }
 
     @SuppressWarnings("unused")

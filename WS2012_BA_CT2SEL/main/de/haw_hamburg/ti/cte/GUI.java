@@ -20,6 +20,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -28,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -75,6 +77,11 @@ public class GUI {
     private CTE                      cte             = new CTE();
 //    private File                     chosenFile;
     private ArrayList<File>          files           = new ArrayList<>();
+    private JTextField txtWwwvalvestarcom;
+    private JTextField txtUsername;
+    private JTextField txtPassword;
+    protected String password;
+    protected String username;
 
     /**
      * Initialize the contents of the frame.
@@ -82,8 +89,8 @@ public class GUI {
     private void initialize() {
         frmAutomaticTestCase = new JFrame();
         frmAutomaticTestCase
-                .setTitle("Automatic Test Case Generation withClassification Trees for Web Testing" + getDate());
-        frmAutomaticTestCase.setBounds(100, 100, 999, 666);
+                .setTitle("Automatic Test Case Generation with Classification Trees for Web Testing<dynamic>");
+        frmAutomaticTestCase.setBounds(100, 100, 999, 700);
         frmAutomaticTestCase.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frmAutomaticTestCase.getContentPane().setLayout(null);
 
@@ -94,32 +101,34 @@ public class GUI {
 
                 File chosenFile = chooseFile("cttc");
 
+                if (chosenFile != null) {
                 frmAutomaticTestCase.setCursor(Cursor
                         .getPredefinedCursor(Cursor.WAIT_CURSOR));
                 junit.framework.Test t = SizingTypeAndMediumSelectionTest
-                        .suite(chosenFile);
+                        .suite(files, username, password);
                 junit.textui.TestRunner.run(t);
                 frmAutomaticTestCase.setCursor(Cursor.getDefaultCursor());
-                // progressBar.setValue(t.getProgress());
-
+                }
             }
         });
-        btnStartJUnitTest.setBounds(10, 298, 195, 23);
+        btnStartJUnitTest.setBounds(10, 332, 195, 23);
         frmAutomaticTestCase.getContentPane().add(btnStartJUnitTest);
 
         JScrollPane scrollPane_2 = new JScrollPane();
-        scrollPane_2.setBounds(10, 334, 959, 246);
+        scrollPane_2.setBounds(10, 368, 959, 246);
         frmAutomaticTestCase.getContentPane().add(scrollPane_2);
         txtrJunitoutput.setEditable(false);
 
         scrollPane_2.setViewportView(txtrJunitoutput);
 
         JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
-        tabbedPane.setBounds(10, 13, 410, 272);
+        tabbedPane.setToolTipText("");
+        tabbedPane.setBounds(10, 47, 410, 272);
         frmAutomaticTestCase.getContentPane().add(tabbedPane);
 
         JScrollPane scrollPane = new JScrollPane();
         tabbedPane.addTab("Files", null, scrollPane, null);
+        cte_list.setToolTipText("Select a File to see the included Testcases");
         cte_list.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent arg0) {
@@ -130,7 +139,6 @@ public class GUI {
                     to_listModel.addElement(cte_list.getSelectedValue());
                     try {
                         ArrayList<CteTestCase> ctes = cte.getTestData(files.get(cte_list.getSelectedIndex()));
-                        TestHandler.addList(ctes);
                         
                         for (Iterator<CteTestCase> iterator = ctes
                                 .iterator(); iterator.hasNext();) {
@@ -141,7 +149,11 @@ public class GUI {
                         System.err.println("IO Err");
                         e.printStackTrace();
                     }
-                    cte.saveTestCasesToFile();
+                    try {
+                        cte.saveTestCasesToFile(files.get(cte_list.getSelectedIndex()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     files.remove(cte_list.getSelectedIndex());
                     cte_listModel.removeElement(cte_list.getSelectedValue());
                     frmAutomaticTestCase.setCursor(Cursor.getDefaultCursor());
@@ -152,7 +164,7 @@ public class GUI {
         scrollPane.setViewportView(cte_list);
 
         JTabbedPane tabbedPane_1 = new JTabbedPane(SwingConstants.TOP);
-        tabbedPane_1.setBounds(432, 13, 537, 272);
+        tabbedPane_1.setBounds(432, 47, 537, 272);
         frmAutomaticTestCase.getContentPane().add(tabbedPane_1);
 
         JScrollPane scrollPane_1 = new JScrollPane();
@@ -167,6 +179,47 @@ public class GUI {
         });
 
         scrollPane_1.setViewportView(to_list);
+        
+        JLabel lblTestObject = new JLabel("Test Object:");
+        lblTestObject.setBounds(12, 13, 78, 16);
+        frmAutomaticTestCase.getContentPane().add(lblTestObject);
+        
+        txtWwwvalvestarcom = new JTextField();
+        txtWwwvalvestarcom.setEditable(false);
+        txtWwwvalvestarcom.setText("www.valvestar.com");
+        txtWwwvalvestarcom.setBounds(102, 10, 172, 22);
+        frmAutomaticTestCase.getContentPane().add(txtWwwvalvestarcom);
+        txtWwwvalvestarcom.setColumns(10);
+        
+        JLabel lblUsername = new JLabel("Username:");
+        lblUsername.setBounds(286, 13, 78, 16);
+        frmAutomaticTestCase.getContentPane().add(lblUsername);
+        
+        txtUsername = new JTextField();
+        txtUsername.setText("username");
+        txtUsername.setBounds(376, 10, 116, 22);
+        frmAutomaticTestCase.getContentPane().add(txtUsername);
+        txtUsername.setColumns(10);
+        
+        JLabel lblPassword = new JLabel("Password:");
+        lblPassword.setBounds(504, 13, 78, 16);
+        frmAutomaticTestCase.getContentPane().add(lblPassword);
+        
+        txtPassword = new JTextField();
+        txtPassword.setText("password");
+        txtPassword.setBounds(594, 10, 116, 22);
+        frmAutomaticTestCase.getContentPane().add(txtPassword);
+        txtPassword.setColumns(10);
+        
+        JButton btnSubmit = new JButton("Submit");
+        btnSubmit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                username = txtUsername.getText();
+                password = txtPassword.getText();
+            }
+        });
+        btnSubmit.setBounds(722, 9, 97, 25);
+        frmAutomaticTestCase.getContentPane().add(btnSubmit);
 
         redirectSystemStreams();
 
@@ -182,9 +235,10 @@ public class GUI {
             public void actionPerformed(ActionEvent arg0) {
 
                 File chosenFile = chooseFile("cte");
-                files.add(chosenFile);
-
-                cte_listModel.addElement(chosenFile.getName());
+                if (chosenFile != null) {
+                    files.add(chosenFile);
+                    cte_listModel.addElement(chosenFile.getName());
+                }
             }
         });
         mnMenu.add(mntmOpencteFile);

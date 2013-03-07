@@ -12,6 +12,7 @@ import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -31,9 +32,11 @@ public class ServiceCondtitionTest {
     private static File                 cttcfile;
     private Integer                     id;
     private String                      name;
-    private HashMap<Integer, String>    markClassMap;
-    private HashMap<Integer, String>    markClassificationMap;
-    private HashMap<Integer, String>    markCompositionMap;
+    private Integer[]                   marks;
+    private int                         noT = 1;
+
+    @Rule
+    public NewPageRule                  newPage;
 
     public ServiceCondtitionTest(Integer id, String name, Integer[] marks,
             HashMap<Integer, String> markClassMap,
@@ -41,16 +44,16 @@ public class ServiceCondtitionTest {
             HashMap<Integer, String> markCompositionMap) {
         this.name = name;
         this.id = id;
-        this.markClassMap = markClassMap;
-        this.markClassificationMap = markClassificationMap;
-        this.markCompositionMap = markCompositionMap;
+        this.marks = marks;
+        this.newPage = new NewPageRule(noT);
     }
 
     @Parameters(name = "{index}: {1}")
     public static List<Object[]> data() {
-
+        FileHandler.setFile(new File("Service_condition.cttc"));
         ArrayList<CteTestCase> tcs = Cast.as(ArrayList.class, FileHandler
-                .loadObjectsFromFile(new File("Service_condition.cttc")));
+                .loadObjectsFromFile());
+        FileHandler.closeFile();
         Object[][] data = new Object[tcs.size()][tcs.size()];
         int i = 0;
         for (Iterator<CteTestCase> iterator = tcs.iterator(); iterator
@@ -58,27 +61,20 @@ public class ServiceCondtitionTest {
             data[i] = iterator.next().asArray();
             i++;
         }
-        System.out.println("Parameter method called");
         return Arrays.asList(data);
     }
 
     private void printActualTestInfo() {
         System.out.println(id + ": " + name);
-        System.out.println("Compositions: " + markCompositionMap);
-        System.out.println("Classifications: "
-                + markClassificationMap.toString());
-        System.out.println("MarkClassMap: " + markClassMap.toString());
         System.out.println("-----------------------------------------------");
     }
 
     @Before
     public void setUp() throws Exception {
-        System.out.println(this.getClass().getSimpleName() + "-> setting up");
     }
 
     @Test
     public void test() {
-        System.out.println(this.getClass().getSimpleName() + "-> test");
         printActualTestInfo();
         scp.inputMaxAllowableWorkingPresure();
         scp.inputSetPressure();
@@ -87,23 +83,24 @@ public class ServiceCondtitionTest {
         scp.clickCalculate();
     }
 
+    
+    /**
+     * TODO DOESENT WORK SOMEHOW
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
-        System.out.println(this.getClass().getSimpleName() + "-> tear down");
-        System.out.println(this.getClass().getSimpleName() + "-> click next+back");
-        scp.clickNextButton().clickNextButton();
+        scp.clickNextButton().clickBackButton();
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         System.out.println("# " + ServiceCondtitionTest.class.getSimpleName()
                 + "-> TEAR DOWN AFTER CLASS e.g. SCP TEST ENDED ##########");
-         scp.clickBackButton();
+        scp.clickBackButton();
     }
 
     public static junit.framework.Test suite(ServiceConditionPage scp) {
-        System.out.println(ServiceCondtitionTest.class.getSimpleName()
-                + "-> suite up");
         ServiceCondtitionTest.scp = scp;
         return new JUnit4TestAdapter(ServiceCondtitionTest.class);
     }

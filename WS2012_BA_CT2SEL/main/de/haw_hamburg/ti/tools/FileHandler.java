@@ -9,29 +9,47 @@ import java.util.ArrayList;
 
 public abstract class FileHandler {
 
-    private FileHandler() {}
-    
-    public static ArrayList<Object> loadObjectsFromFile(File f) {
-        ObjectInputStream ois = null;
-        ArrayList<Object> objects = new ArrayList<>();
+    private static ObjectInputStream ois = null;
+
+    private FileHandler() {
+    }
+
+    public static void setFile(File f) {
+        FileInputStream fin;
         try {
-            FileInputStream fin = new FileInputStream(f);
+            fin = new FileInputStream(f);
             ois = new ObjectInputStream(fin);
-            objects = Cast.as(ArrayList.class, ois.readObject());
         } catch (FileNotFoundException e) {
             System.err.println("File not found...");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Read/Write error...");
+            e.printStackTrace();
+        }
+
+    }
+
+    public static Object loadObjectsFromFile() {
+        Object objects = new ArrayList<>();
+        try {
+            if (!ois.equals(null))
+                objects = ois.readObject();
+            else
+                return null;
         } catch (ClassNotFoundException e) {
             System.err.println("Loading failed...");
         } catch (IOException e) {
             System.err.println("Read/Write error...");
-        } finally {
-            try {
-                ois.close();
-            } catch (IOException e) {
-                System.err.println("Read/Write error...");
-            }
         }
         return objects;
+    }
+
+    public static void closeFile() {
+        try {
+            ois.close();
+        } catch (IOException e) {
+            System.err.println("Read/Write error...");
+        }
     }
 
 }

@@ -16,7 +16,11 @@ public class Classification extends CteObject {
 		this.cteClass = cteClass;
 	}
 
-	public String[] getTestData() {
+	public Classification(String name, String id) {
+        super(name, id);
+    }
+
+    public String[] getTestData() {
 		String[] testData = new String[cteClass.length];
 		for (int i = 0, j = 1; i < cteClass.length; i++) {
 			testData[i] = cteClass[i][j];
@@ -37,8 +41,9 @@ public class Classification extends CteObject {
 	@Override
 	public String toString() {
 		return "Classification [getTestData()="
-				+ Arrays.toString(getTestData()) + ", getTestDataIds()="
-				+ Arrays.toString(getTestDataIds()) + ", getId()=" + getId()
+//				+ Arrays.toString(getTestData()) + ", getTestDataIds()="
+//				+ Arrays.toString(getTestDataIds()) 
+				+ ", getId()=" + getId()
 				+ ", getName()=" + getName() + "]";
 	}
 	

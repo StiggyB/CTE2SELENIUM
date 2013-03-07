@@ -12,11 +12,9 @@ public class ServiceConditionPage extends ControlMenu {
     private String     medium;
     private Javascript jscript;
     private String     mawpTextBoxId              = "ctl00_WorkspacePlaceHolder_ctl00_ctl05_MawpPressureTextBox";
-    private String     mawpTextBoxCSS             = "#" + mawpTextBoxId;
     private String     calculateBtnId             = "ctl00_WorkspacePlaceHolder_ctl00_CalculateButton";
     private String     calculateBtnCSS            = "#" + calculateBtnId;
     private String     setPressureId              = "ctl00_WorkspacePlaceHolder_ctl00_ctl05_SetPressureTextBox";
-    private String     setPressureCSS             = "#" + setPressureId;
     private String     superimposedBackPressureId = "ctl00_WorkspacePlaceHolder_ctl00_ctl05_ConstantBackpressureTextBox";
     private String     overpressureID             = "ctl00_WorkspacePlaceHolder_ctl00_ctl05_OverpressureTextBox";
     private String     temperatureId;
@@ -30,7 +28,7 @@ public class ServiceConditionPage extends ControlMenu {
 
     public ServiceConditionPage inputMaxAllowableWorkingPresure() {
         jscript.clear(mawpTextBoxId);
-        jscript.input(mawpTextBoxId, "12");
+        jscript.input(mawpTextBoxId, "14");
         return this;
     }
 
@@ -48,8 +46,7 @@ public class ServiceConditionPage extends ControlMenu {
                     SizingTypeAndMediumSelectionPage.class);
         } else {
             if (fireCase) {
-                return PageFactory.initElements(driver,
-                        FireCasePage.class);
+                return PageFactory.initElements(driver, FireCasePage.class);
             } else {
                 return PageFactory.initElements(driver,
                         MediumSelectionPage.class);
@@ -64,7 +61,7 @@ public class ServiceConditionPage extends ControlMenu {
     public void setMedium(String medium) {
         this.medium = medium;
     }
-    
+
     public void setFireCase(boolean fireCase) {
         this.fireCase = fireCase;
     }

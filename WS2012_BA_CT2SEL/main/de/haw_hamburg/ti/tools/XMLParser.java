@@ -9,16 +9,28 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.traversal.DocumentTraversal;
+import org.w3c.dom.traversal.NodeFilter;
+import org.w3c.dom.traversal.TreeWalker;
 import org.xml.sax.SAXException;
 
 public class XMLParser {
 
     private static Document dom;
 
+
     private XMLParser() {
         super();
     }
 
+    /**
+     * @return the dom
+     */
+    public static Document getDom() {
+        return dom;
+    }
+    
     /**
      * Parses the given Document(DOM) and returns the root Element e.g. null if
      * no root is found.
@@ -45,6 +57,7 @@ public class XMLParser {
             db = dbf.newDocumentBuilder();
             // parse using builder to get DOM representation of the XML file
             dom = db.parse(chosenFile);
+
         } catch (ParserConfigurationException e) {
             System.err.println("Configuration error");
             e.printStackTrace();
@@ -56,4 +69,5 @@ public class XMLParser {
         dom.normalize();
     }
 
+ 
 }

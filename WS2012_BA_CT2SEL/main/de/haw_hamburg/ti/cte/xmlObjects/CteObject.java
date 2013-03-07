@@ -8,19 +8,25 @@ public abstract class CteObject implements Serializable {
 
     private static final long serialVersionUID = -9175571128726499585L;
     private String            id;
+    private int               intId;
     private String            name;
     private Pattern           idPattern        = Pattern.compile("\\d+");
 
     public CteObject(String name, String id) {
         this.name = name;
         this.id = id;
+        this.intId = intId(id);
     }
 
-    public Integer getId() {
+    private int intId(String id) {
         Matcher idMatcher = idPattern.matcher(id);
         idMatcher.find();
         Integer intId;
         intId = Integer.parseInt(idMatcher.group());
+        return intId;
+    }
+
+    public int getId() {
         return intId;
     }
 

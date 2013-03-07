@@ -36,12 +36,24 @@ public class Javascript {
         }
     }
 
+    int trys = 0;
+
     /**
      * Click Button or CheckBox by CSS
      * 
      * @param cssSelector
      */
     public void click(String cssSelector) {
+        trys++;
+        if (trys > 50) {
+            System.err.println(cssSelector + " clicking failed");
+            try {
+                throw new Exception();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("var x = $(\'" + cssSelector + "\');");
@@ -85,7 +97,6 @@ public class Javascript {
     }
 
     public void clear(String id) {
-        System.out.println(this.getClass().getSimpleName() + "-> clear:" + id);
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         StringBuilder sb = new StringBuilder();
         sb.append("document.getElementById(\"" + id + "\").value = \"\";");
@@ -97,7 +108,6 @@ public class Javascript {
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
             clear(id);
@@ -105,7 +115,6 @@ public class Javascript {
     }
 
     public void input(String id, String text) {
-        System.out.println(this.getClass().getSimpleName() + "-> input: " + id);
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         StringBuilder sb = new StringBuilder();
         sb.append(" var TheTextBox = document.getElementById(\"" + id

@@ -46,8 +46,6 @@ public class MediumSelectionTest {
     }
 
     public static junit.framework.Test suite(MediumSelectionPage msp) {
-        System.out.println(MediumSelectionTest.class.getSimpleName()
-                + "-> suite up");
         MediumSelectionTest.msp = msp;
         return new JUnit4TestAdapter(MediumSelectionTest.class);
     }

@@ -11,7 +11,7 @@ public class CteTestCase extends CteObject {
     private String[]                 marks;
     private Pattern                  idPattern             = Pattern
                                                                    .compile("\\d+");
-    private HashMap<Integer, String> markClassMap               = new HashMap<>();
+    private HashMap<Integer, String> markClassMap          = new HashMap<>();
     private HashMap<Integer, String> markClassificationMap = new HashMap<>();
     private HashMap<Integer, String> markCompositionMap    = new HashMap<>();
 
@@ -74,10 +74,18 @@ public class CteTestCase extends CteObject {
         return arr;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return "CteTestCase [marks=" + Arrays.toString(getMarks())
-                + ", getId()=" + getId() + ", getName()=" + getName() + "]";
+                + ", markClassMap=" + markClassMap
+                + ", markClassificationMap=" + markClassificationMap
+                + ", markCompositionMap=" + markCompositionMap + ", getId()="
+                + getId() + ", getName()=" + getName() + "]";
     }
 
 }

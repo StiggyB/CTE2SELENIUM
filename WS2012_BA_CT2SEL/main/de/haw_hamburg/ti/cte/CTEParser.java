@@ -6,18 +6,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.traversal.DocumentTraversal;
+import org.w3c.dom.traversal.NodeFilter;
+import org.w3c.dom.traversal.TreeWalker;
 
 import de.haw_hamburg.ti.cte.xmlObjects.Classification;
 import de.haw_hamburg.ti.cte.xmlObjects.Composition;
+import de.haw_hamburg.ti.cte.xmlObjects.CteClass;
 import de.haw_hamburg.ti.cte.xmlObjects.CteObject;
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 import de.haw_hamburg.ti.tools.Cast;
 import de.haw_hamburg.ti.tools.XMLParser;
-
-
+import de.haw_hamburg.ti.tools.tree.Tree;
 
 public class CTEParser {
 
@@ -27,11 +31,15 @@ public class CTEParser {
     private final static String         testcase       = "TestCase";
     private Element                     rootElement;
     private String                      actualCteObject;
+    private Tree<CteObject>             cteTree;
+    private ArrayList<CteTestCase>      tcList         = new ArrayList<>();
 
+    // CONSTRUCTOR
     public CTEParser(File cteFile) throws IOException {
         rootElement = XMLParser.parse(cteFile);
     }
 
+    // GETTER & SETTER
     /**
      * Searches for a given Object in the CTE-XML file by Name.
      * 
@@ -55,6 +63,93 @@ public class CTEParser {
         return cteObjectTree;
     }
 
+    public Tree<CteObject> getTree() {
+        createTree(XMLParser.getDom());
+        return cteTree;
+    }
+
+    /**
+     * @return the tcList
+     */
+    protected ArrayList<CteTestCase> getTcList() {
+        return tcList;
+    }
+
+    // METHODS
+    private void createTree(Document dom) {
+        DocumentTraversal traversal = (DocumentTraversal) dom;
+
+        CteObjectsInDocument cteObjectsInDoc = new CteObjectsInDocument();
+        TreeWalker walker = traversal.createTreeWalker(dom
+                .getDocumentElement(), NodeFilter.SHOW_ELEMENT,
+                cteObjectsInDoc, true);
+
+        traverseLevel(walker, "", 0);
+    }
+
+    private void traverseLevel(TreeWalker walker, String indent, int i) {
+
+        // describe current node:
+        Node parent = walker.getCurrentNode();
+//        System.out.println(indent + "- " + ((Element) parent).getTagName()
+//                + "(" + ((Element) parent).getAttribute("name") + ")");
+
+        addToCteTree(parent, i);
+
+        // traverse children:
+        for (Node n = walker.firstChild(); n != null; n = walker
+                .nextSibling()) {
+
+            traverseLevel(walker, indent + '\t', i + 1);
+        }
+
+        // return position to the current (level up):
+        walker.setCurrentNode(parent);
+    }
+
+    private void addToCteTree(Node n, int i) {
+        for (CteObj obj : CteObj.values()) {
+            if (obj.name().equalsIgnoreCase((n.getNodeName()))) {
+                CteObject c = getCteObj((Element) n, obj);
+                if (i == 1 && !(c instanceof CteTestCase)) {
+                    cteTree = new Tree<CteObject>(c, i);
+                } else if (i == 2) {
+                    cteTree.getRootNode().addChild(c, i);
+                } else if (i > 2) {
+                    cteTree.getLastNodeByLevel(i - 1).addChild(c, i);
+                } else if (c instanceof CteTestCase) {
+                    tcList.add((CteTestCase) c);
+                } else {
+                    // nothing
+                }
+            }
+        }
+    }
+
+    private CteObject getCteObj(Element e, CteObj obj) {
+        switch (obj) {
+            case Composition:
+                return new Composition(getElementName(e), getElementId(e));
+            case Classification:
+                return new Classification(getElementName(e), getElementId(e));
+            case Class:
+                return new CteClass(getElementName(e), getElementId(e));
+            case TestCase:
+                return new CteTestCase(getElementName(e), getElementId(e),
+                        getValue(e, "Marks"));
+            default:
+                return null;
+        }
+    }
+
+    private String getElementName(Element e) {
+        return e.getAttribute("name");
+    }
+
+    private String getElementId(Element e) {
+        return e.getAttribute("id");
+    }
+
     private ArrayList<? extends CteObject> getNodes(NodeList nl) {
         ArrayList<CteObject> cteList = new ArrayList<>();
         if (nl != null && nl.getLength() > 0) {
@@ -66,6 +161,9 @@ public class CTEParser {
                 // add it to list
                 cteList.add(c);
                 cteObjectTree.put(c.getId(), c);
+                // cteObjectTree2.put(Integer.parseInt(el.getAttribute("id")
+                // .replace("c", "")), el.getAttribute("name"));
+
             }
         }
         return cteList;
@@ -107,8 +205,9 @@ public class CTEParser {
             }
             ((Composition) cteObj).setClassifications(clarr);
         } else {
-            throw new IllegalArgumentException("Unsupported object: "
-                    + el.getNodeName());
+            return null;
+            // throw new IllegalArgumentException("Unsupported object: "
+            // + el.getNodeName());
         }
         return cteObj;
     }
