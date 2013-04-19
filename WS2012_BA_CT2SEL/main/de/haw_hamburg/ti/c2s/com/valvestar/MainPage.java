@@ -14,12 +14,10 @@ public class MainPage extends ControlMenu {
     private WebElement      sizing;
     @FindBy(css = "img[alt=\"Add new sizing...\"]")
     private WebElement      addSizing;
-    private final WebDriver   driver;
     private transient boolean sizingMenuOpen = false;
 
     public MainPage(final WebDriver driver) {
         super(driver);
-        this.driver = driver;
         // Check that we're on the right page.
         if (!"http://www.valvestar.com/UI/MainForm/MainForm.aspx"
                 .equals(driver.getCurrentUrl())) {

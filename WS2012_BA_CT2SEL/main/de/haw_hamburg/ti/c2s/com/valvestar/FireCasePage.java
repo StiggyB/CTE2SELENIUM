@@ -5,11 +5,9 @@ import org.openqa.selenium.support.PageFactory;
 
 public class FireCasePage extends ControlMenu {
 
-    private WebDriver driver;
 
     public FireCasePage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
     }
 
     /* (non-Javadoc)

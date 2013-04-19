@@ -11,76 +11,54 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
 
 import de.haw_hamburg.ti.cte.xmlObjects.CteObject;
-import de.haw_hamburg.ti.tools.Javascript;
 import de.haw_hamburg.ti.tools.tree.Knot;
-import de.haw_hamburg.ti.tools.tree.Tree;
 
 public class SizingTypeAndMediumSelectionPage extends ControlMenu {
 
-    private Javascript                        js;
-    private WebDriver                         driver;
-
     @FindBy(tagName = "input")
-    private List<WebElement>                  inputs;
+    private List<WebElement> inputs;
     @FindBy(tagName = "select")
-    private List<WebElement>                  selects;
+    private List<WebElement> selects;
 
     /**
      * TODO ALL THIS IN PROPERTIES CLASS?
      */
-    private String                            mediumDDLid             = "ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList";
+    private String           mediumDDLid             = "ctl00_WorkspacePlaceHolder_ctl00_MediumDropDownList";
 
-    private String                            sizingDDLid             = "ctl00_WorkspacePlaceHolder_ctl00_SizingStandardDropDownList";
+    private String           sizingDDLid             = "ctl00_WorkspacePlaceHolder_ctl00_SizingStandardDropDownList";
 
     @FindBy(id = "ctl00_WorkspacePlaceHolder_ctl00_CdtpCheckBox")
-    private WebElement                        CdtpCheckBox;
-    boolean                                   cdtpChecked             = false;
-    private String                            cdtpId                  = "ctl00_WorkspacePlaceHolder_ctl00_CdtpCheckBox";
+    private WebElement       CdtpCheckBox;
+    boolean                  cdtpChecked             = false;
+    private String           cdtpId                  = "ctl00_WorkspacePlaceHolder_ctl00_CdtpCheckBox";
 
-    private String                            reactionForceAD2000A2Id = "ctl00_WorkspacePlaceHolder_ctl00_ReactionForceAd2000A2";
-    private String                            reactionForceAPI520Id   = "ctl00_WorkspacePlaceHolder_ctl00_ReactionForceApi520";
-    private String                            reactionForceIso4126Id  = "ctl00_WorkspacePlaceHolder_ctl00_ReactionForceIso4126";
+    private String           reactionForceAD2000A2Id = "ctl00_WorkspacePlaceHolder_ctl00_ReactionForceAd2000A2";
+    private String           reactionForceAPI520Id   = "ctl00_WorkspacePlaceHolder_ctl00_ReactionForceApi520";
+    private String           reactionForceIso4126Id  = "ctl00_WorkspacePlaceHolder_ctl00_ReactionForceIso4126";
 
-    private String                            noiseAD2000A2Id         = "ctl00_WorkspacePlaceHolder_ctl00_NoiseAd2000A2";
-    private String                            noiseAPI520Id           = "ctl00_WorkspacePlaceHolder_ctl00_NoiseApi520";
+    private String           noiseAD2000A2Id         = "ctl00_WorkspacePlaceHolder_ctl00_NoiseAd2000A2";
+    private String           noiseAPI520Id           = "ctl00_WorkspacePlaceHolder_ctl00_NoiseApi520";
 
-    private String                            pressureDropAD2000A2Id  = "ctl00_WorkspacePlaceHolder_ctl00_PDInletAd2000A2";
-    private String                            pressureDropIso4126Id   = "ctl00_WorkspacePlaceHolder_ctl00_PDInletIso4126";             ;
-    private String                            pressureDropNoneId      = "ctl00_WorkspacePlaceHolder_ctl00_PDInletNone";                ;
+    private String           pressureDropAD2000A2Id  = "ctl00_WorkspacePlaceHolder_ctl00_PDInletAd2000A2";
+    private String           pressureDropIso4126Id   = "ctl00_WorkspacePlaceHolder_ctl00_PDInletIso4126";             ;
+    private String           pressureDropNoneId      = "ctl00_WorkspacePlaceHolder_ctl00_PDInletNone";                ;
 
-    private String                            backPressureAD2000A2Id  = "ctl00_WorkspacePlaceHolder_ctl00_BPOutletAd2000A2";
-    private String                            backPressureIso4126Id   = "ctl00_WorkspacePlaceHolder_ctl00_BPOutletIso4126";            ;
-    private String                            backPressureNoneId      = "ctl00_WorkspacePlaceHolder_ctl00_BPOutletNone";
+    private String           backPressureAD2000A2Id  = "ctl00_WorkspacePlaceHolder_ctl00_BPOutletAd2000A2";
+    private String           backPressureIso4126Id   = "ctl00_WorkspacePlaceHolder_ctl00_BPOutletIso4126";            ;
+    private String           backPressureNoneId      = "ctl00_WorkspacePlaceHolder_ctl00_BPOutletNone";
 
-    private String                            fireCaseApi520Id        = "ctl00_WorkspacePlaceHolder_ctl00_FirecaseApi520";
-    private String                            fireCaseNoneId          = "ctl00_WorkspacePlaceHolder_ctl00_FirecaseNone";
+    private String           fireCaseApi520Id        = "ctl00_WorkspacePlaceHolder_ctl00_FirecaseApi520";
+    private String           fireCaseNoneId          = "ctl00_WorkspacePlaceHolder_ctl00_FirecaseNone";
 
-    private String                            medium                  = "none";
-    private boolean                           fireCase                = false;
-    private Integer[]                         marks;
-    private static ArrayList<Knot<CteObject>> nodeList;
+    private static String    medium;
+    private boolean          fireCase;
 
-    ArrayList<String>                         inputIds                = new ArrayList<>();
-    ArrayList<String>                         selectIds               = new ArrayList<>();
+    ArrayList<String>        inputIds                = new ArrayList<>();
+    ArrayList<String>        selectIds               = new ArrayList<>();
 
     // Constructors
     public SizingTypeAndMediumSelectionPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
-        js = new Javascript(driver);
-    }
-
-    public void setMedium() {
-        for (Knot<CteObject> k : nodeList) {
-            if (k.getContent().getName().equalsIgnoreCase("medium")) {
-                for (CteObject c : k.getContentList()) {
-                    System.out.println(c.getName());
-                    if (Arrays.asList(marks).contains(c.getId())) {
-                        medium = c.getName();
-                    }
-                }
-            }
-        }
     }
 
     // Page Specific Methods
@@ -88,17 +66,18 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
      * NOT WORKING PROPERLY
      * 
      * @param tree
-     * @param marks
+     * @param getMarks
+     *            ()
      * @return this
      */
     public SizingTypeAndMediumSelectionPage selectMedium() {
-        List<WebElement> mediumDropDownListOptions = findSelectableElements("Medium");
-        if (mediumDropDownListOptions == null) {
-            return this;
+        WebElement mediumDDL = findSelect("Medium");
+        if (mediumDDL == null) {
+            return null;
         }
-        for (WebElement webElement : mediumDropDownListOptions) {
+        for (WebElement webElement : new Select(mediumDDL).getOptions()) {
             if (medium.equalsIgnoreCase(webElement.getText())) {
-                js.select(mediumDDLid, webElement.getAttribute("value"));
+                jscript.select(mediumDDLid, webElement.getAttribute("value"));
                 return this;
             }
         }
@@ -108,25 +87,29 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
     /**
      * Selects a Sizing Standard from the Sizing Standard Drop Down List
      * 
-     * @param marks
+     * @param getMarks
+     *            ()
      * 
      * @param map
      *            - the HashMap in which the Standard is stored
      * @return
      */
     public SizingTypeAndMediumSelectionPage selectSizingStandard() {
-        List<WebElement> sizingDropDownListOptions = findSelectableElements("Sizing");
-        if (sizingDropDownListOptions == null) {
+        WebElement sizingDDL = findSelect("Sizing");
+        if (sizingDDL == null) {
             return this;
         }
-        for (WebElement webElement : sizingDropDownListOptions) {
-            for (int i = 0; i < nodeList.size() - 1; i++) {
-                if (nodeList.get(i).getContent().getName().equalsIgnoreCase(
-                        replaceUmlaut(webElement.getText()))) {
-                    for (int j = 0; j < marks.length; j++) {
-                        if (marks[j].equals(nodeList.get(i).getContent()
-                                .getId())) {
-                            js.select(sizingDDLid, webElement
+        for (WebElement webElement : new Select(sizingDDL).getOptions()) {
+            for (int i = 0; i < getNodeList().size() - 1; i++) {
+                if (getNodeList()
+                        .get(i)
+                        .getContent()
+                        .getName()
+                        .equalsIgnoreCase(replaceUmlaut(webElement.getText()))) {
+                    for (int j = 0; j < getMarks().length; j++) {
+                        if (getMarks()[j].equals(getNodeList().get(i)
+                                .getContent().getId())) {
+                            jscript.select(sizingDDLid, webElement
                                     .getAttribute("value"));
                             return this;
                         }
@@ -141,22 +124,21 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
      * Clicks CDTP CheckBox if needed
      * 
      * @param tree
-     * @param marks
+     * @param getMarks
+     *            ()
      * @return this page
      */
     public SizingTypeAndMediumSelectionPage checkCdtpBox() {
-        // List<WebElement> we = findInputElement("CdtpCheckBox");
-
-        for (Knot<CteObject> k : nodeList) {
+        for (Knot<CteObject> k : getNodeList()) {
             if (k.getContent().getName().equalsIgnoreCase("CDTP Calculation")) {
                 for (Knot<CteObject> ck : k.getChilds()) {
-                    for (int j = 0; j < marks.length; j++) {
-                        if (marks[j].equals(ck.getContent().getId())) {
+                    for (int j = 0; j < getMarks().length; j++) {
+                        if (getMarks()[j].equals(ck.getContent().getId())) {
                             if (Boolean.parseBoolean((ck.getContent()
                                     .getName()))) {
                                 click(cdtpId);
                             } else {
-                                js.uncheck(cdtpId);
+                                jscript.uncheck(cdtpId);
                             }
                             return this;
                         }
@@ -165,10 +147,6 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
             }
         }
         return null;
-    }
-
-    private String getWebElementId(WebElement we) {
-        return we.getAttribute("id");
     }
 
     /**
@@ -181,11 +159,11 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
      */
     public SizingTypeAndMediumSelectionPage checkReactionForce() {
         // List<WebElement> we = findInputElement("Reaction");
-        for (Knot<CteObject> k : nodeList) {
+        for (Knot<CteObject> k : getNodeList()) {
             if (k.getContent().getName().equalsIgnoreCase("Reaction Force")) {
                 for (Knot<CteObject> ck : k.getChilds()) {
                     for (Knot<CteObject> cck : ck.getChilds()) {
-                        if (Arrays.asList(marks).contains(
+                        if (Arrays.asList(getMarks()).contains(
                                 cck.getContent().getId())) {
                             if (!rfCheckHelper(ck.getContent().getName(), cck
                                     .getContent().getName())) {
@@ -209,11 +187,11 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
      */
     public SizingTypeAndMediumSelectionPage checkNoise() {
         // List<WebElement> we = findInputElement("Noise");
-        for (Knot<CteObject> k : nodeList) {
+        for (Knot<CteObject> k : getNodeList()) {
             if (k.getContent().getName().equalsIgnoreCase("Noise")) {
                 for (Knot<CteObject> ck : k.getChilds()) {
                     for (Knot<CteObject> cck : ck.getChilds()) {
-                        if (Arrays.asList(marks).contains(
+                        if (Arrays.asList(getMarks()).contains(
                                 cck.getContent().getId())) {
                             if (!cnCheckHelper(ck.getContent().getName(), cck
                                     .getContent().getName())) {
@@ -239,13 +217,12 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
      */
     public SizingTypeAndMediumSelectionPage selectRadioPressureDrop() {
         // List<WebElement> we = findInputElement("PressureDrop");
-        for (Knot<CteObject> k : nodeList) {
+        for (Knot<CteObject> k : getNodeList()) {
             if (k.getContent().getName().equalsIgnoreCase(
                     "Pressure drop inlet line")) {
                 for (Knot<CteObject> ck : k.getChilds()) {
-                    if (Arrays.asList(marks)
-                            .contains(ck.getContent().getId())) {
-                        System.out.println(ck.getContent().getName());
+                    if (Arrays.asList(getMarks()).contains(
+                            ck.getContent().getId())) {
                         if (!radioHelper2(ck)) {
                             return null;
                         }
@@ -279,12 +256,12 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
      * @return this page
      */
     public SizingTypeAndMediumSelectionPage selectRadioBackPressure() {
-        for (Knot<CteObject> k : nodeList) {
+        for (Knot<CteObject> k : getNodeList()) {
             if (k.getContent().getName().equalsIgnoreCase(
                     "Built up back pressure outlet pipe")) {
                 for (Knot<CteObject> ck : k.getChilds()) {
-                    if (Arrays.asList(marks)
-                            .contains(ck.getContent().getId())) {
+                    if (Arrays.asList(getMarks()).contains(
+                            ck.getContent().getId())) {
                         if (!radioHelper(ck)) {
                             return null;
                         }
@@ -318,14 +295,13 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
      * @return this page
      */
     public SizingTypeAndMediumSelectionPage selectRadioFireCase() {
-        for (Knot<CteObject> k : nodeList) {
+        for (Knot<CteObject> k : getNodeList()) {
             if (k.getContent().getName().equalsIgnoreCase("Fire Case")) {
                 for (Knot<CteObject> ck : k.getChilds()) {
-                    if (Arrays.asList(marks)
-                            .contains(ck.getContent().getId())) {
+                    if (Arrays.asList(getMarks()).contains(
+                            ck.getContent().getId())) {
                         if (ck.getContent().getName().equalsIgnoreCase(
                                 "API 520")) {
-                            System.out.println();
                             if (isMedium("Liquid", ".*[Ss]team")) {
                                 return null;
                             } else {
@@ -334,7 +310,7 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
                             }
                         } else if (ck.getContent().getName()
                                 .equalsIgnoreCase("None")) {
-                            if (!isMedium("Liquid", "Wetted steam")) {
+                            if (!isMedium("Liquid", ".*[Ss]team")) {
                                 check("", fireCaseNoneId);
                             }
                             return this;
@@ -367,46 +343,18 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
         }
     }
 
-    // Helper Methods
-    private void initElements() {
-        for (WebElement we : inputs) {
-            inputIds.add(we.getAttribute("id"));
-        }
-        for (WebElement we : selects) {
-            selectIds.add(we.getAttribute("id"));
-        }
-    }
-
     /**
      * 
-     * @return List over elements or null in none found
+     // * @return List over elements or null in none found //
      */
-    private List<WebElement> findSelectableElements(String element) {
-        for (WebElement we : selects) {
-            if (we.getAttribute("id").contains(element)) {
-                return new Select(we).getOptions();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 
-     * @return List over elements or null in none found
-     */
-    private List<WebElement> findInputElement(String element) {
-        List<WebElement> elements = new ArrayList<>();
-        for (WebElement we : inputs) {
-            if (we.getAttribute("id").contains(element)) {
-                elements.add(we);
-            }
-        }
-        return elements;
-    }
-
-    private String replaceUmlaut(String text) {
-        return text.replaceAll("Ü", "UE");
-    }
+    // private List<WebElement> findSelectableElements(String element) {
+    // for (WebElement we : selects) {
+    // if (we.getAttribute("id").contains(element)) {
+    // return new Select(we).getOptions();
+    // }
+    // }
+    // return null;
+    // }
 
     private boolean rfCheckHelper(String classification, String clazz) {
         if (classification.equalsIgnoreCase("AD2000:A2")) {
@@ -443,7 +391,7 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
                 return false;
         } else if (clazz.equalsIgnoreCase("false")) {
             if (!isMedium("Two-phase flow")) {
-                js.uncheck(id);
+                jscript.uncheck(id);
             }
         } else {
             if (!isMedium("Two-phase flow")) {
@@ -453,20 +401,7 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
         return true;
     }
 
-    private void click(String id) {
-        js.uncheck(id);
-        js.click("#" + id);
-    }
-
-    /*
-     * System.out.println(medium); if (Boolean.parseBoolean(clazz)) { if
-     * (!isMedium("Two-phase flow")) { js.uncheck(id); js.click("#" + id); }
-     * else return false; } else { if (!isMedium("Two-phase flow")) {
-     * js.uncheck(id); } } return true;
-     */
-
     public boolean getCdtpBoxState() {
-        System.out.println("trying to get state of cdtp...");
         return CdtpCheckBox.isSelected();
     }
 
@@ -474,17 +409,27 @@ public class SizingTypeAndMediumSelectionPage extends ControlMenu {
         return medium;
     }
 
+    public SizingTypeAndMediumSelectionPage setMedium() {
+        for (Knot<CteObject> k : getNodeList()) {
+            if (k.getContent().getName().equalsIgnoreCase("medium")) {
+                for (CteObject c : k.getContentList()) {
+                    if (Arrays.asList(getMarks()).contains(c.getId())) {
+                        medium = c.getName();
+                    }
+                }
+            }
+        }
+        return this;
+    }
+
     public boolean getFireCase() {
         return fireCase;
     }
 
-    public void setMarks(Integer[] marks) {
-        this.marks = marks;
+    public SizingTypeAndMediumSelectionPage inputTagNo(String tagNo) {
+        String tagNoId = getWebElementId(findInputElement("TagNo"));
+        jscript.clear(tagNoId);
+        jscript.input(tagNoId, tagNo);
+        return this;
     }
-
-    public void setTree(Tree<CteObject> tree) {
-        nodeList = tree.getRootNode().getNodes();
-        initElements();
-    }
-
 }

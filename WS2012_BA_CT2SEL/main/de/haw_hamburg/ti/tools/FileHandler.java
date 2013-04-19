@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
 
 public abstract class FileHandler {
 
@@ -30,9 +29,9 @@ public abstract class FileHandler {
     }
 
     public static Object loadObjectsFromFile() {
-        Object objects = new ArrayList<>();
+        Object objects = null;;
         try {
-            if (!ois.equals(null))
+            if (!(ois == null))
                 objects = ois.readObject();
             else
                 return null;

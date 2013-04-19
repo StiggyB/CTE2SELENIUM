@@ -6,10 +6,11 @@
             <Classification id="c56" name="Maximum allowable working pressure" x="-494" y="92">
                 <Class id="c168" name="valid" x="-523" y="146">
                     <Classification id="c172" name="MAWP &gt; 0 AND MAWP*1.1 &gt;= SP + OP" x="-639" y="198">
-                        <Class id="c64" name="0.001" x="-560" y="252"/>
-                        <Class id="c72" name="10000" x="-494" y="252">
+                        <Class id="c64" name="0.001" x="-588" y="252"/>
+                        <Class id="c72" name="10000" x="-522" y="252">
                             <Tag id="c147" type="Attributes"/>
                         </Class>
+                        <Class id="c860" name="-" x="-451" y="252"/>
                     </Classification>
                 </Class>
                 <Class id="c152" name="invalid" x="-256" y="146">
@@ -23,17 +24,18 @@
                 </Tag>
             </Classification>
             <Classification id="c21" name="Set pressure" x="104" y="92">
-                <Class id="c176" name="valid" x="9" y="146">
-                    <Classification id="c184" name="-0.013 &lt; SP + OP &lt; 218.987" x="-67" y="198">
-                        <Class id="c192" name="-0.012" x="-78" y="252"/>
-                        <Class id="c60" name="109.494" x="-6" y="252"/>
-                        <Class id="c196" name="218.986" x="76" y="252"/>
+                <Class id="c176" name="valid" x="-5" y="146">
+                    <Classification id="c184" name="-0.013 &lt; SP + OP &lt; 218.987" x="-81" y="198">
+                        <Class id="c192" name="-0.012" x="-120" y="252"/>
+                        <Class id="c60" name="109.494" x="-48" y="252"/>
+                        <Class id="c196" name="218.986" x="34" y="252"/>
+                        <Class id="c864" name="10" x="116" y="252"/>
                     </Classification>
                 </Class>
-                <Class id="c180" name="invalid" x="238" y="146">
-                    <Classification id="c188" name="-0.013 &gt;= SP + OP &gt;= 218.987" x="158" y="198">
-                        <Class id="c25" name="-0.013" x="198" y="252"/>
-                        <Class id="c29" name="218.987" x="270" y="252"/>
+                <Class id="c180" name="invalid" x="252" y="146">
+                    <Classification id="c188" name="-0.013 &gt;= SP + OP &gt;= 218.987" x="172" y="198">
+                        <Class id="c25" name="-0.013" x="212" y="252"/>
+                        <Class id="c29" name="218.987" x="284" y="252"/>
                     </Classification>
                 </Class>
                 <Tag id="c111" type="AutoLayout">
@@ -41,16 +43,15 @@
                 </Tag>
             </Classification>
             <Classification id="c212" name="Superimposed back pressure" x="499" y="92">
-                <Class id="c216" name="valid" x="477" y="146">
-                    <Classification id="c224" name="-0.013 &lt; SBP &lt; SP * OP" x="416" y="198">
-                        <Class id="c228" name="-1.012" x="412" y="252"/>
-                        <Class id="c232" name="SP * OP - 0.01" x="484" y="252"/>
+                <Class id="c216" name="valid" x="479" y="146">
+                    <Classification id="c224" name="-0.013 &lt; SBP &lt; SP * OP" x="418" y="198">
+                        <Class id="c228" name="-1.012" x="446" y="252"/>
+                        <Class id="c868" name="0" x="518" y="252"/>
                     </Classification>
                 </Class>
-                <Class id="c220" name="invalid" x="670" y="146">
-                    <Classification id="c236" name="-1.013 &gt;= SBP &gt;= SP * OP" x="605" y="198">
-                        <Class id="c240" name="-1.013" x="631" y="252"/>
-                        <Class id="c244" name="SP * OP" x="703" y="252"/>
+                <Class id="c220" name="invalid" x="667" y="146">
+                    <Classification id="c236" name="-1.013 &gt;= SBP &gt;= SP * OP" x="602" y="198">
+                        <Class id="c240" name="-1.013" x="668" y="252"/>
                     </Classification>
                 </Class>
                 <Tag id="c213" type="AutoLayout">
@@ -58,16 +59,17 @@
                 </Tag>
             </Classification>
             <Classification id="c80" name="Overpressure" x="900" y="92">
-                <Class id="c204" name="valid" x="865" y="146">
-                    <Classification id="c248" name="OP &gt; 0" x="857" y="198">
-                        <Class id="c256" name="0.01" x="836" y="252"/>
-                        <Class id="c264" name="5000" x="894" y="252"/>
+                <Class id="c204" name="valid" x="851" y="146">
+                    <Classification id="c248" name="OP &gt; 0" x="843" y="198">
+                        <Class id="c256" name="0.01" x="794" y="252"/>
+                        <Class id="c264" name="5000" x="852" y="252"/>
+                        <Class id="c872" name="10" x="915" y="252"/>
                     </Classification>
                 </Class>
-                <Class id="c208" name="invalid" x="980" y="146">
-                    <Classification id="c252" name="OP &lt;= 0" x="973" y="198">
-                        <Class id="c260" name="0" x="957" y="252"/>
-                        <Class id="c272" name="-0.01" x="1013" y="252"/>
+                <Class id="c208" name="invalid" x="994" y="146">
+                    <Classification id="c252" name="OP &lt;= 0" x="987" y="198">
+                        <Class id="c260" name="0" x="971" y="252"/>
+                        <Class id="c272" name="-0.01" x="1027" y="252"/>
                     </Classification>
                 </Class>
                 <Tag id="c120" type="AutoLayout">
@@ -75,14 +77,15 @@
                 </Tag>
             </Classification>
             <Classification id="c289" name="Required massflow" x="1112" y="92">
-                <Class id="c293" name="valid" x="1122" y="146">
-                    <Classification id="c301" name="&gt; 0" x="1125" y="198">
-                        <Class id="c309" name="0.001" x="1120" y="252"/>
+                <Class id="c293" name="valid" x="1108" y="146">
+                    <Classification id="c301" name="&gt; 0" x="1111" y="198">
+                        <Class id="c309" name="0.001" x="1078" y="252"/>
+                        <Class id="c876" name="20" x="1144" y="252"/>
                     </Classification>
                 </Class>
-                <Class id="c297" name="invalid" x="1186" y="146">
-                    <Classification id="c305" name="&lt;= 0" x="1191" y="198">
-                        <Class id="c313" name="0" x="1196" y="252"/>
+                <Class id="c297" name="invalid" x="1200" y="146">
+                    <Classification id="c305" name="&lt;= 0" x="1205" y="198">
+                        <Class id="c313" name="0" x="1210" y="252"/>
                     </Classification>
                 </Class>
                 <Tag id="c290" type="AutoLayout">
@@ -92,7 +95,8 @@
             <Classification id="c317" name="Volume flow to be discharged" x="1341" y="93">
                 <Class id="c341" name="valid" x="1388" y="147">
                     <Classification id="c325" name="&gt; 0" x="1391" y="199">
-                        <Class id="c345" name="0.001" x="1386" y="253"/>
+                        <Class id="c345" name="0.001" x="1358" y="253"/>
+                        <Class id="c1128" name="-" x="1424" y="253"/>
                     </Classification>
                 </Class>
                 <Class id="c329" name="invalid" x="1452" y="147">
@@ -104,6 +108,14 @@
                     <Content key="style" value="distX:16"/>
                 </Tag>
             </Classification>
+            <Classification height="26" id="c844" name=" Steam data according to" width="188" x="1636" y="84">
+                <Class id="c852" name="acc. to IAPWS – IF 97" x="1531" y="142"/>
+                <Class id="c848" name="Manually" x="1698" y="142"/>
+                <Class id="c856" name="DIN EN ISO 4126-1" x="1789" y="142"/>
+                <Tag id="c845" type="AutoLayout">
+                    <Content key="style" value="distY:15; distX:16"/>
+                </Tag>
+            </Classification>
             <Tag id="c123" type="AutoLayout">
                 <Content key="style" value="distY:16; distX:66"/>
             </Tag>
@@ -112,26 +124,81 @@
             <Content key="style" value="distY:15"/>
         </Tag>
     </Tree>
-    <TestGroup id="c3" name="" validity="valid">
-        <TestGroup id="c594" name="All" validity="valid">
+    <TestGroup id="c3" name="" validity="invalid">
+        <TestGroup id="c594" name="All" validity="invalid">
             <TestCase id="c595" name="All Testcase 1" validity="valid">
-                <Marks true="c160 c29 c244 c272 c313 c333 "/>
+                <Marks true="c864 c868 c876 c852 c872 c1128 c860 "/>
             </TestCase>
-            <TestCase id="c605" name="All Testcase 2" validity="valid">
-                <Marks true="c160 c29 c244 c272 c313 c345 "/>
+            <TestCase id="c605" name="All Testcase 2" validity="invalid">
+                <Marks true="c345 c196 c872 c852 c868 c309 c72 "/>
             </TestCase>
-            <TestCase id="c615" name="All Testcase 3" validity="valid">
-                <Marks true="c160 c29 c244 c272 c309 c333 "/>
+            <TestCase id="c615" name="All Testcase 3" validity="invalid">
+                <Marks true="c309 c64 c60 c856 c228 c264 c345 "/>
             </TestCase>
             <TestCase id="c625" name="All Testcase 4" validity="valid">
-                <Marks true="c160 c29 c244 c272 c309 c345 "/>
+                <Marks true="c309 c345 c860 c192 c228 c856 c256 "/>
             </TestCase>
-            <TestCase id="c635" name="All Testcase 5" validity="valid">
-                <Marks true="c160 c29 c244 c260 c313 c333 "/>
+            <TestCase id="c635" name="All Testcase 5" validity="invalid">
+                <Marks true="c160 c29 c260 c313 c333 c848 c240 "/>
+            </TestCase>
+        </TestGroup>
+        <TestGroup id="c1139" name="pwSC" validity="invalid">
+            <TestCase id="c1140" name="pwSC Testcase 1" validity="valid">
+                <Marks true="c860 c864 c868 c872 c876 c1128 c856 "/>
+            </TestCase>
+            <TestCase id="c1151" name="pwSC Testcase 2" validity="invalid">
+                <Marks true="c860 c196 c228 c264 c309 c345 c848 "/>
+            </TestCase>
+            <TestCase id="c1162" name="pwSC Testcase 3" validity="valid">
+                <Marks true="c64 c60 c228 c256 c876 c345 c852 "/>
+            </TestCase>
+            <TestCase id="c1173" name="pwSC Testcase 4" validity="valid">
+                <Marks true="c64 c192 c228 c256 c309 c1128 c856 "/>
+            </TestCase>
+            <TestCase id="c1184" name="pwSC Testcase 5" validity="invalid">
+                <Marks true="c72 c864 c228 c264 c309 c345 c852 "/>
+            </TestCase>
+            <TestCase id="c1195" name="pwSC Testcase 6" validity="invalid">
+                <Marks true="c72 c192 c868 c264 c876 c345 c848 "/>
+            </TestCase>
+            <TestCase id="c1206" name="pwSC Testcase 7" validity="invalid">
+                <Marks true="c64 c196 c868 c256 c876 c1128 c852 "/>
+            </TestCase>
+            <TestCase id="c1217" name="pwSC Testcase 8" validity="invalid">
+                <Marks true="c64 c60 c868 c264 c309 c1128 c848 "/>
+            </TestCase>
+            <TestCase id="c1228" name="pwSC Testcase 9" validity="valid">
+                <Marks true="c72 c60 c228 c872 c309 c1128 c848 "/>
+            </TestCase>
+            <TestCase id="c1239" name="pwSC Testcase 10" validity="valid">
+                <Marks true="c860 c192 c868 c872 c876 c345 c852 "/>
+            </TestCase>
+            <TestCase id="c1250" name="pwSC Testcase 11" validity="invalid">
+                <Marks true="c72 c196 c868 c256 c876 c345 c856 "/>
+            </TestCase>
+            <TestCase id="c1261" name="pwSC Testcase 12" validity="valid">
+                <Marks true="c860 c864 c868 c256 c876 c1128 c848 "/>
+            </TestCase>
+            <TestCase id="c1272" name="pwSC Testcase 13" validity="invalid">
+                <Marks true="c860 c60 c868 c264 c876 c1128 c856 "/>
+            </TestCase>
+            <TestCase id="c1283" name="pwSC Testcase 14" validity="invalid">
+                <Marks true="c64 c196 c868 c872 c876 c1128 c856 "/>
+            </TestCase>
+            <TestCase id="c1294" name="pwSC Testcase 15" validity="valid">
+                <Marks true="c64 c864 c868 c872 c876 c1128 c856 "/>
             </TestCase>
         </TestGroup>
     </TestGroup>
     <Tag id="c129" type="TestcaseGeneratorClassic">
+        <Content key="pwSC" value="pairwise(56,21,212,80,289,317,844);"/>
         <Content key="All" value="56 * 21 * 212 * 80 * 289 * 317;"/>
+    </Tag>
+    <Tag id="c1110" type="DependencyManagerClassic">
+        <Content key="INVALID_LOG" value="1;NOT (152 OR 180 OR 220 OR 208 OR 297 OR 329);"/>
+    </Tag>
+    <Tag id="c1114" type="NumericDependencyRules">
+        <Content key="r:SETPRESSURE_NUM" value="1:( c184  +   c248 ) &gt; -0.013 and (  c184  + c248 ) &lt; 218.987 "/>
+        <Content key="r:MAWP_NUM" value="1: ( (c56  &gt; 0 or  c860 )  and  (c172  * 1.1 &gt;=  c21 +  c80) )"/>
     </Tag>
 </CteObject>

@@ -1,7 +1,5 @@
 package cte;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,7 +16,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import de.haw_hamburg.ti.cte.CTE;
+import de.haw_hamburg.ti.cte.CTEData;
 import de.haw_hamburg.ti.cte.xmlObjects.CteObject;
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 import de.haw_hamburg.ti.tools.Cast;
@@ -27,7 +25,7 @@ import de.haw_hamburg.ti.tools.tree.Tree;
 @RunWith(Parameterized.class)
 public class CTETest {
 
-    CTE          cte;
+    CTEData          cte;
     private File cteFile;
     private File cttcFile;
 
@@ -41,14 +39,14 @@ public class CTETest {
         Object[][] data = new Object[][] {
                 { new File("Sizing_Type_and_Medium_Selection.cte"),
                         new File("Sizing_Type_and_Medium_Selection.cttc") },
-                { new File("Service_condition.cte"),
-                        new File("Service_condition.cttc") } };
+                { new File("Service_conditionCleaned.cte"),
+                        new File("Service_conditionCleaned.cttc") } };
         return Arrays.asList(data);
     }
 
     @Before
     public void setUp() throws Exception {
-        cte = new CTE();
+        cte = new CTEData();
     }
 
     @After
@@ -68,9 +66,8 @@ public class CTETest {
 
     @Test
     public void testSavedFile() {
-        ArrayList<CteTestCase> cteBefore;
         try {
-//            cteBefore = cte.getTestData(cteFile);
+            // cteBefore = cte.getTestData(cteFile);
             // System.out.println(this.getClass().getSimpleName() + "-> Before("
             // + cteFile.getName() + ")" + ": " + cteBefore);
             cte.saveTestCasesToFile(cteFile);
@@ -84,6 +81,9 @@ public class CTETest {
                     + cteFile.getName() + ")" + " - Testcases: " + testcases);
             System.out.println(this.getClass().getSimpleName() + "->"
                     + " Tree: " + tree.toString());
+            tree.getRootNode().print();
+
+            System.out.println(tree.getRootNode().getNodes());
             // assertEquals(cteBefore, testcases);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

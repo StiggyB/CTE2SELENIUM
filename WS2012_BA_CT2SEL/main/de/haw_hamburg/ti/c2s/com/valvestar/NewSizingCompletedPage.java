@@ -12,12 +12,16 @@ import org.openqa.selenium.support.PageFactory;
  */
 public class NewSizingCompletedPage extends ControlMenu {
 
-    private boolean   createAnotherSizing = false;
-    private WebDriver driver;
+    private boolean createAnotherSizing = false;
 
     public NewSizingCompletedPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
+    }
+
+    public NewSizingCompletedPage createAnotherSizing() {
+        click(getWebElementId(findInputElement("createanothersizing")));
+        createAnotherSizing = true;
+        return this;
     }
 
     /**
@@ -26,12 +30,12 @@ public class NewSizingCompletedPage extends ControlMenu {
      * 
      * @return MainPage <i>or</i> CreateNewSizingWizardPage
      */
-    public HomePage clickNextButton() {
+    public ControlMenu clickNextButton() {
         return clickFinishButton();
     }
 
-    @Override
-    public HomePage clickFinishButton() {
+    public HomePage clickLastFinishButton() {
+        click("ctl00_WorkspacePlaceHolder_UpperFinishButton");
         if (createAnotherSizing) {
             return PageFactory.initElements(driver,
                     CreateNewSizingWizardPage.class);

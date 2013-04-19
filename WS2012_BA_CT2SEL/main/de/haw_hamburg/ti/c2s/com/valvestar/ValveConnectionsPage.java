@@ -5,11 +5,8 @@ import org.openqa.selenium.support.PageFactory;
 
 public class ValveConnectionsPage extends ControlMenu {
 
-    private WebDriver driver;
-
     public ValveConnectionsPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
     }
 
     /*

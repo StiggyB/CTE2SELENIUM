@@ -1,34 +1,120 @@
 package de.haw_hamburg.ti.c2s.com.valvestar;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.PageFactory;
+import java.util.List;
 
-import de.haw_hamburg.ti.tools.Javascript;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.Select;
+
+import de.haw_hamburg.ti.cte.xmlObjects.CteObject;
+import de.haw_hamburg.ti.tools.tree.Knot;
 
 public class ServiceConditionPage extends ControlMenu {
 
-    private WebDriver  driver;
-    private String     medium;
-    private Javascript jscript;
-    private String     mawpTextBoxId              = "ctl00_WorkspacePlaceHolder_ctl00_ctl05_MawpPressureTextBox";
-    private String     calculateBtnId             = "ctl00_WorkspacePlaceHolder_ctl00_CalculateButton";
-    private String     calculateBtnCSS            = "#" + calculateBtnId;
-    private String     setPressureId              = "ctl00_WorkspacePlaceHolder_ctl00_ctl05_SetPressureTextBox";
-    private String     superimposedBackPressureId = "ctl00_WorkspacePlaceHolder_ctl00_ctl05_ConstantBackpressureTextBox";
-    private String     overpressureID             = "ctl00_WorkspacePlaceHolder_ctl00_ctl05_OverpressureTextBox";
-    private String     temperatureId;
-    private boolean    fireCase                   = false;
+    @FindBy(tagName = "input")
+    private List<WebElement> inputs;
+    @FindBy(tagName = "select")
+    private List<WebElement> selects;
+
+    private String           medium;
+    private String           calculateBtnId  = "ctl00_WorkspacePlaceHolder_ctl00_CalculateButton";
+    private String           calculateBtnCSS = "#" + calculateBtnId;
+    private boolean          fireCase;
 
     public ServiceConditionPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
-        jscript = new Javascript(driver);
     }
 
     public ServiceConditionPage inputMaxAllowableWorkingPresure() {
-        jscript.clear(mawpTextBoxId);
-        jscript.input(mawpTextBoxId, "14");
+        return (ServiceConditionPage) findAndMatch("MawpPressure",
+                "Maximum allowable working pressure");
+    }
+
+    public ServiceConditionPage inputSetPressure() {
+        return (ServiceConditionPage) findAndMatch("SetPressure",
+                "Set pressure");
+    }
+
+    public ServiceConditionPage inputSuperimposedBackPressure() {
+        return (ServiceConditionPage) findAndMatch("Backpressure",
+                "Superimposed back pressure");
+    }
+
+    public ServiceConditionPage inputOverpressure() {
+        return (ServiceConditionPage) findAndMatch("Overpressure",
+                "Overpressure");
+    }
+
+    public ServiceConditionPage inputTemperature() {
+        return (ServiceConditionPage) findAndMatch("Temperature",
+                "Temperature");
+    }
+    
+    public ServiceConditionPage clickRadioRequiredMassflow() {
+        this.click(getWebElementId(findInputElement("RequiredMassFlowRadioButton")));
+        return this;
+    }
+
+    public ServiceConditionPage inputRequiredMassflow() {
+        return (ServiceConditionPage) findAndMatch("massflowtext",
+                "Required massflow");
+    }
+    
+    public ServiceConditionPage clickRadioVolumeFlowToBeDischarged() {
+        this.click(getWebElementId(findInputElement("VolumeFlowToBeDischargedWorkingRadioButton")));
+        return this;
+    }
+
+    public ServiceConditionPage inputVolumeFlowToBeDischarged() {
+        return (ServiceConditionPage) findAndMatch("VolumeFlowToBeDischargedWorkingTextBox",
+                "Volume flow to be discharged");
+    }
+
+    public ServiceConditionPage selectSteamDataAccordingTo() {
+        WebElement s = findSelect("KTable");
+        if (s == null) {
+            return null;
+        }
+        for (WebElement webElement : (new Select(s)).getOptions()) {
+            for (Knot<CteObject> k : getNodeList()) {
+                if (k.getContent().getName().equalsIgnoreCase(
+                        replaceUmlaut(webElement.getText()))) {
+                    for (int j = 0; j < getMarks().length; j++) {
+                        if (getMarks()[j].equals(k.getContent().getId())) {
+                            jscript.select(getWebElementId(s), webElement
+                                    .getAttribute("value"));
+                            return this;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+
+    }
+
+    /**
+     * NYI
+     * 
+     * @return ServiceConditionPage
+     */
+    public ServiceConditionPage inputRatioSpecificHeats() {
+        return this;
+    }
+
+    /**
+     * NYI
+     * 
+     * @return ServiceConditionPage
+     */
+    public ServiceConditionPage inputSpecificVolume() {
+        return this;
+    }
+
+    public ControlMenu clickCalculate() {
+        jscript.click(calculateBtnCSS);
         return this;
     }
 
@@ -64,38 +150,5 @@ public class ServiceConditionPage extends ControlMenu {
 
     public void setFireCase(boolean fireCase) {
         this.fireCase = fireCase;
-    }
-
-    public ServiceConditionPage inputSetPressure() {
-        jscript.clear(setPressureId);
-        jscript.input(setPressureId, "10");
-        return this;
-    }
-
-    public ServiceConditionPage inputSuperimposedBackPressure() {
-        jscript.clear(superimposedBackPressureId);
-        jscript.input(superimposedBackPressureId, "0");
-        return this;
-    }
-
-    public ServiceConditionPage inputOverpressure() {
-        jscript.clear(overpressureID);
-        jscript.input(overpressureID, "50");
-        return this;
-    }
-
-    public ServiceConditionPage inputTemperature() {
-        if (driver.findElement(By.id(temperatureId)).isEnabled()) {
-            jscript.clear(temperatureId);
-            jscript.input(temperatureId, "500");
-        } else {
-            System.err.println("Wrong temperature");
-        }
-        return this;
-    }
-
-    public ServiceConditionPage clickCalculate() {
-        jscript.click(calculateBtnCSS);
-        return this;
     }
 }

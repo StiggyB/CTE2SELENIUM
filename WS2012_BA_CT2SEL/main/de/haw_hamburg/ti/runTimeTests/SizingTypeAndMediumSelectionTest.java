@@ -1,7 +1,8 @@
 package de.haw_hamburg.ti.runTimeTests;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.*;
+import static org.junit.Assume.assumeFalse;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,28 +38,32 @@ import de.haw_hamburg.ti.cte.xmlObjects.CteObject;
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 import de.haw_hamburg.ti.tools.Cast;
 import de.haw_hamburg.ti.tools.FileHandler;
+import de.haw_hamburg.ti.tools.TimeAssist;
 import de.haw_hamburg.ti.tools.tree.Tree;
 
 @RunWith(Parameterized.class)
-public class SizingTypeAndMediumSelectionTest {
+public class SizingTypeAndMediumSelectionTest implements PageTest {
 
     /**
      * TODO WEBDRIVER SINGLETON OBJECT
      */
     private static WebDriver                        driver;
-    private static ArrayList<File>                  cttcfiles    = new ArrayList<>();
+    private static ArrayList<File>                  cttcfiles          = new ArrayList<>();
     private Integer                                 id;
     private String                                  name;
     private Integer[]                               marks;
-    private final static int                        noT          = 7;
+    private final static int                        noT                = 8;
     private static SizingTypeAndMediumSelectionPage stams;
-    private static boolean                          externalCall = false;
     private static Tree<CteObject>                  tree;
-    private static String                           user         = "BenjaminBurchard";
-    private static String                           pass         = "password";
+    private static String                           user               = "BenjaminBurchard";
+    private static String                           pass               = "password";
+    private static int                              evaluatedTestcases = 0;
+    private static int                              testSuites         = 0;
 
     @Rule
-    public NewPageRule                              newPage;
+    public NewPageRule                              newPage            = new NewPageRule(
+                                                                               noT,
+                                                                               this);
 
     public SizingTypeAndMediumSelectionTest(Integer id, String name,
             Integer[] marks, HashMap<Integer, String> markClassMap,
@@ -67,15 +72,18 @@ public class SizingTypeAndMediumSelectionTest {
         this.name = name;
         this.id = id;
         this.marks = marks;
-        this.newPage = new NewPageRule(noT);
     }
 
     @Parameters(name = "{index}: {1}")
     public static List<Object[]> data() {
         if (!externalCall) {
-            cttcfiles.add(new File("Sizing_Type_and_Medium_Selection.cttc"));
+            cttcfiles.add(new File(
+                    "SizingTypeAndMediumSelectionAuslegungsStandard.cttc"));
+            cttcfiles.add(new File("Service_conditionCleaned.cttc"));
         }
+        System.out.println("Used File: " + cttcfiles.get(0));
         FileHandler.setFile(cttcfiles.remove(0));
+
         ArrayList<CteTestCase> tcs = Cast.as(ArrayList.class, FileHandler
                 .loadObjectsFromFile());
         Object[][] data = new Object[tcs.size()][tcs.size()];
@@ -85,11 +93,16 @@ public class SizingTypeAndMediumSelectionTest {
             data[i] = iterator.next().asArray();
             i++;
         }
+        testSuites = i;
         return Arrays.asList(data);
     }
 
+    static long s1;
+    static long s2;
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
+        s1 = TimeAssist.getTimeStamp();
         tree = Cast.as(Tree.class, FileHandler.loadObjectsFromFile());
         FileHandler.closeFile();
         driver = new FirefoxDriver();
@@ -102,10 +115,15 @@ public class SizingTypeAndMediumSelectionTest {
                 LoginPage.class);
 
         MainPage mainPage = loginPage.loginAs(user, pass);
+        if (mainPage == null) {
+            throw new Exception("Wrong username and/or password");
+        }
         stams = mainPage.addNewSizing().clickNextButton();
         stams.setTree(tree);
+        stams.inputTagNo("Test#" + stams.finishedProjects + " - "
+                + TimeAssist.getDate());
     }
-    
+
     @Before
     public void setUp() throws Exception {
         printActualTestInfo();
@@ -113,17 +131,6 @@ public class SizingTypeAndMediumSelectionTest {
         stams.setMedium();
         assumeFalse("Skipped...", newPage.isFailed());
     }
-
-    private void printActualTestInfo() {
-        System.out.println(id + ": " + name);
-    }
-
-    // @Test
-    // public void testSTAMS() {
-    // System.out.println(id + ": " + name);
-    // // printActualTestInfo();
-    //
-    // }
 
     @Test
     public void testSelectMedium() {
@@ -168,68 +175,83 @@ public class SizingTypeAndMediumSelectionTest {
         assertNotNull(stams.selectRadioFireCase());
     }
 
-    private void evalNextPage() {
-        org.junit.runner.JUnitCore jc = new JUnitCore();
-        Result r = new Result();
-        HomePage hp = stams.clickNextButton();
-        if (hp instanceof ServiceConditionPage) {
-            ServiceConditionPage scp = (ServiceConditionPage) hp;
-            scp.setMedium(stams.getMedium());
-            scp.setFireCase(stams.getFireCase());
-            /**
-             * TODO NEXT TEST
-             */
-            r = jc.run(ServiceCondtitionTest.suite(scp));
-            stams = (SizingTypeAndMediumSelectionPage) scp.clickBackButton();
-        } else {
-            MediumSelectionPage msp = (MediumSelectionPage) hp;
-            msp.setMedium(stams.getMedium());
-            msp.setFireCase(stams.getFireCase());
-            /**
-             * TODO NEXT TEST
-             */
-            // r = jc.run(MediumSelectionTest.suite(msp));
-            stams = msp.clickBackButton();
-        }
-        printResult(r);
+    private void printActualTestInfo() {
+        System.out.println(id + ": " + name);
     }
 
-    private void printResult(Result r) {
-        if (r.getFailureCount() > 0) {
-            System.out.println(this.getClass().getSimpleName() + "->nof: "
-                    + r.getFailureCount() + " nor: " + r.getRunCount()
-                    + " time: " + r.getRunTime() + " failuredescr.: "
-                    + r.getFailures().get(0).getTrace() + " message: "
-                    + r.getFailures().get(0).getMessage());
-        }
-    }
-
-    /**
-     * TODO SCT NOT WORKING
-     * 
-     * @throws Exception
-     */
     @After
     public void tearDown() throws Exception {
-        System.out.println(this.id + ": " + newPage.getSucceededTestCases()
-                + "==" + noT);
-        if (newPage.getSucceededTestCases() == noT) {
-            evalNextPage();
-        }
-        System.out.println("-----------------------------------------------");
+        newPage.updateFinishedTestcases();
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         driver.close();
+        s2 = TimeAssist.getTimeStamp();
+        System.out.println("TIME: " + TimeAssist.getTimePassed(s1, s2));
+    }
+
+    public void evalNextPage() {
+        boolean allTestsFinished = false;
+        evaluatedTestcases++;
+        if (evaluatedTestcases == testSuites) {
+            allTestsFinished = true;
+        }
+        System.out.println("## cttcfiles.isEmpty()=?=" + cttcfiles.isEmpty()
+                + " && allTestsFinished=?=" + allTestsFinished + " ##");
+        if (!cttcfiles.isEmpty()) {
+            org.junit.runner.JUnitCore jc = new JUnitCore();
+            Result r = new Result();
+            TimeAssist.setInternalStampOne();
+            HomePage hp = stams.clickNextButton();
+            if (hp instanceof ServiceConditionPage) {
+                ServiceConditionPage scp = (ServiceConditionPage) hp;
+                scp.setMedium(stams.getMedium());
+                scp.setFireCase(stams.getFireCase());
+                r = jc.run(ServiceCondtitionTest.suite(scp, cttcfiles,
+                        allTestsFinished));
+                // stams = (SizingTypeAndMediumSelectionPage)
+                // scp.clickBackButton();
+            } else {
+                MediumSelectionPage msp = (MediumSelectionPage) hp;
+                msp.setMedium(stams.getMedium());
+                msp.setFireCase(stams.getFireCase());
+                // r = jc.run(MediumSelectionTest.suite(msp, cttcfiles));
+                System.err.println("Medium Selection is not coverd by a Unit Test");
+                stams = msp.clickBackButton();
+            }
+        }
+        /*
+         * else { System.out.println("########### evaluatedTestcases: " +
+         * evaluatedTestcases + "=?=" + testSuites +
+         * " :testSuites ###########"); if (!(evaluatedTestcases == testSuites))
+         * { stams.inputTagNo( "Test#" + evaluatedTestcases + " - " +
+         * TimeAssist.getDate()); } }
+         */
+        // printResult(r);
+    }
+
+    private void printResult(Result r) {
+        if (r.getFailureCount() > 0) {
+            System.out.println(SizingTypeAndMediumSelectionTest.class
+                    .getSimpleName()
+                    + "->nof: "
+                    + r.getFailureCount()
+                    + " nor: "
+                    + r.getRunCount()
+                    + " time: "
+                    + r.getRunTime()
+                    + " failuredescr.: "
+                    + r.getFailures().get(0).getTrace()
+                    + " message: " + r.getFailures().get(0).getMessage());
+        }
     }
 
     public static junit.framework.Test suite(ArrayList<File> files,
-            String username, String password) {
+            String username, String password) throws Exception {
         cttcfiles = files;
         user = username;
         pass = password;
-        externalCall = true;
         return new JUnit4TestAdapter(SizingTypeAndMediumSelectionTest.class);
     }
 

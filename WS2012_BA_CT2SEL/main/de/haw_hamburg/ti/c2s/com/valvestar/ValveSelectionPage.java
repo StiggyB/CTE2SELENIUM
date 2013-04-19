@@ -10,11 +10,8 @@ import org.openqa.selenium.support.PageFactory;
  */
 public class ValveSelectionPage extends ControlMenu {
 
-    private WebDriver driver;
-    
     public ValveSelectionPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
     }
 
     /* (non-Javadoc)

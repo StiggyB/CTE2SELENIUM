@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<CteObject id="c0">
+    <!--Created by CTE XL Professional 3.1.3-->
+    <Tree id="c1" name="Inlet_Pipe_Components.cte" root="c2">
+        <Composition id="c2" name="Inlet_Pipe_Components" style="color:#000000; font-size:9px; background-color:#ffffff; font-family:'Segoe UI'" x="456" y="32">
+            <Classification id="c21" name="Components" x="-73" y="92">
+                <Class id="c25" name="Right angled T-pieces: socked sharp edged fit in through" x="-419" y="146"/>
+                <Class id="c29" name="Right angled T-pieces: socked sharp edged fit in branch" x="-9" y="146"/>
+            </Classification>
+            <Classification id="c37" name="Count" x="438" y="92">
+                <Class id="c45" name="1" x="390" y="146"/>
+                <Class id="c49" name="99" x="446" y="146"/>
+                <Class id="c53" name="49" x="502" y="146"/>
+            </Classification>
+            <Classification id="c57" name="Length of inlet pipe" x="558" y="92">
+                <Class id="c61" name="0.5" x="583" y="146"/>
+                <Class id="c65" name="1" x="639" y="146"/>
+            </Classification>
+            <Classification id="c69" name=" Equivalent pipe roughness" x="715" y="92">
+                <Class id="c73" name="0.01" x="735" y="146"/>
+                <Class id="c77" name="0.07" x="793" y="146"/>
+                <Class id="c81" name="0.1" x="851" y="146"/>
+            </Classification>
+            <Classification id="c85" name="Allowed pressure loss based on p-paf" x="955" y="92">
+                <Class id="c89" name="1" x="1012" y="146">
+                    <Tag id="c91" type="AutoLayout">
+                        <Content key="style" value="type:1"/>
+                    </Tag>
+                </Class>
+                <Class id="c93" name="3" x="1068" y="162">
+                    <Tag id="c95" type="AutoLayout">
+                        <Content key="style" value="type:1"/>
+                    </Tag>
+                </Class>
+                <Class id="c97" name="5" x="1124" y="178">
+                    <Tag id="c99" type="AutoLayout">
+                        <Content key="style" value="type:1"/>
+                    </Tag>
+                </Class>
+                <Tag id="c86" type="AutoLayout">
+                    <Content key="style" value="type:2"/>
+                </Tag>
+            </Classification>
+        </Composition>
+    </Tree>
+    <TestGroup id="c3" name="">
+        <TestCase id="c1076" name="Testcase 1">
+            <Marks true="c25 c45 c61 c77 c93 "/>
+        </TestCase>
+        <TestCase id="c1085" name="Testcase 2">
+            <Marks true="c29 c53 c65 c81 c89 "/>
+        </TestCase>
+    </TestGroup>
+    <Tag id="c11" type="TestcaseGeneratorClassic">
+        <Content key="All" value="21 * 37 * 57 * 69 * 85;"/>
+    </Tag>
+</CteObject>

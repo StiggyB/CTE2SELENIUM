@@ -36,14 +36,17 @@ public class Javascript {
         }
     }
 
-    int trys = 0;
-
     /**
      * Click Button or CheckBox by CSS
      * 
      * @param cssSelector
      */
     public void click(String cssSelector) {
+        int trys = 0;
+        click(cssSelector, trys);
+    }
+
+    private void click(String cssSelector, int trys) {
         trys++;
         if (trys > 50) {
             System.err.println(cssSelector + " clicking failed");
@@ -62,10 +65,10 @@ public class Javascript {
                 + "return false;}");
         try {
             if (!((boolean) jse.executeScript(stringBuilder.toString()))) {
-                click(cssSelector);
+                click(cssSelector, trys);
             }
         } catch (WebDriverException e) {
-            click(cssSelector);
+            click(cssSelector, trys);
         }
     }
 
@@ -92,6 +95,8 @@ public class Javascript {
         try {
             jse.executeScript(sb.toString());
         } catch (WebDriverException e) {
+            System.err.println("Error selecting element.");
+            e.printStackTrace();
             select(listId, value);
         }
     }

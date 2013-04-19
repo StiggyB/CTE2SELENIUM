@@ -5,11 +5,9 @@ import org.openqa.selenium.support.PageFactory;
 
 public class ExternalFirePage extends ControlMenu {
 
-    private WebDriver driver;
 
     public ExternalFirePage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
     }
 
     /* (non-Javadoc)

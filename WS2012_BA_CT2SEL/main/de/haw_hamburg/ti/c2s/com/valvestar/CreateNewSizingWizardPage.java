@@ -5,11 +5,8 @@ import org.openqa.selenium.support.PageFactory;
 
 public class CreateNewSizingWizardPage extends ControlMenu {
 
-    private WebDriver driver;
-
     public CreateNewSizingWizardPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
     }
 
     @Override

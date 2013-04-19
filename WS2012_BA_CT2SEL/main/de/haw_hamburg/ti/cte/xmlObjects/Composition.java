@@ -1,6 +1,5 @@
 package de.haw_hamburg.ti.cte.xmlObjects;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

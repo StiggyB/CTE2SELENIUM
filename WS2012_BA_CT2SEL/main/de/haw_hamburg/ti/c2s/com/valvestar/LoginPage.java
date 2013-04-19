@@ -1,5 +1,6 @@
 package de.haw_hamburg.ti.c2s.com.valvestar;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -7,7 +8,6 @@ import org.openqa.selenium.support.PageFactory;
 
 public class LoginPage extends ControlMenu {
 
-    private final WebDriver driver;
     @FindBy(id = "ctl00_AgreementCheckBox")
     private WebElement      agreementCheckBox;
     @FindBy(id = "ctl00_WorkspacePlaceHolder_LoginTextBox")
@@ -19,7 +19,6 @@ public class LoginPage extends ControlMenu {
 
     public LoginPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
 
         // Check that we're on the right page.
         if (!"http://www.valvestar.com/UI/MainForm/Workspace/Authentication/Authentication.aspx"
@@ -42,13 +41,13 @@ public class LoginPage extends ControlMenu {
         passwordTextBox.clear();
         passwordTextBox.sendKeys(password);
         submitButton.click();
-        // Return a new page object representing the destination. Should the
-        // login page ever
-        // go somewhere else (for example, a legal disclaimer) then changing the
-        // method signature
-        // for this method will mean that all tests that rely on this behaviour
-        // won't compile.
-        return PageFactory.initElements(driver, MainPage.class);
+
+        return driver
+                .findElement(By.cssSelector("BODY"))
+                .getText()
+                .matches(
+                        "^[\\s\\S]*Authentication information is incorrect: you cannot log on now\\.[\\s\\S]*$") ? null
+                : PageFactory.initElements(driver, MainPage.class);
     }
 
 }

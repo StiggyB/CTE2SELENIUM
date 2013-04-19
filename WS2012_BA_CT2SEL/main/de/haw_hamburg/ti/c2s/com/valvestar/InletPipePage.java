@@ -5,11 +5,9 @@ import org.openqa.selenium.support.PageFactory;
 
 public class InletPipePage extends ControlMenu {
 
-    private WebDriver driver;
 
     public InletPipePage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
     }
 
     /*

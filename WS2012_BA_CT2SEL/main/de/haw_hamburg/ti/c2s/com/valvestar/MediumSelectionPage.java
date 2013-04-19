@@ -4,12 +4,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
-import de.haw_hamburg.ti.tools.Javascript;
-
 public class MediumSelectionPage extends ControlMenu {
 
-    private WebDriver  driver;
-    private Javascript jscript;
     private String     medium;
     private String     selectMediumBtnId  = "ctl00_WorkspacePlaceHolder_ctl00_DbMediumSelectButton";
     private String     selectMediumBtnCSS = "#" + selectMediumBtnId;
@@ -17,8 +13,6 @@ public class MediumSelectionPage extends ControlMenu {
 
     public MediumSelectionPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
-        this.jscript = new Javascript(driver);
     }
 
     /**

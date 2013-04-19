@@ -1,5 +1,6 @@
 package de.haw_hamburg.ti.cte;
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -7,14 +8,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -25,6 +23,9 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
@@ -37,6 +38,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import de.haw_hamburg.ti.cte.xmlObjects.CteTestCase;
 import de.haw_hamburg.ti.runTimeTests.SizingTypeAndMediumSelectionTest;
 import de.haw_hamburg.ti.tools.PrintAction;
+import de.haw_hamburg.ti.tools.TimeAssist;
 
 public class GUI {
 
@@ -73,15 +75,17 @@ public class GUI {
     private JList<String>            to_list         = new JList<String>(
                                                              to_listModel);
     private JTextArea                txtrJunitoutput = new JTextArea();
+    private JPopupMenu               popupMenu       = new JPopupMenu();
 
-    private CTE                      cte             = new CTE();
-//    private File                     chosenFile;
+    private CTEData                      cte             = new CTEData();
+    // private File chosenFile;
     private ArrayList<File>          files           = new ArrayList<>();
-    private JTextField txtWwwvalvestarcom;
-    private JTextField txtUsername;
-    private JTextField txtPassword;
-    protected String password;
-    protected String username;
+    private ArrayList<File>          cttcfiles       = new ArrayList<>();
+    private JTextField               txtWwwvalvestarcom;
+    private JTextField               txtUsername;
+    private JPasswordField           txtPassword;
+    protected String                 password;
+    protected String                 username;
 
     /**
      * Initialize the contents of the frame.
@@ -89,26 +93,83 @@ public class GUI {
     private void initialize() {
         frmAutomaticTestCase = new JFrame();
         frmAutomaticTestCase
-                .setTitle("Automatic Test Case Generation with Classification Trees for Web Testing<dynamic>");
+                .setTitle("Automatic Test Case Generation with Classification Trees for Web Testing");
         frmAutomaticTestCase.setBounds(100, 100, 999, 700);
         frmAutomaticTestCase.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frmAutomaticTestCase.getContentPane().setLayout(null);
+
+        JMenuItem mntmRemove = new JMenuItem("remove");
+        mntmRemove.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int i = to_list.getSelectedIndex();
+                if (i >= 0) {
+                    to_listModel.remove(i);
+                    cttcfiles.remove(i);
+                }
+            }
+        });
+        popupMenu.add(mntmRemove);
 
         JButton btnStartJUnitTest = new JButton("Start Unit Test");
         btnStartJUnitTest.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
 
-                File chosenFile = chooseFile("cttc");
-
-                if (chosenFile != null) {
-                frmAutomaticTestCase.setCursor(Cursor
-                        .getPredefinedCursor(Cursor.WAIT_CURSOR));
-                junit.framework.Test t = SizingTypeAndMediumSelectionTest
-                        .suite(files, username, password);
-                junit.textui.TestRunner.run(t);
-                frmAutomaticTestCase.setCursor(Cursor.getDefaultCursor());
+                if (txtUsername.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(frmAutomaticTestCase,
+                            "No username entered.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                } else if (txtPassword.getPassword().length == 0) {
+                    JOptionPane.showMessageDialog(frmAutomaticTestCase,
+                            "No password entered.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                } else if (cttcfiles.isEmpty()) {
+                    JOptionPane.showMessageDialog(frmAutomaticTestCase,
+                            "No test files selected.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    frmAutomaticTestCase.setCursor(Cursor
+                            .getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    try {
+                        PrintStream oldoutps = System.out; 
+                        try {
+                            
+                            FileOutputStream outfos = new FileOutputStream("TestOutput.htm"); //create //new output stream
+                            PrintStream newoutps = new PrintStream(outfos); //create new output //stream
+                            System.setOut(newoutps); //set the output stream
+                            
+                            System.out.println("Output of Junit Testing");
+                            System.out.println();
+                            System.out.println(TimeAssist.getDate());
+                            
+                            long stamp1 = TimeAssist.getTimeStamp();
+                            junit.framework.Test t = SizingTypeAndMediumSelectionTest
+                                    .suite(cttcfiles, txtUsername.getText(),
+                                            String.valueOf(txtPassword.getPassword()));
+                            junit.textui.TestRunner.run(t);
+                            long stamp2 = TimeAssist.getTimeStamp();
+                            
+                            System.out.println("################### TIME PASSED:" + TimeAssist.getTimePassed(stamp1, stamp2));
+                            System.setOut(oldoutps); //for resetting the output stream
+                            
+                        } catch (Exception e) {
+                            
+                            System.out.println("some error");
+                            
+                        }
+                    } catch (Exception e) {
+                        if (e.getMessage().equalsIgnoreCase(
+                                "Wrong username and/or password")) {
+                            JOptionPane.showMessageDialog(
+                                    frmAutomaticTestCase,
+                                    "Wrong username and/or password.",
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    frmAutomaticTestCase.setCursor(Cursor.getDefaultCursor());
                 }
+
             }
         });
         btnStartJUnitTest.setBounds(10, 332, 195, 23);
@@ -136,26 +197,41 @@ public class GUI {
                         && !cte_listModel.isEmpty()) {
                     frmAutomaticTestCase.setCursor(Cursor
                             .getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    to_listModel.addElement(cte_list.getSelectedValue());
+                    // to_listModel.addElement(cte_list.getSelectedValue());
                     try {
-                        ArrayList<CteTestCase> ctes = cte.getTestData(files.get(cte_list.getSelectedIndex()));
-                        
-                        for (Iterator<CteTestCase> iterator = ctes
-                                .iterator(); iterator.hasNext();) {
-                            to_listModel
-                                    .addElement(iterator.next().getName());
-                        }
+                        ArrayList<CteTestCase> ctes = cte.getTestData(files
+                                .get(cte_list.getSelectedIndex()));
+
+                        // for (Iterator<CteTestCase> iterator =
+                        // ctes.iterator(); iterator
+                        // .hasNext();) {
+                        // to_listModel.addElement("-"
+                        // + iterator.next().getName());
+                        // }
                     } catch (IOException e) {
                         System.err.println("IO Err");
                         e.printStackTrace();
                     }
                     try {
-                        cte.saveTestCasesToFile(files.get(cte_list.getSelectedIndex()));
+                        File cttcfile = cte.saveTestCasesToFile(files
+                                .get(cte_list.getSelectedIndex()));
+                        if (!cttcfiles.contains(cttcfile)) {
+                            addPopup(to_list, popupMenu);
+                            System.out.println("ADDED: " + cttcfile);
+                            cttcfiles.add(cttcfile);
+                            to_listModel.addElement(cttcfile.getName());
+                            files.remove(cte_list.getSelectedIndex());
+                            cte_listModel.removeElement(cte_list
+                                    .getSelectedValue());
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    frmAutomaticTestCase,
+                                    "You already added this file.", "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    files.remove(cte_list.getSelectedIndex());
-                    cte_listModel.removeElement(cte_list.getSelectedValue());
                     frmAutomaticTestCase.setCursor(Cursor.getDefaultCursor());
                 }
             }
@@ -169,57 +245,51 @@ public class GUI {
 
         JScrollPane scrollPane_1 = new JScrollPane();
         tabbedPane_1.addTab("Testcases", null, scrollPane_1, null);
+        to_list.setToolTipText("Select the Files which should be tested.");
         to_list.addMouseListener(new MouseAdapter() {
+
+            // JPopupMenu jp = new JPopupMenu();
+            // jp.add(menuItem)
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
+                if (e.getButton() == MouseEvent.BUTTON2) {
                 }
                 // to_listModel.removeElement(to_list.getSelectedValue());
             }
         });
 
         scrollPane_1.setViewportView(to_list);
-        
+
         JLabel lblTestObject = new JLabel("Test Object:");
         lblTestObject.setBounds(12, 13, 78, 16);
         frmAutomaticTestCase.getContentPane().add(lblTestObject);
-        
+
         txtWwwvalvestarcom = new JTextField();
         txtWwwvalvestarcom.setEditable(false);
         txtWwwvalvestarcom.setText("www.valvestar.com");
         txtWwwvalvestarcom.setBounds(102, 10, 172, 22);
         frmAutomaticTestCase.getContentPane().add(txtWwwvalvestarcom);
         txtWwwvalvestarcom.setColumns(10);
-        
+
         JLabel lblUsername = new JLabel("Username:");
         lblUsername.setBounds(286, 13, 78, 16);
         frmAutomaticTestCase.getContentPane().add(lblUsername);
-        
+
         txtUsername = new JTextField();
-        txtUsername.setText("username");
+        txtUsername.setText("");
         txtUsername.setBounds(376, 10, 116, 22);
         frmAutomaticTestCase.getContentPane().add(txtUsername);
         txtUsername.setColumns(10);
-        
+
         JLabel lblPassword = new JLabel("Password:");
         lblPassword.setBounds(504, 13, 78, 16);
         frmAutomaticTestCase.getContentPane().add(lblPassword);
-        
-        txtPassword = new JTextField();
-        txtPassword.setText("password");
+
+        txtPassword = new JPasswordField();
+        txtPassword.setText("");
         txtPassword.setBounds(594, 10, 116, 22);
         frmAutomaticTestCase.getContentPane().add(txtPassword);
         txtPassword.setColumns(10);
-        
-        JButton btnSubmit = new JButton("Submit");
-        btnSubmit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                username = txtUsername.getText();
-                password = txtPassword.getText();
-            }
-        });
-        btnSubmit.setBounds(722, 9, 97, 25);
-        frmAutomaticTestCase.getContentPane().add(btnSubmit);
 
         redirectSystemStreams();
 
@@ -233,7 +303,6 @@ public class GUI {
         mntmOpencteFile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-
                 File chosenFile = chooseFile("cte");
                 if (chosenFile != null) {
                     files.add(chosenFile);
@@ -326,47 +395,42 @@ public class GUI {
         System.setOut(new PrintStream(out, true));
         System.setErr(new PrintStream(out, true));
     }
-    
-    private String getDate() {
-        //
-        // Create a DateFormatter object for displaying date information.
-        //
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-        
-        //
-        // Get date and time information in milliseconds
-        //
-        long now = System.currentTimeMillis();
-
-        //
-        // Create a calendar object that will convert the date and time value
-        // in milliseconds to date. We use the setTimeInMillis() method of the
-        // Calendar object.
-        //
-        
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(now);
-        
-        System.out.println(formatter.format(calendar.getTime()));
-        return formatter.format(calendar.getTime());
-    }
 
     /**
-     * @param extension 
-     * @return 
+     * @param extension
+     * @return
      * 
      */
     private File chooseFile(String extension) {
         JFileChooser chooser = new JFileChooser();
 
         chooser.setCurrentDirectory(new File("."));
-        chooser.setFileFilter(new FileNameExtensionFilter(null,
-                extension));
+        chooser.setFileFilter(new FileNameExtensionFilter(null, extension));
 
         int choice = chooser.showOpenDialog(chooser);
 
         if (choice != JFileChooser.APPROVE_OPTION)
             return null;
         return chooser.getSelectedFile();
+    }
+
+    private static void addPopup(Component component, final JPopupMenu popup) {
+        component.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showMenu(e);
+                }
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showMenu(e);
+                }
+            }
+
+            private void showMenu(MouseEvent e) {
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
     }
 }

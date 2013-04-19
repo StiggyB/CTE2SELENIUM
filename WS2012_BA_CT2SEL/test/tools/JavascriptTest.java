@@ -16,7 +16,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 
-import de.haw_hamburg.ti.c2s.com.valvestar.ControlMenu;
 import de.haw_hamburg.ti.c2s.com.valvestar.LoginPage;
 import de.haw_hamburg.ti.c2s.com.valvestar.MainPage;
 import de.haw_hamburg.ti.tools.Javascript;
@@ -28,7 +27,6 @@ public class JavascriptTest {
     private static WebDriver   driver;
     private static Javascript  js;
     private static String      baseUrl;
-    private static ControlMenu controlMenu;
     private static WebElement  CdtpCheckBox;
 
     @BeforeClass

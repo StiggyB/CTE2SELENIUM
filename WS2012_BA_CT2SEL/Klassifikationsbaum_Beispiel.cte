@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<CteObject id="c0">
+    <!--Created by CTE XL Professional 3.1.3-->
+    <Tree id="c1" name="Klassifikationsbaum_Beispiel.cte" root="c2">
+        <Composition id="c2" name="Objekterkennung" style="color:#000000; font-size:9px; background-color:#ffffff; font-family:'Segoe UI'" x="516" y="32">
+            <Classification id="c25" name="Farbe" x="462" y="92">
+                <Class id="c33" name="Rot" x="438" y="146"/>
+                <Class id="c37" name="Grün" x="494" y="146"/>
+            </Classification>
+            <Classification id="c29" name="Form" x="655" y="92">
+                <Class id="c41" name="Kreis" x="556" y="146"/>
+                <Class id="c45" name="Polygon" x="736" y="146">
+                    <Classification id="c49" name="Regularität" x="648" y="198">
+                        <Class id="c57" name="regulär" x="619" y="252"/>
+                        <Class id="c61" name="irregulär" x="697" y="252"/>
+                    </Classification>
+                    <Classification id="c53" name="Kanten" x="830" y="198">
+                        <Class id="c65" name="Dreieck" x="784" y="252"/>
+                        <Class id="c69" name="Rechteck" x="865" y="252"/>
+                    </Classification>
+                </Class>
+            </Classification>
+        </Composition>
+    </Tree>
+    <TestGroup id="c3" name="" validity="invalid">
+        <TestGroup id="c242" name="Obj" validity="invalid">
+            <TestCase id="c243" name="Obj Testcase 1" validity="valid">
+                <Marks true="c37 c61 c69 "/>
+            </TestCase>
+            <TestCase id="c250" name="Obj Testcase 2" validity="valid">
+                <Marks true="c37 c61 c65 "/>
+            </TestCase>
+            <TestCase id="c257" name="Obj Testcase 3" validity="valid">
+                <Marks true="c37 c57 c69 "/>
+            </TestCase>
+            <TestCase id="c264" name="Obj Testcase 4" validity="valid">
+                <Marks true="c37 c57 c65 "/>
+            </TestCase>
+            <TestCase id="c271" name="Obj Testcase 5" validity="valid">
+                <Marks true="c37 c41 "/>
+            </TestCase>
+            <TestCase id="c277" name="Obj Testcase 6" validity="invalid">
+                <Marks true="c33 c61 c69 "/>
+            </TestCase>
+            <TestCase id="c284" name="Obj Testcase 7" validity="invalid">
+                <Marks true="c33 c61 c65 "/>
+            </TestCase>
+            <TestCase id="c291" name="Obj Testcase 8" validity="invalid">
+                <Marks true="c33 c57 c69 "/>
+            </TestCase>
+            <TestCase id="c298" name="Obj Testcase 9" validity="invalid">
+                <Marks true="c33 c57 c65 "/>
+            </TestCase>
+            <TestCase id="c305" name="Obj Testcase 10" validity="valid">
+                <Marks true="c33 c41 "/>
+            </TestCase>
+        </TestGroup>
+        <TestGroup id="c554" name="Obj" validity="valid">
+            <TestCase id="c555" name="Obj Testcase 1" validity="valid">
+                <Marks true="c37 c61 c69 "/>
+            </TestCase>
+            <TestCase id="c562" name="Obj Testcase 2" validity="valid">
+                <Marks true="c37 c61 c65 "/>
+            </TestCase>
+            <TestCase id="c569" name="Obj Testcase 3" validity="valid">
+                <Marks true="c37 c57 c69 "/>
+            </TestCase>
+            <TestCase id="c576" name="Obj Testcase 4" validity="valid">
+                <Marks true="c37 c57 c65 "/>
+            </TestCase>
+            <TestCase id="c583" name="Obj Testcase 5" validity="valid">
+                <Marks true="c37 c41 "/>
+            </TestCase>
+            <TestCase id="c589" name="Obj Testcase 6" validity="valid">
+                <Marks true="c33 c41 "/>
+            </TestCase>
+        </TestGroup>
+    </TestGroup>
+    <Tag id="c11" type="TestcaseGeneratorClassic">
+        <Content key="Obj" value="pairwise(25,29);"/>
+    </Tag>
+    <Tag id="c412" type="DependencyManagerClassic">
+        <Content key="noRedPolygon" value="1;33 NAND 45;"/>
+    </Tag>
+</CteObject>

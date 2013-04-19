@@ -5,11 +5,8 @@ import org.openqa.selenium.support.PageFactory;
 
 public class OutletPipeComponentsPage extends ControlMenu {
 
-    private WebDriver driver;
-
     public OutletPipeComponentsPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
     }
 
     /* (non-Javadoc)
